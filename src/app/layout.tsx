@@ -1,0 +1,66 @@
+import type { Metadata, Viewport } from "next";
+import { Fraunces, Manrope } from "next/font/google";
+
+import "./globals.css";
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-editorial",
+  display: "swap",
+});
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const campaignTitle = "Vriksha Vvandhan | Protect the Protector";
+const campaignDescription =
+  "This Raksha Bandhan, join Mirchi’s Vriksha Vvandhan movement and make a promise to protect and nurture a tree.";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: campaignTitle,
+  description: campaignDescription,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    title: campaignTitle,
+    description: campaignDescription,
+    url: "/",
+    siteName: "Vriksha Vvandhan",
+    images: [
+      {
+        url: "/opengraph-image.jpg",
+        width: 1200,
+        height: 670,
+        alt: "Vriksha Vvandhan — This Raksha Bandhan, protect the protector",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: campaignTitle,
+    description: campaignDescription,
+    images: ["/opengraph-image.jpg"],
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#173A2B",
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en-IN" className={`${fraunces.variable} ${manrope.variable}`}>
+      <body>{children}</body>
+    </html>
+  );
+}
