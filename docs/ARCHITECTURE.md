@@ -11,6 +11,10 @@
 - `public/brand` and `public/campaign` — supplied brand assets and documented web derivatives.
 - `e2e` — browser, navigation, overflow, console and axe checks.
 
+## Visual-system boundary
+
+The light campaign system is implemented as semantic CSS custom properties in `src/app/globals.css`. Components consume role-based tokens for the page canvas, white and soft surfaces, ink, Rakhi-red action, forest support, gold detail, dividers and shadows. This keeps visual changes independent from content records and component behaviour. `docs/LIGHT_VISUAL_SYSTEM.md` records the palette, surface rhythm, accessibility intent and exclusions.
+
 ## Content-driven design
 
 Campaign wording and typed data live in `src/content/campaign.ts`, rather than being scattered through JSX. Components decide composition and semantics; content decides labels, copy, metrics and selected assets. This keeps later campaign approvals and translations localised.

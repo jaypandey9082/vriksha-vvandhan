@@ -4,9 +4,9 @@
 
 The Section 1 hero placed its message before the campaign identity, switched to two columns at portrait-tablet widths, overlaid the tracker on the photograph and surrounded it with circular Promise Halo crops. That composition made the Mirchi and Vriksha Vvandhan pairing too quiet, compressed the 768px layout and made the static metric feel secondary.
 
-## Living Promise Hero
+## Light Living Promise Hero
 
-Section 1.1 interprets the supplied sketch as a “Living Promise Hero”: a large Mirchi-led campaign masthead, a direct “Protect the protector.” message, the approved tree-Rakhi photograph, a prominent promise medallion and a participant-photo ribbon. The redesign is limited to the hero and its directly shared components; every downstream homepage section and anchor remains in place.
+Section 1.1 interprets the supplied sketch as a “Living Promise Hero”: a large Mirchi-led campaign masthead, a direct “Protect the protector.” message, the approved tree-Rakhi photograph, a prominent promise medallion and a participant-photo ribbon. Its current treatment uses the light campaign canvas documented in `docs/LIGHT_VISUAL_SYSTEM.md`: warm off-white ground, dark ink, white raised surfaces and Rakhi red action. Every downstream homepage section and anchor remains in place.
 
 ## Content order
 
@@ -32,7 +32,7 @@ At `960px` and wider, the masthead remains above a two-column stage. The tree-Ra
 
 ## Tracker treatment
 
-The tracker is a reusable server-rendered SVG medallion with a forest centre, muted-gold progress arc, two inner tree rings, four orientation marks and one Rakhi-red knot. It shows `417`, `of 983`, `Vriksha promises`, the visible rounded percentage and the generated support line. The percentage is calculated with `Math.round((current / target) * 100)`, clamped to the first circle and guarded against a zero target. Progress remains understandable in text without relying on colour.
+The tracker is a reusable server-rendered SVG medallion with a white centre, neutral remaining track, Rakhi-red progress arc, two subtle gold and forest inner tree rings, four orientation marks and one red knot. It shows `417`, `of 983`, `Vriksha promises`, the visible rounded percentage and the generated support line. The percentage is calculated with `Math.round((current / target) * 100)`, clamped to the first circle and guarded against a zero target. Progress remains understandable in text without relying on colour.
 
 ## Promise Ribbon
 

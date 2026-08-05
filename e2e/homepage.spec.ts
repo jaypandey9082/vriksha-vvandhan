@@ -14,6 +14,34 @@ test("homepage loads without browser console errors", async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
+test("homepage uses the light campaign canvas without a dark hero treatment", async ({ page }) => {
+  await page.goto("/");
+
+  const surfaces = await page.evaluate(() => {
+    const header = document.querySelector<HTMLElement>(".site-header");
+    const hero = document.querySelector<HTMLElement>(".campaign-hero");
+    const tracker = document.querySelector<HTMLElement>(".promise-tracker");
+
+    if (!header || !hero || !tracker) throw new Error("Required campaign surfaces are missing");
+
+    return {
+      body: getComputedStyle(document.body).backgroundColor,
+      header: getComputedStyle(header).backgroundColor,
+      hero: getComputedStyle(hero).backgroundColor,
+      heroImage: getComputedStyle(hero).backgroundImage,
+      trackerCenter: getComputedStyle(tracker, "::before").backgroundColor,
+    };
+  });
+
+  expect(surfaces).toEqual({
+    body: "rgb(248, 247, 243)",
+    header: "rgb(255, 255, 255)",
+    hero: "rgb(248, 247, 243)",
+    heroImage: "none",
+    trackerCenter: "rgb(255, 255, 255)",
+  });
+});
+
 test("desktop navigation and homepage CTAs reach valid sections", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");

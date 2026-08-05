@@ -7,7 +7,7 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="site-header__inner shell">
         <a className="site-header__brand" href="#movement" aria-label="Vriksha Vvandhan home">
-          <LogoLockup variant="compact" inverse />
+          <LogoLockup variant="compact" />
         </a>
         <nav className="site-header__desktop-nav" aria-label="Primary navigation">
           <ul>

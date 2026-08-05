@@ -2,7 +2,7 @@
 
 ## Section 1.1 refinement
 
-The original hero has been redesigned as the premium mobile-first “Living Promise Hero.” Mirchi and the temporary Vriksha Vvandhan lockup now form a prominent masthead; the concise message, calculated `417 / 983` tracker, Rakhi-red action, tree-Rakhi image and internally scrolling Promise Ribbon establish a clearer hierarchy. Portrait tablet remains stacked through 959px, while desktop uses image-left/message-right composition. The circular Promise Halo and its absolute positioning were removed. See `docs/HERO_REDESIGN.md` for the full design, performance, rights and accessibility rationale.
+The original hero has been redesigned as the premium mobile-first “Living Promise Hero” and then aligned to the campaign-wide light visual system. Mirchi and the temporary Vriksha Vvandhan lockup form a prominent masthead; the concise message, white `417 / 983` tracker with red progress, Rakhi-red action, tree-Rakhi image and internally scrolling Promise Ribbon establish a clear hierarchy. Portrait tablet remains stacked through 959px, while desktop uses image-left/message-right composition. The circular Promise Halo, grain and dark hero gradients were removed. See `docs/HERO_REDESIGN.md` and `docs/LIGHT_VISUAL_SYSTEM.md` for the full rationale.
 
 ## Work completed
 
@@ -20,9 +20,10 @@ The authentic Mirchi logo and 16 web-friendly image derivatives were selected fr
 
 ## Design decisions
 
-- Warm ivory editorial surfaces contrast with deep forest campaign chapters.
+- A warm `#F8F7F3` canvas, white surfaces and soft `#F1F0EC` alternates create a consistent light editorial rhythm.
 - Fraunces creates the emotional editorial voice; Manrope keeps body and interface copy clear.
-- Rakhi red is reserved for action and emphasis; muted gold carries ceremonial detail.
+- Rakhi red is the principal action and emphasis colour; restrained forest and gold carry tree and ceremonial detail.
+- Dark full-width chapters were removed. Image-local overlays remain only where photographic captions require contrast.
 - Composition, spacing, photography and typography create the premium feel; there is no glassmorphism, carousel or heavy animation library.
 - Only the tree-Rakhi LCP image is preloaded through the current Next.js 16 Image API; Promise Ribbon images are lazy-loaded.
 - The campaign wordmark is a temporary text lockup because no standalone approved wordmark was available.
@@ -43,7 +44,7 @@ Playwright confirmed the mobile menu opens, focuses the first destination, close
 - `npm run typecheck` — passed with strict TypeScript.
 - `npm run test` — passed: 4 files, 11 tests.
 - `npm run build` — passed with Next.js 16.3.0 using the supported webpack builder; `/`, `/_not-found` and `/opengraph-image.jpg` were statically prerendered.
-- `npm run test:e2e` — passed: 10 Chromium tests, including browser console, navigation, mobile focus, 360/390px overflow, above-fold hierarchy, responsive layout, ribbon scrolling, reduced motion and axe.
+- `npm run test:e2e` — passed: 11 Chromium tests, including light-surface assertions, browser console, navigation, mobile focus, 360/390px overflow, above-fold hierarchy, responsive layout, ribbon scrolling, reduced motion and axe.
 - `curl -I http://127.0.0.1:3010` — returned `HTTP/1.1 200 OK`.
 
 The default Turbopack production build was also attempted, but this managed environment denied an internal PostCSS process from binding to a port. The project build script therefore uses `next build --webpack`, which completed without application warnings.

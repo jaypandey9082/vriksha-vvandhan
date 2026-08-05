@@ -12,7 +12,7 @@ export function FinalCta() {
           <span>{finalCta.lineTwo}</span>
           <em>{finalCta.lineThree}</em>
         </h2>
-        <a className="button button--light" href={finalCta.cta.href}>
+        <a className="button button--primary" href={finalCta.cta.href}>
           {finalCta.cta.label}
           <ArrowUpRight aria-hidden="true" size={18} />
         </a>

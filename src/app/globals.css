@@ -1,21 +1,34 @@
 @import "tailwindcss";
 
 :root {
-  --deep-forest: #173a2b;
-  --forest-shadow: #10291f;
-  --forest-mist: #315843;
-  --warm-ivory: #f4efe5;
-  --soft-paper: #ede5d7;
-  --paper-light: #fbf8f1;
-  --bark-brown: #604231;
-  --rakhi-red: #ad3e35;
-  --muted-gold: #c3a466;
+  --page-bg: #f8f7f3;
+  --surface: #ffffff;
+  --surface-soft: #f1f0ec;
+  --surface-raised: #ffffff;
   --ink: #1b1d19;
   --muted-ink: #62655e;
-  --line: rgba(27, 29, 25, 0.14);
-  --header-height: 74px;
+  --subtle-ink: #858780;
+  --action-red: #d62828;
+  --action-red-hover: #b91f24;
+  --action-red-soft: #fbe9e8;
+  --forest-accent: #2d403c;
+  --forest-soft: #e9eeeb;
+  --gold-accent: #b48a45;
+  --line: #dedcd5;
+  --line-strong: #cbc8c0;
+  --shadow-soft: 0 20px 60px rgba(27, 29, 25, 0.1);
+  --shadow-card: 0 10px 34px rgba(27, 29, 25, 0.08);
+  --deep-forest: var(--forest-accent);
+  --forest-shadow: #20312d;
+  --forest-mist: #526762;
+  --warm-ivory: var(--page-bg);
+  --soft-paper: var(--surface-soft);
+  --paper-light: var(--surface);
+  --bark-brown: #604231;
+  --rakhi-red: var(--action-red);
+  --muted-gold: var(--gold-accent);
+  --header-height: 78px;
   --shell: 1240px;
-  --shadow-soft: 0 24px 70px rgba(16, 41, 31, 0.14);
 }
 
 * {
@@ -29,7 +42,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--warm-ivory);
+  background: var(--page-bg);
   color: var(--ink);
   font-family: var(--font-sans), Arial, sans-serif;
   line-height: 1.6;
@@ -38,8 +51,8 @@ body {
 }
 
 body::selection {
-  background: var(--muted-gold);
-  color: var(--forest-shadow);
+  background: var(--action-red-soft);
+  color: var(--ink);
 }
 
 a {
@@ -66,7 +79,7 @@ svg {
 }
 
 :focus-visible {
-  outline: 3px solid var(--muted-gold);
+  outline: 3px solid var(--action-red);
   outline-offset: 4px;
 }
 
@@ -77,8 +90,9 @@ svg {
   z-index: 1000;
   transform: translateY(-180%);
   border-radius: 0.35rem;
-  background: var(--paper-light);
-  color: var(--forest-shadow);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
   font-weight: 800;
   padding: 0.75rem 1rem;
   transition: transform 160ms ease;
@@ -124,17 +138,18 @@ svg {
 }
 
 .button--primary {
-  background: var(--rakhi-red);
-  color: #fffaf2;
+  background: var(--action-red);
+  color: #fff;
 }
 
 .button--primary:hover {
-  background: #923129;
+  background: var(--action-red-hover);
 }
 
 .button--light {
-  background: var(--paper-light);
-  color: var(--forest-shadow);
+  border-color: var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
 }
 
 .button--light:hover {
@@ -149,10 +164,6 @@ svg {
   font-size: 0.84rem;
   font-weight: 800;
   letter-spacing: 0.03em;
-}
-
-.text-link--light {
-  color: rgba(255, 250, 242, 0.9);
 }
 
 .campaign-image {
@@ -181,7 +192,7 @@ svg {
 .campaign-channel__eyebrow,
 .ped-paigaam__eyebrow {
   margin: 0 0 1rem;
-  color: var(--rakhi-red);
+  color: var(--action-red-hover);
   font-size: 0.72rem;
   font-weight: 900;
   letter-spacing: 0.18em;
@@ -204,21 +215,18 @@ svg {
   font-size: clamp(1rem, 1.5vw, 1.15rem);
 }
 
-.section-heading--inverse .section-heading__title,
-.section-heading--inverse .section-heading__description {
-  color: var(--warm-ivory);
-}
-
 /* Header */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 80;
   height: var(--header-height);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(16, 41, 31, 0.94);
-  color: #fffaf2;
-  backdrop-filter: blur(18px);
+  border-top: 4px solid var(--forest-accent);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 5px 20px rgba(27, 29, 25, 0.04);
+  backdrop-filter: blur(14px);
 }
 
 .site-header__inner {
@@ -286,7 +294,7 @@ svg {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  color: var(--muted-gold);
+  color: var(--forest-accent);
   font-size: 0.6rem;
   font-weight: 800;
   letter-spacing: 0.2em;
@@ -326,7 +334,7 @@ svg {
   height: 46px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid var(--line-strong);
   border-radius: 50%;
   background: transparent;
   color: currentColor;
@@ -339,7 +347,7 @@ svg {
   z-index: 100;
   display: flex;
   justify-content: flex-end;
-  background: rgba(4, 18, 12, 0.68);
+  background: rgba(27, 29, 25, 0.42);
 }
 
 .mobile-navigation__panel {
@@ -347,8 +355,8 @@ svg {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--forest-shadow);
-  color: var(--warm-ivory);
+  background: var(--surface);
+  color: var(--ink);
   padding: 1.25rem 1.25rem 2rem;
   box-shadow: -24px 0 80px rgba(0, 0, 0, 0.24);
   animation: menu-in 220ms ease-out both;
@@ -358,7 +366,7 @@ svg {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  border-bottom: 1px solid var(--line);
   padding-bottom: 1.25rem;
 }
 
@@ -381,14 +389,14 @@ svg {
   display: flex;
   align-items: center;
   gap: 1.1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+  border-bottom: 1px solid var(--line);
   font-family: var(--font-editorial), Georgia, serif;
   font-size: 1.7rem;
   line-height: 1.1;
 }
 
 .mobile-navigation__list span {
-  color: var(--muted-gold);
+  color: var(--action-red);
   font-family: var(--font-sans), Arial, sans-serif;
   font-size: 0.64rem;
   font-weight: 800;
@@ -404,21 +412,9 @@ svg {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 86% 9%, rgba(195, 164, 102, 0.08), transparent 32%),
-    linear-gradient(142deg, rgba(16, 41, 31, 0.995), rgba(23, 58, 43, 0.97)),
-    var(--deep-forest);
-  color: var(--warm-ivory);
-}
-
-.campaign-hero__grain {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  opacity: 0.24;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.13) 0.6px, transparent 0.6px);
-  background-size: 6px 6px;
-  mask-image: linear-gradient(to bottom, black, transparent 90%);
+  border-bottom: 1px solid var(--line);
+  background: var(--page-bg);
+  color: var(--ink);
 }
 
 .campaign-hero::after {
@@ -429,11 +425,11 @@ svg {
   aspect-ratio: 1;
   right: -48%;
   top: 18%;
-  border: 1px solid rgba(195, 164, 102, 0.13);
+  border: 1px solid rgba(45, 64, 60, 0.11);
   border-radius: 50%;
   box-shadow:
-    inset 0 0 0 38px rgba(195, 164, 102, 0.02),
-    inset 0 0 0 82px rgba(195, 164, 102, 0.02);
+    inset 0 0 0 38px rgba(45, 64, 60, 0.018),
+    inset 0 0 0 82px rgba(45, 64, 60, 0.018);
 }
 
 .campaign-hero__inner {
@@ -463,7 +459,7 @@ svg {
 
 .campaign-hero__eyebrow {
   margin-bottom: 0.7rem;
-  color: var(--muted-gold);
+  color: var(--action-red);
 }
 
 .campaign-hero h1 {
@@ -478,7 +474,7 @@ svg {
 .campaign-hero__description {
   max-width: 48ch;
   margin: 0.625rem 0 0;
-  color: rgba(244, 239, 229, 0.78);
+  color: var(--muted-ink);
   font-size: clamp(0.98rem, 2vw, 1.14rem);
 }
 
@@ -508,18 +504,15 @@ svg {
 
 .hero-media__frame {
   aspect-ratio: 4 / 5;
-  border: 1px solid rgba(255, 255, 255, 0.19);
+  border: 1px solid var(--line-strong);
   border-radius: 48% 48% 0.8rem 0.8rem;
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.32);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
   animation: hero-image-reveal 800ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
 }
 
 .hero-media__frame::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(7, 25, 16, 0.54), transparent 45%);
-  pointer-events: none;
+  content: none;
 }
 
 .hero-media__caption {
@@ -527,11 +520,15 @@ svg {
   right: 1rem;
   bottom: 0.85rem;
   z-index: 2;
-  color: rgba(244, 239, 229, 0.78);
+  border: 1px solid rgba(222, 220, 213, 0.82);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--forest-accent);
   font-family: var(--font-editorial), Georgia, serif;
   font-size: 0.75rem;
   font-style: italic;
   letter-spacing: 0.01em;
+  padding: 0.3rem 0.55rem;
 }
 
 .campaign-hero__tracker {
@@ -542,7 +539,7 @@ svg {
 
 .campaign-hero__tracker > p {
   margin: 0 0 0.45rem;
-  color: var(--muted-gold);
+  color: var(--forest-accent);
   font-size: 0.64rem;
   font-weight: 900;
   letter-spacing: 0.18em;
@@ -562,10 +559,10 @@ svg {
   inset: 0 auto auto 0;
   width: 100%;
   aspect-ratio: 1;
-  border: 1px solid rgba(244, 239, 229, 0.11);
+  border: 1px solid var(--line-strong);
   border-radius: 50%;
-  background: rgba(11, 31, 22, 0.95);
-  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.34);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-card);
   content: "";
 }
 
@@ -584,35 +581,35 @@ svg {
 }
 
 .promise-tracker__track {
-  stroke: rgba(255, 255, 255, 0.17);
+  stroke: #dfded9;
   stroke-width: 5;
 }
 
 .promise-tracker__progress {
-  stroke: var(--muted-gold);
+  stroke: var(--action-red);
   stroke-linecap: round;
   stroke-width: 6;
 }
 
 .promise-tracker__inner {
-  stroke: rgba(195, 164, 102, 0.22);
+  stroke: rgba(180, 138, 69, 0.44);
   stroke-width: 1;
 }
 
 .promise-tracker__inner--fine {
-  stroke: rgba(195, 164, 102, 0.12);
+  stroke: rgba(45, 64, 60, 0.2);
   stroke-dasharray: 2 5;
 }
 
 .promise-tracker__mark {
-  stroke: rgba(244, 239, 229, 0.42);
+  stroke: var(--forest-accent);
   stroke-linecap: round;
   stroke-width: 1.5;
 }
 
 .promise-tracker__knot {
-  fill: var(--rakhi-red);
-  stroke: var(--warm-ivory);
+  fill: var(--action-red);
+  stroke: var(--surface);
   stroke-width: 1;
 }
 
@@ -637,14 +634,14 @@ svg {
 
 .promise-tracker__copy span {
   margin-top: 0.25rem;
-  color: var(--muted-gold);
+  color: var(--action-red);
   font-size: 0.74rem;
   font-weight: 800;
 }
 
 .promise-tracker__copy small {
   margin-top: 0.35rem;
-  color: rgba(244, 239, 229, 0.66);
+  color: var(--muted-ink);
   font-size: 0.58rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -655,8 +652,8 @@ svg {
   top: 17%;
   right: 10%;
   border-radius: 999px;
-  background: var(--rakhi-red);
-  color: var(--warm-ivory);
+  background: var(--action-red);
+  color: #fff;
   padding: 0.34rem 0.46rem;
   font-size: 0.62rem;
   letter-spacing: 0.04em;
@@ -665,7 +662,7 @@ svg {
 .promise-tracker__support {
   position: absolute;
   inset: auto 0 0;
-  color: rgba(244, 239, 229, 0.72);
+  color: var(--muted-ink);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.03em;
@@ -689,23 +686,23 @@ svg {
 }
 
 .campaign-hero__thread-shadow {
-  stroke: rgba(0, 0, 0, 0.25);
+  stroke: rgba(27, 29, 25, 0.08);
   stroke-width: 6;
 }
 
 .campaign-hero__thread-gold {
-  stroke: var(--muted-gold);
+  stroke: var(--gold-accent);
   stroke-width: 3;
 }
 
 .campaign-hero__thread-red {
-  stroke: var(--rakhi-red);
+  stroke: var(--action-red);
   stroke-width: 2;
 }
 
 .campaign-hero__thread circle {
-  fill: var(--rakhi-red);
-  stroke: var(--muted-gold);
+  fill: var(--action-red);
+  stroke: var(--gold-accent);
   stroke-width: 2;
   vector-effect: non-scaling-stroke;
 }
@@ -726,12 +723,12 @@ svg {
 .promise-ribbon__heading > span {
   width: 2.8rem;
   height: 2px;
-  background: linear-gradient(to right, var(--rakhi-red) 58%, var(--muted-gold) 58%);
+  background: linear-gradient(to right, var(--action-red) 58%, var(--gold-accent) 58%);
 }
 
 .promise-ribbon h2 {
   margin: 0;
-  color: rgba(244, 239, 229, 0.78);
+  color: var(--forest-accent);
   font-size: 0.68rem;
   font-weight: 850;
   letter-spacing: 0.14em;
@@ -744,7 +741,7 @@ svg {
   max-width: 100%;
   overflow-x: auto;
   overscroll-behavior-inline: contain;
-  scrollbar-color: rgba(195, 164, 102, 0.5) transparent;
+  scrollbar-color: var(--line-strong) transparent;
   scrollbar-width: thin;
   scroll-snap-type: inline proximity;
 }
@@ -763,9 +760,10 @@ svg {
   flex: 0 0 auto;
   margin: 0;
   overflow: hidden;
-  border: 1px solid rgba(244, 239, 229, 0.18);
+  border: 1px solid var(--line);
   border-radius: 0.3rem;
-  background: var(--forest-shadow);
+  background: var(--surface);
+  box-shadow: 0 5px 18px rgba(27, 29, 25, 0.07);
   scroll-snap-align: start;
   animation: ribbon-card-in 600ms ease both;
 }
@@ -791,7 +789,7 @@ svg {
 
 /* Story */
 .campaign-story {
-  background: var(--paper-light);
+  background: var(--surface);
 }
 
 .campaign-story__inner {
@@ -822,7 +820,7 @@ svg {
 
 .campaign-story__signature {
   margin: 2.2rem 0 0;
-  color: var(--deep-forest);
+  color: var(--forest-accent);
   font-family: var(--font-editorial), Georgia, serif;
   font-size: 1.45rem;
   font-style: italic;
@@ -831,8 +829,9 @@ svg {
 /* Movement identity */
 .movement-pillars {
   overflow: hidden;
-  background: var(--deep-forest);
-  color: var(--warm-ivory);
+  border-block: 1px solid var(--line);
+  background: var(--surface-soft);
+  color: var(--ink);
 }
 
 .movement-pillars::before {
@@ -840,7 +839,7 @@ svg {
   position: absolute;
   right: -0.08em;
   top: -0.25em;
-  color: rgba(255, 255, 255, 0.035);
+  color: rgba(214, 40, 40, 0.035);
   font-family: var(--font-editorial), Georgia, serif;
   font-size: clamp(15rem, 40vw, 35rem);
   font-weight: 800;
@@ -849,7 +848,7 @@ svg {
 
 .movement-pillars__kicker {
   position: relative;
-  color: var(--muted-gold);
+  color: var(--action-red-hover);
 }
 
 .movement-pillars h2 {
@@ -868,17 +867,17 @@ svg {
   display: grid;
   gap: 0;
   margin-top: clamp(3.5rem, 8vw, 7rem);
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid var(--line-strong);
 }
 
 .movement-pillars article {
   min-height: 210px;
   padding: 1.6rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid var(--line-strong);
 }
 
 .movement-pillars article > span {
-  color: var(--muted-gold);
+  color: var(--action-red-hover);
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.12em;
@@ -895,12 +894,12 @@ svg {
 .movement-pillars article p {
   max-width: 32ch;
   margin: 0;
-  color: rgba(244, 239, 229, 0.68);
+  color: var(--muted-ink);
 }
 
 /* Participation */
 .participation {
-  background: var(--soft-paper);
+  background: var(--surface);
 }
 
 .participation__layout {
@@ -934,9 +933,9 @@ svg {
   height: 48px;
   display: grid;
   place-items: center;
-  border: 1px solid rgba(23, 58, 43, 0.3);
+  border: 1px solid rgba(45, 64, 60, 0.32);
   border-radius: 50%;
-  color: var(--deep-forest);
+  color: var(--forest-accent);
   font-family: var(--font-editorial), Georgia, serif;
   font-size: 1.35rem;
   font-weight: 650;
@@ -959,7 +958,7 @@ svg {
 .participation__steps small {
   display: block;
   margin-top: 0.65rem;
-  color: var(--rakhi-red);
+  color: var(--action-red-hover);
   font-size: 0.76rem;
   font-weight: 750;
 }
@@ -969,7 +968,7 @@ svg {
   left: 15px;
   bottom: -9px;
   z-index: 2;
-  color: var(--muted-gold);
+  color: var(--gold-accent);
 }
 
 .certificate-preview {
@@ -1028,8 +1027,9 @@ svg {
 
 /* First moment */
 .first-moment {
-  background: #121710;
-  color: var(--warm-ivory);
+  border-block: 1px solid var(--line);
+  background: var(--page-bg);
+  color: var(--ink);
 }
 
 .first-moment__inner {
@@ -1043,7 +1043,7 @@ svg {
 
 .first-moment__copy > p:first-child {
   margin: 0 0 1rem;
-  color: var(--muted-gold);
+  color: var(--action-red);
   font-size: 0.72rem;
   font-weight: 900;
   letter-spacing: 0.16em;
@@ -1064,23 +1064,25 @@ svg {
   height: 1px;
   display: block;
   margin-block: 2.2rem;
-  background: var(--muted-gold);
+  background: var(--gold-accent);
 }
 
 .first-moment__copy > p:last-child {
   max-width: 56ch;
   margin: 0;
-  color: rgba(244, 239, 229, 0.72);
+  color: var(--muted-ink);
 }
 
 .first-moment__image {
   min-height: 540px;
+  border: 1px solid var(--line);
   border-radius: 0.5rem 5rem 0.5rem 0.5rem;
+  box-shadow: var(--shadow-soft);
 }
 
 /* Channels */
 .campaign-channels {
-  background: var(--paper-light);
+  background: var(--surface);
 }
 
 .campaign-channels__intro {
@@ -1090,7 +1092,7 @@ svg {
 
 .campaign-channels__intro > p {
   margin: 0;
-  color: var(--rakhi-red);
+  color: var(--action-red);
   font-size: 0.72rem;
   font-weight: 900;
   letter-spacing: 0.17em;
@@ -1127,7 +1129,7 @@ svg {
 
 .campaign-channel h3 {
   margin: 0;
-  color: var(--deep-forest);
+  color: var(--forest-accent);
   font-family: var(--font-editorial), Georgia, serif;
   font-size: clamp(2.3rem, 5vw, 4rem);
   font-weight: 520;
@@ -1155,13 +1157,14 @@ svg {
 }
 
 .campaign-channel li svg {
-  color: var(--rakhi-red);
+  color: var(--action-red);
   flex: 0 0 auto;
 }
 
 /* Movement preview */
 .movement-preview {
-  background: var(--warm-ivory);
+  border-block: 1px solid var(--line);
+  background: var(--surface-soft);
 }
 
 .movement-preview__grid {
@@ -1176,14 +1179,15 @@ svg {
   min-height: 390px;
   overflow: hidden;
   border-radius: 0.45rem;
-  background: var(--deep-forest);
-  box-shadow: 0 16px 44px rgba(16, 41, 31, 0.1);
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
 .movement-story:hover {
   transform: translateY(-4px);
-  box-shadow: 0 26px 60px rgba(16, 41, 31, 0.18);
+  box-shadow: var(--shadow-soft);
 }
 
 .movement-story__image,
@@ -1217,7 +1221,7 @@ svg {
 }
 
 .movement-story__copy span {
-  color: var(--muted-gold);
+  color: #f2c978;
   font-size: 0.62rem;
   font-weight: 900;
   letter-spacing: 0.12em;
@@ -1251,8 +1255,8 @@ svg {
 /* Ped Ka Paigaam */
 .ped-paigaam {
   overflow: hidden;
-  background: #b99555;
-  color: #16150e;
+  background: var(--surface);
+  color: var(--ink);
 }
 
 .ped-paigaam::after {
@@ -1262,19 +1266,24 @@ svg {
   height: 520px;
   right: -280px;
   bottom: -320px;
-  border: 1px solid rgba(16, 41, 31, 0.28);
+  border: 1px solid rgba(45, 64, 60, 0.12);
   border-radius: 50%;
 }
 
 .ped-paigaam__inner {
   display: grid;
   gap: 3rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--forest-soft);
+  padding: clamp(1rem, 3vw, 2.25rem);
 }
 
 .ped-paigaam__image {
   min-height: 520px;
   border-radius: 13rem 13rem 0.5rem 0.5rem;
-  box-shadow: 0 30px 70px rgba(56, 36, 17, 0.25);
+  border: 1px solid rgba(45, 64, 60, 0.14);
+  box-shadow: var(--shadow-card);
 }
 
 .ped-paigaam__copy {
@@ -1287,7 +1296,7 @@ svg {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  color: var(--forest-shadow);
+  color: var(--action-red-hover);
 }
 
 .ped-paigaam h2 {
@@ -1316,7 +1325,7 @@ svg {
   display: block;
   max-width: 58ch;
   margin-top: 1.25rem;
-  border-top: 1px solid rgba(16, 41, 31, 0.25);
+  border-top: 1px solid rgba(45, 64, 60, 0.22);
   padding-top: 1rem;
   font-size: 0.78rem;
   font-weight: 800;
@@ -1325,8 +1334,9 @@ svg {
 /* Final CTA and footer */
 .final-cta {
   overflow: hidden;
-  background: var(--rakhi-red);
-  color: #fff9ef;
+  border-block: 1px solid var(--line);
+  background: var(--surface-soft);
+  color: var(--ink);
 }
 
 .final-cta::before,
@@ -1335,7 +1345,7 @@ svg {
   position: absolute;
   width: 52vw;
   height: 1px;
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(214, 40, 40, 0.16);
 }
 
 .final-cta::before {
@@ -1358,7 +1368,7 @@ svg {
 
 .final-cta__inner > p {
   margin: 0 0 1.5rem;
-  color: #fff9ef;
+  color: var(--forest-accent);
   font-size: 0.72rem;
   font-weight: 900;
   letter-spacing: 0.18em;
@@ -1367,11 +1377,12 @@ svg {
 
 .final-cta h2 {
   margin: 0;
+  color: var(--action-red);
   font-family: var(--font-editorial), Georgia, serif;
   font-size: clamp(3.5rem, 10vw, 8.5rem);
   font-weight: 470;
   letter-spacing: -0.06em;
-  line-height: 0.82;
+  line-height: 0.9;
 }
 
 .final-cta h2 span,
@@ -1380,7 +1391,8 @@ svg {
 }
 
 .final-cta h2 em {
-  margin-top: 1.2rem;
+  margin-top: 1.5rem;
+  color: var(--forest-accent);
   font-size: 0.48em;
   font-style: italic;
 }
@@ -1390,8 +1402,9 @@ svg {
 }
 
 .site-footer {
-  background: #0b1e16;
-  color: var(--warm-ivory);
+  border-top: 4px solid var(--forest-accent);
+  background: var(--surface);
+  color: var(--ink);
   padding-block: 3rem 6rem;
 }
 
@@ -1405,13 +1418,13 @@ svg {
 }
 
 .site-footer__campaign p:first-child {
-  color: var(--muted-gold);
+  color: var(--action-red);
   font-weight: 850;
 }
 
 .site-footer__campaign p:last-child,
 .site-footer__copyright {
-  color: rgba(244, 239, 229, 0.58);
+  color: var(--muted-ink);
   font-size: 0.78rem;
 }
 
@@ -1428,9 +1441,10 @@ svg {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(16, 41, 31, 0.97);
-  color: var(--warm-ivory);
+  border-top: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 -8px 28px rgba(27, 29, 25, 0.08);
   padding: 0.55rem 1rem calc(0.55rem + env(safe-area-inset-bottom));
 }
 
@@ -1444,7 +1458,8 @@ svg {
   display: inline-flex;
   align-items: center;
   border-radius: 0.35rem;
-  background: var(--rakhi-red);
+  background: var(--action-red);
+  color: #fff;
   padding-inline: 1rem;
   font-size: 0.75rem;
   font-weight: 850;
@@ -1545,7 +1560,7 @@ svg {
   .movement-pillars article {
     min-height: 310px;
     padding: 1.8rem 1.6rem;
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    border-right: 1px solid var(--line-strong);
   }
 
   .movement-pillars article:first-child {
@@ -1726,13 +1741,13 @@ svg {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
-    color: rgba(255, 250, 242, 0.78);
+    color: var(--muted-ink);
     font-size: 0.72rem;
     font-weight: 750;
   }
 
   .site-header__desktop-nav ul a:hover {
-    color: #fff;
+    color: var(--action-red);
   }
 
   .mobile-navigation {

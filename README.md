@@ -1,6 +1,6 @@
 # Vriksha Vvandhan
 
-Vriksha Vvandhan is a Mirchi campaign experience for Raksha Bandhan: a public invitation to return the promise of protection by caring for a tree. This repository contains Section 1—the production foundation and a premium, static, mobile-first campaign homepage—plus the focused Section 1.1 Living Promise Hero refinement.
+Vriksha Vvandhan is a Mirchi campaign experience for Raksha Bandhan: a public invitation to return the promise of protection by caring for a tree. This repository contains Section 1—the production foundation and a premium, static, mobile-first campaign homepage—plus the Section 1.1 light editorial visual system and Living Promise Hero refinement.
 
 ## Section 1 scope
 

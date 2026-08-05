@@ -4,7 +4,7 @@ export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="shell site-footer__inner">
-        <LogoLockup inverse />
+        <LogoLockup />
         <div className="site-footer__campaign">
           <p>#VrikshaVvandhan</p>
           <p>This Raksha Bandhan, protect the protector.</p>

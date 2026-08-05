@@ -9,7 +9,6 @@ import { heroContent, heroPromiseImages, promiseMetric } from "@/content/campaig
 export function CampaignHero() {
   return (
     <section className="campaign-hero" id="movement" aria-labelledby="campaign-title">
-      <div className="campaign-hero__grain" aria-hidden="true" />
       <div className="shell campaign-hero__inner">
         <HeroBrandMasthead />
         <div className="campaign-hero__stage">
@@ -26,7 +25,7 @@ export function CampaignHero() {
                 {heroContent.primaryCta.label}
                 <ArrowDownRight aria-hidden="true" size={18} />
               </a>
-              <a className="text-link text-link--light" href={heroContent.secondaryCta.href}>
+              <a className="text-link" href={heroContent.secondaryCta.href}>
                 {heroContent.secondaryCta.label}
               </a>
             </div>
