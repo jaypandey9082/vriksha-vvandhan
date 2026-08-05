@@ -10,6 +10,15 @@
 - `src/types/campaign.ts` — campaign-domain TypeScript types.
 - `public/brand` and `public/campaign` — supplied brand assets and documented web derivatives.
 - `e2e` — browser, navigation, overflow, console and axe checks.
+- `supabase` — local configuration, three ordered migrations, empty seed and pgTAP database tests.
+- `src/lib/env` — lazy public/server environment validation so the static site builds without credentials.
+- `src/lib/supabase` — separate browser, request-scoped server, trusted service and scoped Proxy helpers.
+- `src/lib/auth` — server-only staff DAL, typed errors and pure Reviewer/Admin permissions.
+- `src/lib/storage` — fixed bucket names, immutable path validation and unexposed signed URL helpers.
+
+## Section 2 backend boundary
+
+The public application imports none of the backend modules above. The static homepage and `417 / 983` seed tracker therefore stay prerendered. Future internal routes pass through the Next.js 16 Proxy for session refresh, but authorization is re-verified in the Data Access Layer and database RLS. The service client is a separately marked server-only boundary because its secret key bypasses RLS.
 
 ## Visual-system boundary
 

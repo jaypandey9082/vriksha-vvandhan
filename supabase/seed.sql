@@ -1,0 +1,2 @@
+-- Section 2 intentionally contains no participant, staff, or production seed data.
+-- The required campaign_settings singleton is inserted idempotently by migration.

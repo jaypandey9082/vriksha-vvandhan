@@ -1,55 +1,75 @@
 # Vriksha Vvandhan
 
-Vriksha Vvandhan is a Mirchi campaign experience for Raksha Bandhan: a public invitation to return the promise of protection by caring for a tree. This repository contains Section 1—the production foundation and a premium, static, mobile-first campaign homepage—plus the Section 1.1 light editorial system and Section 1.2 progressively enhanced Promise Reel.
+Vriksha Vvandhan is Mirchi's Raksha Bandhan campaign inviting people to protect a tree. The repository now contains the premium, static public experience from Section 1 and the secure data, staff-auth and media foundation from Section 2.
 
-## Section 1 scope
+## Six-section roadmap
 
-Section 1 includes the complete static homepage, the `417 / 983` seed Promise Tracker, campaign storytelling, participation journey, First Rakhi Moment, digital and on-ground campaign panels, a seed Movement Wall preview, Ped Ka Paigaam preview, responsive navigation, accessibility foundations, tests, and campaign documentation.
+1. **Premium public experience** — responsive campaign homepage, static `417 / 983` tracker and progressively enhanced Promise Reel. Complete.
+2. **Backend foundation** — Supabase schema, RLS, staff roles, Storage rules, server clients, authorization DAL, tests and CI. Complete in source; local database execution requires Docker.
+3. **Public submission flow** — display name, email, one photograph, publication consent, terms acceptance and confirmation.
+4. **Internal operations and publication** — staff portal, moderation workflow, Guardian assignment, public Movement Wall and live derived count.
+5. **Certificates and email** — certificate generation plus submission, approval and final-rejection delivery.
+6. **Hardening and launch** — retention, load, accessibility, security and operational launch checks.
 
-It deliberately does not include uploads, databases, authentication, a real counter, certificates, moderation, event operations, analytics, or audio playback.
+Section 2 does not add a public form, upload endpoint, portal UI, moderation operation, live counter, certificate or email sender. The homepage remains static and buildable without Supabase credentials.
 
-## Local setup
+## Local application setup
 
 Requirements: Node.js 20.9 or later and npm.
 
 ```bash
-npm install
+npm ci
+cp .env.example .env.local
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Supabase values may remain empty when working only on the public homepage. Backend modules validate them lazily when called.
 
-## Commands
+## Local backend setup
+
+Docker Desktop or another Docker-compatible runtime is required by the Supabase CLI.
 
 ```bash
-npm run dev          # local development server
-npm run build        # production build
-npm run start        # run the production build
-npm run lint         # ESLint
-npm run typecheck    # strict TypeScript check
-npm run test         # Vitest component/unit tests
-npm run test:watch   # Vitest watch mode
-npm run test:e2e     # Playwright + axe homepage tests
+npm run db:start
+npm run db:reset
+npm run db:buckets:seed
+npm run db:lint
+npm run db:test
+npm run db:types
+npm run db:types:check
+npm run db:stop
 ```
 
-## Asset handling
+See [BACKEND_SETUP.md](docs/BACKEND_SETUP.md) for environment, staff provisioning and hosted-project guidance.
 
-- The source deck remains external and unchanged at `/Users/jaypandey/Downloads/Mirchi X Vriksha Vvandhan.pptx`.
-- Production imagery in `public/campaign` consists of web-friendly crops made from supplied deck media; no internet or stock imagery was used.
-- `public/brand/mirchi-logo.png` is the authentic standalone Mirchi logo extracted from the deck.
-- The deck does not contain a clean standalone Vriksha Vvandhan logo. The site therefore uses a documented temporary text lockup next to the authentic Mirchi logo. It must be replaced when the approved campaign wordmark is supplied.
-- Temporary extraction and visual-QA files live under ignored `.tmp/` paths.
+## Application commands
 
-See [docs/ASSET_INVENTORY.md](docs/ASSET_INVENTORY.md) for provenance and dimensions.
+```bash
+npm run dev
+npm run build
+npm run lint
+npm run typecheck
+npm run test
+npm run test:e2e
+```
+
+## Environment variables
+
+```dotenv
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+SUPABASE_SECRET_KEY=
+```
+
+Only the publishable key is browser-safe. `SUPABASE_SECRET_KEY` bypasses RLS and must remain in server-only environments.
 
 ## Current limitations
 
-- The promise count is static seed data (`417 / 983`).
-- Photo submission and certificate delivery are communicated as later campaign phases, not simulated.
-- Ped Ka Paigaam has no playable control because no approved audio file was supplied.
-- No approved video file or URL was supplied for the First Rakhi Moment.
-- Campaign dates, geography, eligibility rules, legal language, and celebrity web-use approval remain unresolved.
+- The visible `417 / 983` tracker is still explicit Section 1 seed content.
+- Docker is required to apply and execute the local migrations, bucket seed and pgTAP suites.
+- Staff Auth users are provisioned manually; public participants never receive accounts.
+- Legal consent text, retention, email templates/domain, geography, dates, media rights, final wordmark and post-983 behaviour remain unresolved.
+- No hosted Supabase project or production secret is included.
 
-## Next planned section
-
-Section 2 should establish the approved data, authentication, and media foundation needed for real submissions, while preserving the Section 1 public experience and content model.
+Section 3 is the controlled public submission workflow built on this private foundation.
