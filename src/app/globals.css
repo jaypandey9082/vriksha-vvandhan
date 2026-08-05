@@ -711,6 +711,8 @@ svg {
   position: relative;
   z-index: 4;
   min-width: 0;
+  --promise-reel-gap: 0.65rem;
+  --promise-reel-duration: 46s;
 }
 
 .promise-ribbon__heading {
@@ -718,6 +720,7 @@ svg {
   align-items: center;
   gap: 0.8rem;
   margin-bottom: 0.9rem;
+  padding-right: 5.6rem;
 }
 
 .promise-ribbon__heading > span {
@@ -736,6 +739,40 @@ svg {
   text-transform: uppercase;
 }
 
+.promise-reel {
+  position: relative;
+  min-width: 0;
+}
+
+.promise-reel__control {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 0.62rem);
+  z-index: 3;
+  min-width: 4.7rem;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--forest-accent);
+  box-shadow: 0 5px 16px rgba(27, 29, 25, 0.06);
+  padding: 0.35rem 0.7rem;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.04em;
+  transition: border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.promise-reel__control:hover {
+  border-color: var(--action-red);
+  color: var(--action-red-hover);
+  transform: translateY(-1px);
+}
+
 .promise-ribbon__viewport {
   position: relative;
   max-width: 100%;
@@ -744,18 +781,34 @@ svg {
   scrollbar-color: var(--line-strong) transparent;
   scrollbar-width: thin;
   scroll-snap-type: inline proximity;
+  touch-action: pan-x;
 }
 
 .promise-ribbon__track {
   width: max-content;
   display: flex;
   align-items: end;
-  gap: 0.65rem;
-  padding: 0 1.8rem 0.65rem 0;
+  gap: var(--promise-reel-gap);
+  padding-bottom: 0.65rem;
+}
+
+.promise-ribbon__track[data-enhanced="true"] {
+  animation: promise-reel-travel var(--promise-reel-duration) linear infinite;
+  will-change: transform;
+}
+
+.promise-ribbon__track[data-playing="false"] {
+  animation-play-state: paused;
+}
+
+.promise-reel__sequence {
+  display: flex;
+  align-items: end;
+  gap: var(--promise-reel-gap);
 }
 
 .promise-ribbon__card {
-  width: 120px;
+  width: 132px;
   height: 102px;
   flex: 0 0 auto;
   margin: 0;
@@ -768,8 +821,9 @@ svg {
   animation: ribbon-card-in 600ms ease both;
 }
 
-.promise-ribbon__card:nth-child(3n + 1) { width: 100px; }
-.promise-ribbon__card:nth-child(3n + 2) { width: 145px; }
+.promise-ribbon__card--portrait { width: 104px; }
+.promise-ribbon__card--square { width: 132px; }
+.promise-ribbon__card--landscape { width: 178px; }
 
 .promise-ribbon__card img {
   width: 100%;
@@ -785,6 +839,11 @@ svg {
 @keyframes ribbon-card-in {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes promise-reel-travel {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(calc(-50% - 0.325rem), 0, 0); }
 }
 
 /* Story */
@@ -1524,6 +1583,10 @@ svg {
     height: 110px;
   }
 
+  .promise-ribbon__card--portrait { width: 112px; }
+  .promise-ribbon__card--square { width: 145px; }
+  .promise-ribbon__card--landscape { width: 198px; }
+
   .movement-preview__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1713,12 +1776,12 @@ svg {
   }
 
   .promise-ribbon__card {
-    width: 160px;
     height: 132px;
   }
 
-  .promise-ribbon__card:nth-child(3n + 1) { width: 124px; }
-  .promise-ribbon__card:nth-child(3n + 2) { width: 204px; }
+  .promise-ribbon__card--portrait { width: 130px; }
+  .promise-ribbon__card--square { width: 160px; }
+  .promise-ribbon__card--landscape { width: 224px; }
 }
 
 @media (min-width: 1024px) {
@@ -1805,5 +1868,10 @@ svg {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .promise-ribbon__track[data-enhanced="true"][data-playing="true"] {
+    animation-duration: var(--promise-reel-duration) !important;
+    animation-iteration-count: infinite !important;
   }
 }

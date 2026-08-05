@@ -31,7 +31,9 @@ describe("CampaignHero", () => {
     const { container } = render(<CampaignHero />);
 
     const ribbon = screen.getByRole("region", { name: "Promises already taking root" });
-    expect(ribbon.querySelectorAll("figure")).toHaveLength(heroPromiseImages.length);
+    expect(ribbon.querySelectorAll(".promise-reel__sequence:not([aria-hidden]) figure")).toHaveLength(
+      heroPromiseImages.length,
+    );
     expect(container.querySelector(".promise-halo")).toBeNull();
   });
 });

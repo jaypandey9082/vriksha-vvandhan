@@ -37,6 +37,11 @@ export type CampaignImage = {
   objectPosition?: string;
 };
 
+export type PromiseReelImage = CampaignImage & {
+  id: string;
+  aspect: "portrait" | "landscape" | "square";
+};
+
 export type CampaignLink = {
   label: string;
   href: `#${string}`;

@@ -1,10 +1,10 @@
-import Image from "next/image";
+import { PromiseReel } from "@/components/home/promise-reel";
 
-import type { CampaignImage } from "@/types/campaign";
+import type { PromiseReelImage } from "@/types/campaign";
 
 type PromiseRibbonProps = {
   heading: string;
-  images: readonly CampaignImage[];
+  images: readonly PromiseReelImage[];
 };
 
 export function PromiseRibbon({ heading, images }: PromiseRibbonProps) {
@@ -14,27 +14,7 @@ export function PromiseRibbon({ heading, images }: PromiseRibbonProps) {
         <span aria-hidden="true" />
         <h2 id="promise-ribbon-title">{heading}</h2>
       </div>
-      <div
-        className="promise-ribbon__viewport"
-        aria-label="Scrollable campaign promise photographs"
-        role="group"
-        tabIndex={0}
-      >
-        <div className="promise-ribbon__track">
-          {images.map((image) => (
-            <figure className="promise-ribbon__card" key={image.src}>
-              <Image
-                src={image.src}
-                alt={image.alt}
-                width={image.width}
-                height={image.height}
-                sizes="(max-width: 959px) 145px, 210px"
-                loading="lazy"
-              />
-            </figure>
-          ))}
-        </div>
-      </div>
+      <PromiseReel images={images} />
     </section>
   );
 }

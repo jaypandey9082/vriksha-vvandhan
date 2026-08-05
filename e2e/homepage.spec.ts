@@ -142,12 +142,71 @@ test("Promise Ribbon scrolls internally without expanding the page", async ({ pa
   expect(after.pageWidth).toBeLessThanOrEqual(after.viewportWidth);
 });
 
+test("Promise Reel moves continuously and the visible control pauses it", async ({ page }) => {
+  await page.goto("/");
+  const reel = page.locator(".promise-reel");
+  const track = page.locator(".promise-ribbon__track");
+  await reel.scrollIntoViewIfNeeded();
+
+  await expect(page.getByRole("button", { name: "Pause promise reel" })).toBeVisible();
+  await expect(track).toHaveAttribute("data-playing", "true");
+  const firstTransform = await track.evaluate((element) => getComputedStyle(element).transform);
+  await page.waitForTimeout(500);
+  const secondTransform = await track.evaluate((element) => getComputedStyle(element).transform);
+  expect(secondTransform).not.toBe(firstTransform);
+
+  await page.getByRole("button", { name: "Pause promise reel" }).click();
+  await expect(track).toHaveAttribute("data-playing", "false");
+  await expect(page.getByRole("button", { name: "Play promise reel" })).toBeVisible();
+});
+
+test("Promise Reel pauses on hover and keyboard focus", async ({ page }) => {
+  await page.goto("/");
+  const reel = page.locator(".promise-reel");
+  const viewport = page.locator(".promise-ribbon__viewport");
+  const track = page.locator(".promise-ribbon__track");
+  await reel.scrollIntoViewIfNeeded();
+
+  await reel.hover();
+  await expect(track).toHaveAttribute("data-playing", "false");
+  await page.mouse.move(0, 0);
+  await expect(track).toHaveAttribute("data-playing", "true");
+
+  await viewport.focus();
+  await expect(track).toHaveAttribute("data-playing", "false");
+});
+
 test("reduced motion leaves hero content visible", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
 
   await expect(page.locator(".hero-media__frame")).toBeVisible();
   await expect(page.locator(".promise-ribbon__card").first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "Play promise reel" })).toBeVisible();
+  await expect(page.locator(".promise-ribbon__track")).toHaveAttribute("data-playing", "false");
+});
+
+test.describe("without JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("Promise Reel remains a manually scrollable static image strip", async ({ page }) => {
+    await page.goto("/");
+    const ribbon = page.locator(".promise-ribbon");
+    const viewport = page.locator(".promise-ribbon__viewport");
+    const track = page.locator(".promise-ribbon__track");
+
+    await expect(ribbon.locator("figure")).toHaveCount(8);
+    await expect(page.getByRole("button", { name: /promise reel/i })).toBeHidden();
+    await expect(track).toHaveAttribute("data-enhanced", "false");
+
+    const dimensions = await viewport.evaluate((element) => ({
+      scrollWidth: element.scrollWidth,
+      clientWidth: element.clientWidth,
+      animationName: getComputedStyle(element.firstElementChild!).animationName,
+    }));
+    expect(dimensions.scrollWidth).toBeGreaterThan(dimensions.clientWidth);
+    expect(dimensions.animationName).toBe("none");
+  });
 });
 
 test("homepage has no serious or critical axe violations", async ({ page }) => {

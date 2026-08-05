@@ -36,7 +36,7 @@ The tracker is a reusable server-rendered SVG medallion with a white centre, neu
 
 ## Promise Ribbon
 
-`heroPromiseImages` is a typed collection of eight existing tree, tree-care and community campaign images. The labelled ribbon uses a horizontally overflowing, keyboard-focusable inner viewport, controlled mixed-width rectangular crops, touch/trackpad/keyboard scrolling, partial next-card visibility and CSS scroll snap. Images are decorative, not focusable and lazy-loaded. There is no autoplay, marquee, pagination, duplicated loop or carousel dependency; page-level width remains fixed.
+`heroPromiseImages` is a typed collection of eight existing tree, tree-care and community campaign images. Section 1.2 progressively enhances the labelled ribbon into a slow, continuous right-to-left Promise Reel with controlled portrait, square and landscape crops. A second `aria-hidden` sequence creates the seamless CSS-transform loop; hover, focus, direct pointer contact, reduced motion and the visible Pause/Play control govern playback. Without JavaScript, the original keyboard-focusable, natively scrolling single sequence remains intact. There is no slide-by-slide carousel or motion dependency, and page-level width remains fixed. See `docs/PROMISE_REEL.md`.
 
 ## Rakhi thread and motion
 

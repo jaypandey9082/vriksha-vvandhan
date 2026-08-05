@@ -4,6 +4,10 @@
 
 The original hero has been redesigned as the premium mobile-first “Living Promise Hero” and then aligned to the campaign-wide light visual system. Mirchi and the temporary Vriksha Vvandhan lockup form a prominent masthead; the concise message, white `417 / 983` tracker with red progress, Rakhi-red action, tree-Rakhi image and internally scrolling Promise Ribbon establish a clear hierarchy. Portrait tablet remains stacked through 959px, while desktop uses image-left/message-right composition. The circular Promise Halo, grain and dark hero gradients were removed. See `docs/HERO_REDESIGN.md` and `docs/LIGHT_VISUAL_SYSTEM.md` for the full rationale.
 
+## Section 1.2 refinement
+
+The Promise Ribbon is now a progressively enhanced, auto-rotating editorial reel. One isolated Client Component adds a 46-second seamless transform, an `aria-hidden` duplicate sequence, Pause/Play control and hover, focus, pointer and reduced-motion pauses. The server-rendered fallback remains a single native horizontal strip when JavaScript is unavailable. No hero or downstream section was redesigned.
+
 ## Work completed
 
 - Current stable Next.js App Router foundation with strict TypeScript, Tailwind CSS, ESLint and npm lockfile.
@@ -11,7 +15,7 @@ The original hero has been redesigned as the premium mobile-first “Living Prom
 - Typed, central campaign content model and explicit seed/mock records.
 - Static, typed `417 / 983` SVG Promise Tracker with a calculated 42% label and a restrained Promise Ribbon.
 - Focus-managed mobile menu, skip link, reduced-motion support and semantic structure.
-- Vitest component tests and Playwright/axe end-to-end coverage.
+- Vitest component tests and Playwright/axe end-to-end coverage, including reel playback and progressive fallback behavior.
 - Deck summary, asset provenance, architecture, content questions and staged build status.
 
 ## Selected assets
@@ -42,9 +46,9 @@ Playwright confirmed the mobile menu opens, focuses the first destination, close
 
 - `npm run lint` — passed.
 - `npm run typecheck` — passed with strict TypeScript.
-- `npm run test` — passed: 4 files, 11 tests.
+- `npm run test` — passed: 5 files, 15 tests.
 - `npm run build` — passed with Next.js 16.3.0 using the supported webpack builder; `/`, `/_not-found` and `/opengraph-image.jpg` were statically prerendered.
-- `npm run test:e2e` — passed: 11 Chromium tests, including light-surface assertions, browser console, navigation, mobile focus, 360/390px overflow, above-fold hierarchy, responsive layout, ribbon scrolling, reduced motion and axe.
+- `npm run test:e2e` — passed: 14 Chromium tests, including reel movement, control, hover/focus pauses, no-JavaScript fallback, reduced motion, light surfaces, console, navigation, mobile focus, overflow, responsive layout and axe.
 - `curl -I http://127.0.0.1:3010` — returned `HTTP/1.1 200 OK`.
 
 The default Turbopack production build was also attempted, but this managed environment denied an internal PostCSS process from binding to a port. The project build script therefore uses `next build --webpack`, which completed without application warnings.
