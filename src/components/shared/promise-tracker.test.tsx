@@ -16,6 +16,17 @@ describe("PromiseTracker", () => {
   it("exposes useful accessible text", () => {
     render(<PromiseTracker metric={metric} />);
 
-    expect(screen.getByRole("img", { name: "417 of 983 Vriksha promises" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", {
+        name: "417 of 983 Vriksha promises, 42% of the first circle complete",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("calculates and displays the rounded completion percentage", () => {
+    render(<PromiseTracker metric={metric} />);
+
+    expect(screen.getAllByText("42%")).toHaveLength(1);
+    expect(screen.getByText("42% of the first circle complete")).toBeInTheDocument();
   });
 });

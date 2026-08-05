@@ -3,7 +3,7 @@
 ## Current structure
 
 - `src/app` — App Router layout, homepage, global CSS, metadata image and 404 experience.
-- `src/components/home` — focused Server Components for each homepage section.
+- `src/components/home` — focused Server Components for each homepage section, including the Section 1.1 hero masthead, media and Promise Ribbon composition.
 - `src/components/layout` — header, focus-managed mobile navigation, footer and mobile join bar.
 - `src/components/shared` — campaign image wrapper, brand lockup, section heading and SVG Promise Tracker.
 - `src/content/campaign.ts` — single source of truth for public campaign copy, seed metrics, navigation, images and mock/seed stories.
@@ -15,11 +15,11 @@
 
 Campaign wording and typed data live in `src/content/campaign.ts`, rather than being scattered through JSX. Components decide composition and semantics; content decides labels, copy, metrics and selected assets. This keeps later campaign approvals and translations localised.
 
-The tracker receives `current`, `target` and `label` as typed data and renders one SVG progress ring. The Movement Wall uses explicit `seedMovementStories`; neutral labels prevent seed content from looking like genuine participant data.
+The tracker receives `current`, `target` and `label` as typed data, calculates a rounded percentage and renders an accessible SVG medallion. `heroPromiseImages` drives the decorative, internally scrolling Promise Ribbon without presenting those images as approved public submissions. The Movement Wall uses explicit `seedMovementStories`; neutral labels prevent seed content from looking like genuine participant data.
 
 ## Server and Client Components
 
-All homepage content and image sections are Server Components. The only Client Component is `MobileNavigation`, because it requires open state, body scroll locking, focus management, an Escape shortcut and a keyboard focus loop. No campaign content is fetched client-side.
+All homepage content and image sections—including the Living Promise Hero—are Server Components. The only Client Component is `MobileNavigation`, because it requires open state, body scroll locking, focus management, an Escape shortcut and a keyboard focus loop. No campaign content is fetched client-side.
 
 ## Future integration points
 

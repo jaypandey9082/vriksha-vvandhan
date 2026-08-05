@@ -15,6 +15,7 @@
 /playwright-report/
 /test-results/
 /output/playwright/
+/.playwright-cli/
 
 # local inspection and QA artifacts
 /.tmp/

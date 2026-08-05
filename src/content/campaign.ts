@@ -2,6 +2,7 @@ import type {
   AudioMessagePreview,
   CampaignChannel,
   CampaignImage,
+  HeroContent,
   CampaignMetric,
   MovementPillar,
   MovementStory,
@@ -23,14 +24,14 @@ export const promiseMetric: CampaignMetric = {
 };
 
 export const heroContent = {
-  eyebrow: "Mirchi presents",
-  title: "The protector has always protected us.",
-  secondLine: "It’s time to protect the protector.",
+  eyebrow: "This Raksha Bandhan",
+  title: "Protect the protector.",
   description:
-    "This Raksha Bandhan, join Vriksha Vvandhan and make a promise to protect and nurture a tree.",
+    "The protector has always protected us. Tie a Rakhi to a tree and make your promise visible.",
   primaryCta: { label: "Join the Movement", href: "#how-it-works" },
-  secondaryCta: { label: "Explore the Stories", href: "#stories" },
-} as const;
+  secondaryCta: { label: "See the Promises", href: "#stories" },
+  ribbonLabel: "Promises already taking root",
+} as const satisfies HeroContent;
 
 export const heroImage: CampaignImage = {
   src: "/campaign/hero-tree-rakhi.webp",
@@ -243,15 +244,15 @@ export const seedMovementStories = [
   },
 ] as const satisfies readonly MovementStory[];
 
-export const promiseHaloImages = [
+export const heroPromiseImages = [
   { src: "/campaign/child-hand-bark.webp", width: 560, height: 720, alt: "" },
-  { src: "/campaign/rakhi-hands.webp", width: 438, height: 640, alt: "" },
   { src: "/campaign/on-ground-school.webp", width: 445, height: 430, alt: "" },
   { src: "/campaign/on-ground-community.webp", width: 480, height: 430, alt: "" },
   { src: "/campaign/on-ground-youth.webp", width: 451, height: 720, alt: "" },
-  { src: "/campaign/family-rakhi.webp", width: 670, height: 360, alt: "" },
-  { src: "/campaign/service-rakhi.webp", width: 335, height: 370, alt: "" },
-  { src: "/campaign/child-and-dog.webp", width: 325, height: 350, alt: "" },
+  { src: "/campaign/story-banyan.webp", width: 726, height: 720, alt: "" },
+  { src: "/campaign/movement-rakhi-wide.webp", width: 1376, height: 390, alt: "" },
+  { src: "/campaign/rakhi-tree-at-dusk.webp", width: 1376, height: 360, alt: "" },
+  { src: "/campaign/first-rakhi-moment.webp", width: 730, height: 675, alt: "" },
 ] as const satisfies readonly CampaignImage[];
 
 export const pedKaPaigaam: AudioMessagePreview = {

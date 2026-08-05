@@ -1,11 +1,15 @@
 # Section 1 Report
 
+## Section 1.1 refinement
+
+The original hero has been redesigned as the premium mobile-first “Living Promise Hero.” Mirchi and the temporary Vriksha Vvandhan lockup now form a prominent masthead; the concise message, calculated `417 / 983` tracker, Rakhi-red action, tree-Rakhi image and internally scrolling Promise Ribbon establish a clearer hierarchy. Portrait tablet remains stacked through 959px, while desktop uses image-left/message-right composition. The circular Promise Halo and its absolute positioning were removed. See `docs/HERO_REDESIGN.md` for the full design, performance, rights and accessibility rationale.
+
 ## Work completed
 
 - Current stable Next.js App Router foundation with strict TypeScript, Tailwind CSS, ESLint and npm lockfile.
 - Premium responsive homepage with all requested campaign sections and valid in-page destinations.
 - Typed, central campaign content model and explicit seed/mock records.
-- Static `417 / 983` SVG Promise Tracker and restrained Promise Halo.
+- Static, typed `417 / 983` SVG Promise Tracker with a calculated 42% label and a restrained Promise Ribbon.
 - Focus-managed mobile menu, skip link, reduced-motion support and semantic structure.
 - Vitest component tests and Playwright/axe end-to-end coverage.
 - Deck summary, asset provenance, architecture, content questions and staged build status.
@@ -20,11 +24,12 @@ The authentic Mirchi logo and 16 web-friendly image derivatives were selected fr
 - Fraunces creates the emotional editorial voice; Manrope keeps body and interface copy clear.
 - Rakhi red is reserved for action and emphasis; muted gold carries ceremonial detail.
 - Composition, spacing, photography and typography create the premium feel; there is no glassmorphism, carousel or heavy animation library.
+- Only the tree-Rakhi LCP image is preloaded through the current Next.js 16 Image API; Promise Ribbon images are lazy-loaded.
 - The campaign wordmark is a temporary text lockup because no standalone approved wordmark was available.
 
 ## Responsive checks
 
-Passed the screenshot-and-fix visual loop at `390 × 844`, `768 × 1024`, and `1440 × 1000`. Campaign imagery was loaded through an incremental browser scroll before each final full-page capture. The automated 390px check confirmed `documentElement.scrollWidth <= clientWidth`.
+Section 1.1 passed the screenshot-and-fix visual loop at `360 × 800`, `390 × 844`, `768 × 1024`, `1024 × 768`, and `1440 × 1000`, plus focused mobile and desktop Promise Ribbon captures. The automated 360px and 390px checks confirmed `documentElement.scrollWidth <= clientWidth`; the ribbon’s inner viewport scrolls without expanding the page. Mobile hero actions clear the fixed join bar, portrait tablet remains stacked and the desktop stage uses image-left/count-right composition.
 
 ## Accessibility checks
 
@@ -36,9 +41,9 @@ Playwright confirmed the mobile menu opens, focuses the first destination, close
 
 - `npm run lint` — passed.
 - `npm run typecheck` — passed with strict TypeScript.
-- `npm run test` — passed: 3 files, 7 tests.
+- `npm run test` — passed: 4 files, 11 tests.
 - `npm run build` — passed with Next.js 16.3.0 using the supported webpack builder; `/`, `/_not-found` and `/opengraph-image.jpg` were statically prerendered.
-- `npm run test:e2e` — passed: 5 Chromium tests, including browser console, navigation, mobile focus, 390px overflow and axe.
+- `npm run test:e2e` — passed: 10 Chromium tests, including browser console, navigation, mobile focus, 360/390px overflow, above-fold hierarchy, responsive layout, ribbon scrolling, reduced motion and axe.
 - `curl -I http://127.0.0.1:3010` — returned `HTTP/1.1 200 OK`.
 
 The default Turbopack production build was also attempted, but this managed environment denied an internal PostCSS process from binding to a port. The project build script therefore uses `next build --webpack`, which completed without application warnings.

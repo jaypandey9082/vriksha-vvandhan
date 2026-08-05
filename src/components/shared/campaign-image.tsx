@@ -8,7 +8,7 @@ type CampaignImageProps = {
   sizes: string;
   className?: string;
   imageClassName?: string;
-  priority?: boolean;
+  preload?: boolean;
 };
 
 export function CampaignImage({
@@ -16,7 +16,7 @@ export function CampaignImage({
   sizes,
   className,
   imageClassName,
-  priority = false,
+  preload = false,
 }: CampaignImageProps) {
   return (
     <div className={cn("campaign-image", className)}>
@@ -26,7 +26,7 @@ export function CampaignImage({
         width={image.width}
         height={image.height}
         sizes={sizes}
-        priority={priority}
+        preload={preload}
         className={cn("campaign-image__media", imageClassName)}
         style={{ objectPosition: image.objectPosition }}
       />

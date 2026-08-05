@@ -7,7 +7,7 @@ describe("campaign homepage", () => {
   it("renders the main campaign sections and headings", () => {
     render(<Home />);
 
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("The protector has always protected us.");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Protect the protector.");
     expect(screen.getByRole("heading", { name: "Four steps. One bond that continues." })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "The First Rakhi Moment" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Every promise carries a story." })).toBeInTheDocument();

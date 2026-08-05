@@ -37,6 +37,20 @@ export type CampaignImage = {
   objectPosition?: string;
 };
 
+export type CampaignLink = {
+  label: string;
+  href: `#${string}`;
+};
+
+export type HeroContent = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  primaryCta: CampaignLink;
+  secondaryCta: CampaignLink;
+  ribbonLabel: string;
+};
+
 export type MovementStory = {
   id: string;
   label: string;
