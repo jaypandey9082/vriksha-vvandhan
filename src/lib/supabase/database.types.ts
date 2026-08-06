@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.15"
-  }
   private: {
     Tables: {
       [_ in never]: never
@@ -77,7 +72,9 @@ export type Database = {
       campaign_settings: {
         Row: {
           created_at: string
+          draft_ttl_minutes: number
           id: number
+          max_submissions_per_email_24h: number
           metric_label: string
           submissions_open: boolean
           target_count: number
@@ -85,7 +82,9 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          draft_ttl_minutes?: number
           id?: number
+          max_submissions_per_email_24h?: number
           metric_label?: string
           submissions_open?: boolean
           target_count?: number
@@ -93,7 +92,9 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          draft_ttl_minutes?: number
           id?: number
+          max_submissions_per_email_24h?: number
           metric_label?: string
           submissions_open?: boolean
           target_count?: number
@@ -402,6 +403,7 @@ export type Database = {
           guardian_number: number | null
           id: string
           is_test: boolean
+          public_request_token_hash: string | null
           published_at: string | null
           rejected_at: string | null
           rejection_comment: string | null
@@ -427,6 +429,7 @@ export type Database = {
           guardian_number?: number | null
           id?: string
           is_test?: boolean
+          public_request_token_hash?: string | null
           published_at?: string | null
           rejected_at?: string | null
           rejection_comment?: string | null
@@ -452,6 +455,7 @@ export type Database = {
           guardian_number?: number | null
           id?: string
           is_test?: boolean
+          public_request_token_hash?: string | null
           published_at?: string | null
           rejected_at?: string | null
           rejection_comment?: string | null
@@ -509,7 +513,39 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      finalize_public_submission: {
+        Args: {
+          p_public_request_token_hash: string
+          p_submission_id: string
+          p_verified_bytes: number
+          p_verified_height: number
+          p_verified_mime_type: string
+          p_verified_sha256: string
+          p_verified_width: number
+        }
+        Returns: {
+          status: Database["public"]["Enums"]["submission_status"]
+          submission_id: string
+        }[]
+      }
+      prepare_public_submission: {
+        Args: {
+          p_consent_version: string
+          p_display_name: string
+          p_email: string
+          p_original_extension: string
+          p_public_request_token_hash: string
+          p_publication_consent: boolean
+          p_terms_accepted: boolean
+        }
+        Returns: {
+          draft_expires_at: string
+          original_extension: string
+          original_path: string
+          status: Database["public"]["Enums"]["submission_status"]
+          submission_id: string
+        }[]
+      }
     }
     Enums: {
       certificate_status: "not_started" | "queued" | "generated" | "failed"

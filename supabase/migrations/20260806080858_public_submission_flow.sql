@@ -142,7 +142,7 @@ begin
 
     insert into public.submission_contacts (submission_id, email)
     values (v_submission.id, v_email)
-    on conflict (submission_id) do update
+    on conflict on constraint submission_contacts_pkey do update
       set email = excluded.email;
 
     insert into public.submission_consents (
@@ -158,7 +158,7 @@ begin
       true,
       now()
     )
-    on conflict (submission_id) do update set
+    on conflict on constraint submission_consents_pkey do update set
       consent_version = excluded.consent_version,
       publication_consent = true,
       terms_accepted = true,

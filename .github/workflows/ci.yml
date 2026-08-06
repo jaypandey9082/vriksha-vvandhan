@@ -40,17 +40,6 @@ jobs:
       - run: npm run db:lint
       - run: npm run db:test
       - run: npm run db:types:check
-      - name: Generate database types for drift diagnosis
-        if: failure()
-        run: mkdir -p .tmp && npx supabase gen types --local --schema public,private > .tmp/database.types.generated.ts
-      - name: Upload generated database types
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: generated-database-types
-          path: .tmp/database.types.generated.ts
-          if-no-files-found: ignore
-          retention-days: 1
       - run: npm run typecheck
       - name: Stop local Supabase
         if: always()
