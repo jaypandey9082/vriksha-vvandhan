@@ -379,7 +379,7 @@ begin
     'submission_received',
     'not_started',
     'submission_received:' || v_submission.id::text
-  ) on conflict (submission_id, kind) do nothing;
+  ) on conflict on constraint email_deliveries_submission_kind_unique do nothing;
 
   return query select v_submission.id, v_submission.status;
 end;
