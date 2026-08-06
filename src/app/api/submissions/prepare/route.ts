@@ -1,0 +1,50 @@
+import { ZodError } from "zod";
+
+import { jsonApiError } from "@/lib/submissions/api-errors";
+import { acceptsSmallJson, isSameOriginRequest } from "@/lib/submissions/origin.server";
+import {
+  prepareSubmissionRequestSchema,
+  type PrepareSubmissionRequest,
+} from "@/lib/submissions/schemas";
+import {
+  preparePublicSubmission,
+  SubmissionServiceError,
+} from "@/lib/submissions/service.server";
+
+export const runtime = "nodejs";
+
+export async function POST(request: Request): Promise<Response> {
+  if (!isSameOriginRequest(request) || !acceptsSmallJson(request)) {
+    return jsonApiError("invalid_request", 400);
+  }
+
+  let input: PrepareSubmissionRequest;
+  try {
+    const rawBody = await request.text();
+    if (new TextEncoder().encode(rawBody).byteLength > 16_384) {
+      return jsonApiError("invalid_request", 413);
+    }
+    input = prepareSubmissionRequestSchema.parse(JSON.parse(rawBody));
+  } catch (error) {
+    if (error instanceof ZodError || error instanceof SyntaxError) {
+      return jsonApiError("invalid_request", 400);
+    }
+    return jsonApiError("temporarily_unavailable", 503);
+  }
+
+  try {
+    return Response.json(await preparePublicSubmission(input), {
+      status: 200,
+      headers: { "Cache-Control": "no-store" },
+    });
+  } catch (error) {
+    if (error instanceof SubmissionServiceError) {
+      const status =
+        error.code === "submissions_closed" ? 409 :
+          error.code === "submission_limit_reached" ? 429 :
+            error.code === "draft_expired" ? 410 : 503;
+      return jsonApiError(error.code, status);
+    }
+    return jsonApiError("temporarily_unavailable", 503);
+  }
+}

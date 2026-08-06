@@ -8,6 +8,10 @@ export function SiteFooter() {
         <div className="site-footer__campaign">
           <p>#VrikshaVvandhan</p>
           <p>This Raksha Bandhan, protect the protector.</p>
+          <nav aria-label="Campaign policies">
+            <a href="/campaign-terms">Campaign terms</a>
+            <a href="/privacy">Privacy</a>
+          </nav>
         </div>
         <p className="site-footer__copyright">
           © {new Date().getFullYear()} Mirchi. Campaign website concept.

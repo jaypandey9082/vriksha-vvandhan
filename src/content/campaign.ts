@@ -12,10 +12,10 @@ import type {
 } from "@/types/campaign";
 
 export const navigationItems = [
-  { label: "The Movement", href: "#movement" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "Stories", href: "#stories" },
-  { label: "Ped Ka Paigaam", href: "#ped-ka-paigaam" },
+  { label: "The Movement", href: "/#movement" },
+  { label: "How It Works", href: "/#how-it-works" },
+  { label: "Stories", href: "/#stories" },
+  { label: "Ped Ka Paigaam", href: "/#ped-ka-paigaam" },
 ] as const satisfies readonly NavigationItem[];
 
 export const promiseMetric: CampaignMetric = {
@@ -29,7 +29,7 @@ export const heroContent = {
   title: "Protect the protector.",
   description:
     "The protector has always protected us. Tie a Rakhi to a tree and make your promise visible.",
-  primaryCta: { label: "Join the Movement", href: "#how-it-works" },
+  primaryCta: { label: "Join the Movement", href: "/join" },
   secondaryCta: { label: "See the Promises", href: "#stories" },
   ribbonLabel: "Promises already taking root",
 } as const satisfies HeroContent;
@@ -79,7 +79,6 @@ export const participationSteps: readonly ParticipationStep[] = [
     number: 3,
     title: "Share the tree",
     description: "Upload a photograph of the tree you have chosen to care for.",
-    availability: "Photo submissions will open in the next campaign phase.",
   },
   {
     number: 4,
@@ -330,5 +329,5 @@ export const finalCta = {
   lineOne: "One Rakhi.",
   lineTwo: "One Story.",
   lineThree: "Millions inspired to protect a tree.",
-  cta: { label: "Join the Movement", href: "#how-it-works" },
+  cta: { label: "Join the Movement", href: "/join" },
 } as const;

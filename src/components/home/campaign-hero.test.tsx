@@ -19,7 +19,7 @@ describe("CampaignHero", () => {
     expect(screen.getByText("of 983")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Join the Movement" })).toHaveAttribute(
       "href",
-      "#how-it-works",
+      "/join",
     );
     expect(screen.getByRole("link", { name: "See the Promises" })).toHaveAttribute(
       "href",

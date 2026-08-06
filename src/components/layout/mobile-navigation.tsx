@@ -116,7 +116,7 @@ export function MobileNavigation({ items }: MobileNavigationProps) {
               </ul>
             </nav>
             <a
-              href="#how-it-works"
+              href="/join"
               className="button button--primary mobile-navigation__cta"
               onClick={() => closeMenu({ restoreFocus: false })}
             >

@@ -6,7 +6,7 @@ export type CampaignMetric = {
 
 export type NavigationItem = {
   label: string;
-  href: `#${string}`;
+  href: `#${string}` | `/${string}`;
 };
 
 export type ParticipationStep = {
@@ -44,7 +44,7 @@ export type PromiseReelImage = CampaignImage & {
 
 export type CampaignLink = {
   label: string;
-  href: `#${string}`;
+  href: `#${string}` | `/${string}`;
 };
 
 export type HeroContent = {

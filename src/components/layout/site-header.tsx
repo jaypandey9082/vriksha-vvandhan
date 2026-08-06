@@ -6,9 +6,9 @@ export function SiteHeader() {
   return (
     <header className="site-header">
       <div className="site-header__inner shell">
-        <a className="site-header__brand" href="#movement" aria-label="Vriksha Vvandhan home">
+        <Link className="site-header__brand" href="/" aria-label="Vriksha Vvandhan home">
           <LogoLockup variant="compact" />
-        </a>
+        </Link>
         <nav className="site-header__desktop-nav" aria-label="Primary navigation">
           <ul>
             {navigationItems.map((item) => (
@@ -17,7 +17,7 @@ export function SiteHeader() {
               </li>
             ))}
           </ul>
-          <a className="button button--primary button--small" href="#how-it-works">
+          <a className="button button--primary button--small" href="/join">
             Join the Movement
           </a>
         </nav>
@@ -26,3 +26,4 @@ export function SiteHeader() {
     </header>
   );
 }
+import Link from "next/link";

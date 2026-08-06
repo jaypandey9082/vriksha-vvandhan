@@ -52,7 +52,7 @@ test("desktop navigation and homepage CTAs reach valid sections", async ({ page 
 
   await page.goto("/");
   await page.locator(".campaign-hero").getByRole("link", { name: "Join the Movement" }).click();
-  await expect(page).toHaveURL(/#how-it-works$/);
+  await expect(page).toHaveURL(/\/join$/);
 
   await page.goto("/");
   await page.getByRole("link", { name: "See the Promises" }).click();

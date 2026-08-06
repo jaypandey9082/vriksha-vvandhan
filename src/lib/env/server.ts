@@ -11,6 +11,14 @@ const serverEnvironmentSchema = z.object({
 export type ServerEnvironment = z.infer<typeof serverEnvironmentSchema> &
   ReturnType<typeof getPublicEnvironment>;
 
+export function hasServerSupabaseEnvironment(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY &&
+      process.env.SUPABASE_SECRET_KEY,
+  );
+}
+
 export function getServerEnvironment(): ServerEnvironment {
   return {
     ...getPublicEnvironment(),
