@@ -186,6 +186,10 @@ begin
     raise exception using errcode = 'P0001', message = 'submissions_closed';
   end if;
 
+  perform pg_catalog.pg_advisory_xact_lock(
+    pg_catalog.hashtextextended('email:' || v_email, 0)
+  );
+
   select count(*)
     into v_recent_count
     from public.submission_contacts as contact
