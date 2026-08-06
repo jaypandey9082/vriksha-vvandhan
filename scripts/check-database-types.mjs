@@ -5,6 +5,35 @@ import { dirname, resolve } from "node:path";
 const committedPath = resolve("src/lib/supabase/database.types.ts");
 const temporaryPath = resolve(".tmp/database.types.generated.ts");
 
+function formatFirstDifference(committed, generated) {
+  const committedLines = committed.split("\n");
+  const generatedLines = generated.split("\n");
+  const longest = Math.max(committedLines.length, generatedLines.length);
+  const firstDifference = Array.from({ length: longest }, (_, index) => index).find(
+    (index) => committedLines[index] !== generatedLines[index],
+  );
+
+  if (firstDifference === undefined) {
+    return "Generated files differ at the byte level but not by text line.\n";
+  }
+
+  const start = Math.max(0, firstDifference - 3);
+  const end = Math.min(longest, firstDifference + 12);
+  const context = [];
+
+  for (let index = start; index < end; index += 1) {
+    if (committedLines[index] === generatedLines[index]) {
+      context.push(`  ${index + 1}: ${committedLines[index] ?? "<missing>"}`);
+      continue;
+    }
+
+    context.push(`- ${index + 1}: ${committedLines[index] ?? "<missing>"}`);
+    context.push(`+ ${index + 1}: ${generatedLines[index] ?? "<missing>"}`);
+  }
+
+  return `First generated-type difference at line ${firstDifference + 1}:\n${context.join("\n")}\n`;
+}
+
 mkdirSync(dirname(temporaryPath), { recursive: true });
 
 try {
@@ -30,6 +59,7 @@ try {
       process.stderr.write(
         "Committed Supabase database types are stale. Run npm run db:types after applying migrations.\n",
       );
+      process.stderr.write(formatFirstDifference(committed, generated));
       process.exitCode = 1;
     }
   }
