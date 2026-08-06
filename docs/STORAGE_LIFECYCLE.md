@@ -3,8 +3,8 @@
 ## Buckets
 
 - `submission-originals`: private, 15 MiB, JPEG/PNG/WebP/HEIC/HEIF.
-- `published-images`: public read, trusted server write, 15 MiB, WebP/JPEG/PNG.
-- `certificates`: private, trusted server write, 15 MiB, PDF/PNG.
+- `published-images`: public read, trusted server write, 5 MiB, WebP/JPEG/PNG.
+- `certificates`: private, trusted server write, 10 MiB, PDF/PNG.
 
 Buckets are declared in `supabase/config.toml` and created with the current bucket-seeding command. The Storage schema is not altered by application SQL.
 

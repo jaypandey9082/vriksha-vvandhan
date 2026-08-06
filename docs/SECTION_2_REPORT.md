@@ -1,41 +1,72 @@
 # Section 2 Report
 
-## Starting state and Promise Reel
+## Starting state
 
-Work began on `main` at `69cdce2`. The complete Section 1.2 Promise Reel was first preserved in its own `242a58e` commit. The light homepage, hero, static tracker, reel, campaign assets and downstream sections were not redesigned or connected to backend code.
+Section 2.2 started on `main` at `07a938ad78fcf7d5402b9869abaa964b94750812`. The hosted staging project had already been created manually and linked to this repository. No production project was created or accessed.
 
-## Dependencies
+The Section 1 homepage, static `417 / 983` tracker, Promise Reel, campaign assets and public routes remain unchanged. Section 2 still adds no public form, upload endpoint, Auth UI, staff portal, moderation operation, live count, certificate generation or email delivery.
 
-Production dependencies: `@supabase/supabase-js@2.112.1`, `@supabase/ssr@0.12.4`, `zod@4.4.3` and `server-only@0.0.1`. Development dependency: `supabase@2.111.0`. No ORM, carousel, image-processing, email, PDF or queue package was added.
+## Hosted migration and schema verification
 
-## Migrations, enums and tables
+Supabase CLI `2.111.0` reported the following local and linked migration timestamps as exact matches:
 
-Three ordered migrations create the campaign schema, private security helpers/RLS and the derived count. They define seven enums and nine public tables: staff profiles, campaign settings, submissions, private contacts, consents, media, certificates, email deliveries and explicit audit logs. The required settings singleton is migrated; the seed contains no participant/staff data. `guardian_number_seq` exists but is unused.
+- `20260805114319_create_campaign_schema.sql`
+- `20260805114321_security_helpers_and_rls.sql`
+- `20260805114323_campaign_count_function.sql`
 
-## Workflow and count
+`supabase db push --linked --dry-run` was attempted but the direct Postgres connection could not authenticate because `SUPABASE_DB_PASSWORD` is not present in this environment. No migration was pushed again. The matching migration history plus linked Management API queries confirmed the migrated schema is present remotely.
 
-The only submission states are Draft, Pending Review, Rejection Awaiting Admin, Published and Rejected. Recommendation requires a participant-facing comment and Reviewer actor/time. Final rejection requires Admin actor/time; direct Admin rejection is supported and no Return to Reviewer state exists. `private.current_published_count()` reads only active Published, production records marked to count and never mutates data.
+The linked staging database contains exactly the nine expected public tables: `audit_logs`, `campaign_settings`, `certificates`, `email_deliveries`, `staff_profiles`, `submission_consents`, `submission_contacts`, `submission_media` and `submissions`. RLS is enabled on all nine. The ten expected read policies are present, `anon` has no table grants, and `authenticated` has only `SELECT` grants governed by RLS. No public function was exposed.
 
-## RLS and Storage
+The private schema contains only the expected seven functions. The four security-definer authorization helpers have an empty search path and are executable only by `authenticated`; the count and trigger helpers are not granted to public roles.
 
-All nine tables enable RLS. Anonymous, non-staff and inactive staff have no internal access. Reviewer reads only the specified non-contact operational data; Admin additionally reads contacts, all profiles and audit logs. Neither role receives broad direct writes. Three declarative buckets cover private originals, public approved variants and private certificates. Pure builders create immutable paths; the unexposed service helpers reserve non-overwriting original uploads and five-minute private review URLs.
+## Locked workflow
 
-## Supabase clients, Proxy and DAL
+The hosted enum contains only `draft`, `pending_review`, `rejection_pending_admin`, `published` and `rejected`. There is no Return to Reviewer status. The verified constraints preserve reviewer recommendation, Admin confirmation, Admin approval after a recommendation, and Admin-controlled trash metadata without granting broad direct writes or deletes.
 
-Browser, request-scoped server and RLS-bypassing service clients are separate. Environment validation is lazy. Next.js 16 Proxy refreshes only `/admin` and `/auth`, verifies claims and does not read roles. The server-only DAL is the final application boundary: it verifies claims, loads an active profile and returns only `userId`, nullable email, display name and role. Pure permission helpers encode Reviewer/Admin authority.
+Participant data remains split across display name, private email, photograph metadata, publication consent and terms acceptance. `private.current_published_count()` counts only Published, non-test, `counts_toward_goal = true`, non-trashed submissions.
 
-## Tests and commands
+## Storage verification
 
-Unit coverage validates environment parsing, service-client options, safe DAL outcomes, permissions, paths and signed helper boundaries without network calls. Five pgTAP files cover schema, constraints, workflow, count and RLS. Package scripts provide start/stop/reset/lint/test/type generation/type drift/bucket seeding. CI separates credential-free application checks from Docker-backed local database checks and always stops Supabase.
+The three linked staging buckets were queried through the supported CLI Management API. `published-images` was initially private even though its size and MIME restrictions were already correct. The declarative bucket configuration was corrected and `supabase seed buckets --linked` updated all three bucket definitions. A second linked query verified:
 
-Executed successfully on this machine: `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build` and `npm run test:e2e`. The build retained a static `/` route and the 14 browser/axe/reel regressions passed.
+| Bucket | Visibility | Maximum size | Allowed MIME types |
+| --- | --- | ---: | --- |
+| `submission-originals` | Private | 15 MiB | JPEG, PNG, WebP, HEIC, HEIF |
+| `published-images` | Public | 5 MiB | JPEG, PNG, WebP |
+| `certificates` | Private | 10 MiB | PDF, PNG |
+
+No file was uploaded, no broad public write policy was created, and `storage.objects` was not modified directly.
+
+## Linked database types
+
+Real TypeScript types were generated from the linked `public` and `private` schemas. The fresh 679-line output was byte-for-byte identical to the existing uncommitted generated file. It contains the nine expected tables, seven enums and five callable private helper/count functions, with no unexpected table or function.
+
+## Local application verification
+
+The application was verified with Node `24.15.0`:
+
+- `npm run typecheck`: passed.
+- `npm run lint`: passed.
+- `npm run test`: 11 files and 31 tests passed, including Promise Reel coverage.
+- `npm run build`: passed; `/` remains statically prerendered.
+- `npm run test:e2e`: 14 Chromium tests passed, including mobile overflow, Promise Reel behavior and axe accessibility checks.
+
+The repository-owned server on port 3010 was identified as PID 2707 through its parent command, stopped through its own terminal session, and the port was confirmed free. Playwright then started its configured isolated server on port 3000. An initial sandbox-only bind denial was resolved by rerunning with local-network permission; it was not an application failure.
+
+## CI baseline and fixes
+
+The pre-Section-2.2 run `31003569033` reached both jobs but failed for two concrete reasons:
+
+- The application job used Node 20 while the locked `jsdom@30.0.1` requires Node 22.22.2 or 24.15.0 and newer supported releases.
+- The database job started and reset Supabase, seeded buckets and passed database lint, but pgTAP schema assertions used ambiguous overloads and the Guardian uniqueness fixture violated workflow state before reaching the unique index.
+
+The workflow now supports `push`, `pull_request` and `workflow_dispatch`, uses Node 24, retains all five pgTAP suites, checks generated-type drift, and always stops its local ephemeral Supabase stack. Final post-push application/database results are recorded in the Section 2.2 delivery handoff.
 
 ## Local database limitation
 
-The current Mac has neither Docker nor Podman. `npm run db:start` returned `LegacyDockerLifecycleInspectError`, and `npm run db:types:check` returned `LegacyContainerRuntimeNotFoundError`. Therefore migrations, local buckets, pgTAP and true CLI-generated database types were not executed here. The committed type snapshot keeps application code typed but must be replaced by `npm run db:types` against the migrated local stack before release; the CI drift check intentionally enforces that requirement.
+Docker-backed verification remains unavailable on this Mac because the Data volume was nearly full and Docker image extraction failed. No Docker image, volume or unrelated user file was deleted. Local database execution is therefore delegated to the Docker-capable GitHub Actions database job.
 
 ## Safety confirmations
 
-No secret or real credential is committed. No hosted Supabase project was created. The public source tree imports no backend module, so the homepage remains credential-free and visually intact. No form, upload endpoint, Auth UI, portal, moderation operation, live count, dynamic gallery, certificate, email sender or other Section 3+ feature was added.
-
-Section 3 will expose a controlled submission transaction and private signed upload on top of these boundaries.
+`.env.example` contains variable names only, `.env.local` is ignored and absent, and no project password, connection string, access token, publishable key or secret key is tracked. The hosted resource touched was the linked staging project only. No production resource and no Section 3 feature was created or modified.

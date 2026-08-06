@@ -131,12 +131,12 @@ allowed_mime_types = ["image/jpeg", "image/png", "image/webp", "image/heic", "im
 
 [storage.buckets.published-images]
 public = true
-file_size_limit = "15MiB"
+file_size_limit = "5MiB"
 allowed_mime_types = ["image/webp", "image/jpeg", "image/png"]
 
 [storage.buckets.certificates]
 public = false
-file_size_limit = "15MiB"
+file_size_limit = "10MiB"
 allowed_mime_types = ["application/pdf", "image/png"]
 
 # Allow connections via S3 compatible clients

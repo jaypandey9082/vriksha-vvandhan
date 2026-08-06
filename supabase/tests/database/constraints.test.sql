@@ -24,10 +24,35 @@ select throws_ok(
   '23514', null, 'test records cannot count toward goal'
 );
 
-insert into public.submissions (id, guardian_number)
-values ('10000000-0000-4000-8000-000000000002', 42);
+insert into auth.users (
+  id, instance_id, aud, role, email, encrypted_password, created_at, updated_at
+) values (
+  '10000000-0000-4000-8000-000000000100',
+  '00000000-0000-0000-0000-000000000000',
+  'authenticated', 'authenticated', 'admin-constraints@example.test', '', now(), now()
+);
+insert into public.staff_profiles (id, display_name, role)
+values ('10000000-0000-4000-8000-000000000100', 'Admin', 'admin');
+
+insert into public.submissions (id) values
+  ('10000000-0000-4000-8000-000000000002'),
+  ('10000000-0000-4000-8000-000000000003');
+insert into public.submission_consents (
+  submission_id, consent_version, publication_consent, terms_accepted, accepted_at
+) values
+  ('10000000-0000-4000-8000-000000000002', 'v1', true, true, now()),
+  ('10000000-0000-4000-8000-000000000003', 'v1', true, true, now());
+update public.submissions set
+  status = 'published', display_name = 'First', submitted_at = now(),
+  approved_at = now(), approved_by = '10000000-0000-4000-8000-000000000100',
+  published_at = now(), guardian_number = 42
+where id = '10000000-0000-4000-8000-000000000002';
 select throws_ok(
-  $$insert into public.submissions (guardian_number) values (42)$$,
+  $$update public.submissions set
+      status = 'published', display_name = 'Second', submitted_at = now(),
+      approved_at = now(), approved_by = '10000000-0000-4000-8000-000000000100',
+      published_at = now(), guardian_number = 42
+    where id = '10000000-0000-4000-8000-000000000003'$$,
   '23505', null, 'Guardian numbers are unique'
 );
 

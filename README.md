@@ -15,7 +15,7 @@ Section 2 does not add a public form, upload endpoint, portal UI, moderation ope
 
 ## Local application setup
 
-Requirements: Node.js 20.9 or later and npm.
+Requirements: Node.js 22.22.2, 24.15.0, or a later supported even-numbered release, plus npm.
 
 ```bash
 npm ci
@@ -56,7 +56,7 @@ npm run test:e2e
 ## Environment variables
 
 ```dotenv
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SECRET_KEY=
@@ -70,6 +70,10 @@ Only the publishable key is browser-safe. `SUPABASE_SECRET_KEY` bypasses RLS and
 - Docker is required to apply and execute the local migrations, bucket seed and pgTAP suites.
 - Staff Auth users are provisioned manually; public participants never receive accounts.
 - Legal consent text, retention, email templates/domain, geography, dates, media rights, final wordmark and post-983 behaviour remain unresolved.
-- No hosted Supabase project or production secret is included.
+- Local Docker-backed database verification remains blocked until sufficient Mac disk space is available.
+
+The hosted staging project has been linked and its Section 2 migrations, RLS,
+policies and Storage bucket restrictions have been verified. No hosted
+credential is committed; production remains untouched.
 
 Section 3 is the controlled public submission workflow built on this private foundation.
