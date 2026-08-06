@@ -330,8 +330,15 @@ export type Database = {
           original_width: number | null
           published_at: string | null
           published_bucket: string | null
+          published_card_bytes: number | null
+          published_card_height: number | null
           published_card_path: string | null
+          published_card_width: number | null
+          published_full_bytes: number | null
+          published_full_height: number | null
           published_full_path: string | null
+          published_full_width: number | null
+          published_version: string | null
           removed_at: string | null
           status: Database["public"]["Enums"]["media_status"]
           submission_id: string
@@ -354,8 +361,15 @@ export type Database = {
           original_width?: number | null
           published_at?: string | null
           published_bucket?: string | null
+          published_card_bytes?: number | null
+          published_card_height?: number | null
           published_card_path?: string | null
+          published_card_width?: number | null
+          published_full_bytes?: number | null
+          published_full_height?: number | null
           published_full_path?: string | null
+          published_full_width?: number | null
+          published_version?: string | null
           removed_at?: string | null
           status?: Database["public"]["Enums"]["media_status"]
           submission_id: string
@@ -378,8 +392,15 @@ export type Database = {
           original_width?: number | null
           published_at?: string | null
           published_bucket?: string | null
+          published_card_bytes?: number | null
+          published_card_height?: number | null
           published_card_path?: string | null
+          published_card_width?: number | null
+          published_full_bytes?: number | null
+          published_full_height?: number | null
           published_full_path?: string | null
+          published_full_width?: number | null
+          published_version?: string | null
           removed_at?: string | null
           status?: Database["public"]["Enums"]["media_status"]
           submission_id?: string
@@ -518,6 +539,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      confirm_submission_rejection: {
+        Args: { p_comment: string; p_submission_id: string }
+        Returns: undefined
+      }
+      delete_trashed_submission: {
+        Args: { p_reason: string; p_submission_id: string }
+        Returns: undefined
+      }
       finalize_public_submission: {
         Args: {
           p_public_request_token_hash: string
@@ -532,6 +561,45 @@ export type Database = {
           status: Database["public"]["Enums"]["submission_status"]
           submission_id: string
         }[]
+      }
+      get_public_campaign_summary: {
+        Args: never
+        Returns: {
+          current_count: number
+          metric_label: string
+          submissions_open: boolean
+          target_count: number
+        }[]
+      }
+      list_public_movement_entries: {
+        Args: {
+          p_before_guardian_number?: number
+          p_before_published_at?: string
+          p_limit?: number
+        }
+        Returns: {
+          alt_text: string
+          card_height: number
+          card_path: string
+          card_width: number
+          display_name: string
+          focal_x: number
+          focal_y: number
+          full_height: number
+          full_path: string
+          full_width: number
+          guardian_number: number
+          published_at: string
+        }[]
+      }
+      manage_staff_profile: {
+        Args: {
+          p_active: boolean
+          p_display_name: string
+          p_role: Database["public"]["Enums"]["staff_role"]
+          p_staff_id: string
+        }
+        Returns: undefined
       }
       prepare_public_submission: {
         Args: {
@@ -550,6 +618,73 @@ export type Database = {
           status: Database["public"]["Enums"]["submission_status"]
           submission_id: string
         }[]
+      }
+      publish_submission: {
+        Args: {
+          p_alt_text: string
+          p_card_bytes: number
+          p_card_height: number
+          p_card_path: string
+          p_card_width: number
+          p_full_bytes: number
+          p_full_height: number
+          p_full_path: string
+          p_full_width: number
+          p_guardian_number: number
+          p_published_version: string
+          p_submission_id: string
+        }
+        Returns: {
+          already_published: boolean
+          card_path: string
+          full_path: string
+          guardian_number: number
+        }[]
+      }
+      recommend_submission_rejection: {
+        Args: { p_comment: string; p_submission_id: string }
+        Returns: undefined
+      }
+      reserve_guardian_number_for_publication: {
+        Args: { p_actor_id: string; p_submission_id: string }
+        Returns: number
+      }
+      restore_nonpublished_submission: {
+        Args: { p_submission_id: string }
+        Returns: undefined
+      }
+      restore_published_submission: {
+        Args: {
+          p_card_bytes: number
+          p_card_height: number
+          p_card_path: string
+          p_card_width: number
+          p_full_bytes: number
+          p_full_height: number
+          p_full_path: string
+          p_full_width: number
+          p_published_version: string
+          p_submission_id: string
+        }
+        Returns: undefined
+      }
+      trash_submission: {
+        Args: { p_submission_id: string }
+        Returns: {
+          card_path: string
+          certificate_path: string
+          full_path: string
+          workflow_status: Database["public"]["Enums"]["submission_status"]
+        }[]
+      }
+      update_submission_review_fields: {
+        Args: {
+          p_display_name: string
+          p_focal_x: number
+          p_focal_y: number
+          p_submission_id: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
