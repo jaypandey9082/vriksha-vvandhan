@@ -13,6 +13,8 @@
 - The approved certificate label is **Vriksha Guardian No.**
 - Admin controls Trash, restore and permanent deletion.
 - The future count is derived only from active Published, non-test records that count toward the goal.
+- Public participant fields are limited to display name, approved card/full image, Guardian number and published date.
+- Six or more approved entries replace the curated homepage preview; fewer retain clearly labelled campaign inspiration.
 
 ## Still unresolved
 

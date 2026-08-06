@@ -1,17 +1,17 @@
 # Vriksha Vvandhan
 
-Vriksha Vvandhan is Mirchi's Raksha Bandhan campaign inviting people to protect a tree. The repository contains the premium campaign site, secure Supabase foundation, and Section 3 private public-submission flow.
+Vriksha Vvandhan is Mirchi's Raksha Bandhan campaign inviting people to protect a tree. The repository contains the premium campaign site, secure Supabase foundation, private submission flow, invite-only Campaign Desk, and approved public Movement Wall.
 
 ## Six-section roadmap
 
-1. **Premium public experience** — responsive campaign homepage, static `417 / 983` tracker and progressively enhanced Promise Reel. Complete.
+1. **Premium public experience** — responsive campaign homepage, tracker UI and progressively enhanced Promise Reel. Complete; Section 4 now supplies the tracker’s live count.
 2. **Backend foundation** — Supabase schema, RLS, staff roles, Storage rules, server clients, authorization DAL, tests and CI. Complete and verified on staging.
 3. **Public submission flow** — display name, email, one privately uploaded photograph, publication consent, terms acceptance, server verification and Pending Review confirmation. Source, CI and staging migration are verified; the credentialed staging smoke result is tracked in `docs/SECTION_3_REPORT.md`.
-4. **Internal operations and publication** — staff portal, moderation workflow, Guardian assignment, public Movement Wall and live derived count.
+4. **Internal operations and publication** — staff portal, moderation workflow, Guardian assignment, public Movement Wall and live derived count. Complete and staging-verified.
 5. **Certificates and email** — certificate generation plus submission, approval and final-rejection delivery.
 6. **Hardening and launch** — retention, load, accessibility, security and operational launch checks.
 
-Section 3 does not add a portal UI, moderation operation, live counter, Guardian number, certificate, public participant image, or email sender. The homepage remains static and buildable without Supabase credentials; `/join` fails closed when backend configuration is unavailable.
+Section 4 adds the portal and publication path while keeping certificate generation and email sending deferred to Section 5. The homepage still builds without Supabase credentials and shows an honest unavailable count rather than fabricated campaign data.
 
 ## Local application setup
 
@@ -53,6 +53,8 @@ npm run test
 npm run test:e2e
 npm run cleanup:drafts:dry-run
 npm run test:staging:submission
+npm run staff:bootstrap -- --email=staff@example.com --display-name="Staff name" --role=reviewer
+npm run test:staging:moderation -- --execute
 ```
 
 ## Environment variables
@@ -70,7 +72,6 @@ Guarded staging scripts additionally require `SUPABASE_TARGET_ENVIRONMENT=stagin
 
 ## Current limitations
 
-- The visible `417 / 983` tracker is still explicit Section 1 seed content.
 - Docker is required to apply and execute the local migrations, bucket seed and pgTAP suites.
 - Staff Auth users are provisioned manually; public participants never receive accounts.
 - Legal consent text, retention, email templates/domain, geography, dates, media rights, final wordmark and post-983 behaviour remain unresolved.
@@ -80,4 +81,4 @@ The hosted staging project has been linked and its Section 2 migrations, RLS,
 policies and Storage bucket restrictions have been verified. No hosted
 credential is committed; production remains untouched.
 
-See [the public flow](docs/PUBLIC_SUBMISSION_FLOW.md), [image pipeline](docs/IMAGE_UPLOAD_PIPELINE.md), and [Section 3 report](docs/SECTION_3_REPORT.md).
+See [the moderation workflow](docs/MODERATION_WORKFLOW.md), [publication pipeline](docs/PUBLICATION_PIPELINE.md), [staff access setup](docs/STAFF_ACCESS_SETUP.md), and [Section 4 report](docs/SECTION_4_REPORT.md).

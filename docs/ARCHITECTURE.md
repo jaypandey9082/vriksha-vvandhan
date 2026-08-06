@@ -17,10 +17,12 @@
 - `src/lib/storage` — fixed bucket names, immutable path validation and unexposed signed URL helpers.
 - `src/components/submission` — the isolated public form, photo controls, status, retry, availability and success states.
 - `src/lib/submissions` — shared validation, in-memory request capability, browser image preparation, origin checks, stable errors, private upload orchestration and trusted server verification.
+- `src/app/admin`, `src/components/admin`, and `src/lib/moderation` — dynamic invite-only Campaign Desk, role-aware queues, private signed review, focal-point editing, and server-only publication orchestration.
+- `src/lib/public-campaign`, `src/app/movement`, and `src/components/movement` — cached anonymous-safe campaign summary, keyset Movement data, public wall, and accessible full-image dialog.
 
-## Section 2 backend boundary
+## Staff and public publication boundary
 
-The public application imports none of the backend modules above. The static homepage and `417 / 983` seed tracker therefore stay prerendered. Future internal routes pass through the Next.js 16 Proxy for session refresh, but authorization is re-verified in the Data Access Layer and database RLS. The service client is a separately marked server-only boundary because its secret key bypasses RLS.
+Internal routes pass through the Next.js 16 Proxy for session refresh, but authorization is re-verified in the Data Access Layer and every mutation RPC. The service client is a separately marked server-only boundary because it downloads private originals, writes trusted variants, and bypasses RLS. Public visitors receive only two anonymous-safe RPC projections; no base campaign table or private original is exposed.
 
 ## Section 3 submission boundary
 
@@ -42,15 +44,14 @@ The tracker receives `current`, `target` and `label` as typed data, calculates a
 
 All homepage sections—including the Living Promise Hero and `PromiseRibbon` wrapper—remain Server Components. `MobileNavigation` handles menu focus and scroll locking, while the small `PromiseReel` Client Component handles only playback, reduced motion and temporary interaction pauses. Both boundaries receive serializable props and no campaign content is fetched client-side.
 
-## Future integration points
+## Remaining integration points
 
-- Replace `promiseMetric` with approved server-side campaign data without changing `PromiseTracker`.
-- Replace `seedMovementStories` with moderated public records after the submission and moderation system exists.
-- Section 4 consumes Pending Review records through a protected staff workflow and creates approved public variants.
+- The homepage tracker now uses the cached public summary and falls back to an unavailable state.
+- The homepage uses approved records only when at least six exist; otherwise curated imagery remains explicitly labelled.
 - Replace the certificate concept with an approved generation/download workflow.
 - Add approved Ped Ka Paigaam audio sources and transcripts to the existing preview model.
 - Replace the temporary campaign text lockup with the approved wordmark asset.
 
-## Why there is no database or media service
+## Cache and rendering
 
-Section 1 is intentionally static. Adding a database, authentication, media hosting or placeholder APIs would create unapproved product behaviour, security surface and false implementation signals before consent, moderation, legal and operational decisions exist.
+Homepage and Movement summary/list fetches use 30-second server caching tagged `campaign-public`. Publication, Trash, restore, permanent deletion, and settings changes invalidate the tag. `/admin` is always dynamic, noindex, and never opens public Realtime connections.

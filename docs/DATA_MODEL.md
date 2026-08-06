@@ -17,7 +17,7 @@
 - `submissions` owns workflow, publication, rejection, test, Guardian and Trash state.
 - `submission_contacts` is a one-to-one private email record.
 - `submission_consents` is one-to-one versioned acceptance evidence.
-- `submission_media` is one-to-one private-original metadata plus future approved derivative paths.
+- `submission_media` is one-to-one private-original metadata plus immutable public version, card/full paths, dimensions, byte sizes, focal point and alt text.
 - `certificates` is one-to-one generation state.
 - `email_deliveries` is one row per submission and delivery kind with a stable idempotency key.
 - `audit_logs` records explicit future staff actions without copying participant email.
@@ -28,7 +28,7 @@ Draft may be incomplete. Pending Review requires submitted display data and acce
 
 ## Count and Guardian numbers
 
-`private.current_published_count()` counts only `published`, non-test, `counts_toward_goal = true`, non-trashed records. It never mutates data. `guardian_number_seq` is reserved but unused in Section 2. Allocated Guardian numbers are unique and are never reused.
+`private.current_published_count()` counts only `published`, non-test, `counts_toward_goal = true`, non-trashed records whose media is Published with both public paths. `guardian_number_seq` is reserved by the trusted publication orchestrator. Allocated values are unique, gaps are expected after failed processing, and numbers are never reused.
 
 ## Privacy, test and Trash rules
 
@@ -37,3 +37,7 @@ Email is separated from publishable content. Signed URLs/tokens and image binari
 ## Section 3 public transaction
 
 `submissions.public_request_token_hash` stores only the lowercase SHA-256 capability hash and is unique when present. The prepare RPC creates a Draft, private contact, versioned consent, and fixed reserved-media path atomically. The finalise RPC accepts only server-derived verified metadata, moves the Draft to Pending Review, and creates one unsent `submission_received` delivery placeholder. Pending Review has no Guardian number, certificate row, publication timestamp, or public-count effect.
+
+## Section 4 moderation and publication
+
+Purpose-specific RPCs normalize review fields, recommend/confirm rejection, publish, Trash, restore, permanently delete, manage existing staff profiles, and update campaign settings. Publication records card/full metadata atomically with the workflow transition and creates exactly one `not_started` certificate and approval-email placeholder. `get_public_campaign_summary` and `list_public_movement_entries` expose only derived public data; neither returns submission IDs, contacts, private paths, consent, staff identity, or rejection data.

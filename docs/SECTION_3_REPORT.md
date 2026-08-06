@@ -1,5 +1,7 @@
 # Section 3 Report
 
+> Historical Section 3 snapshot. Section 4 has since replaced the static tracker with the live public summary and added the staff/publication surfaces described in `SECTION_4_REPORT.md`.
+
 ## Product flow
 
 `/join` implements the approved public journey: choose or take one photograph, enter display name and email, accept publication consent and campaign terms, prepare the image locally, create a private Draft, upload directly with a signed token, verify the stored bytes on the server, atomically finalise to Pending Review, and show the required on-screen confirmation.

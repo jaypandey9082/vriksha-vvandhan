@@ -15,12 +15,16 @@ The publishable key may reach the browser. `SUPABASE_SECRET_KEY` is validated la
 
 ## Security-definer helpers
 
-Private RLS helpers use an empty fixed `search_path`, schema-qualified references and minimum execute grants. The count function is not exposed to anonymous/authenticated roles in Section 2. Default table/function exposure is revoked.
+Private RLS helpers use an empty fixed `search_path`, schema-qualified references and minimum execute grants. Default table/function exposure is revoked. Section 4 grants only the anonymous-safe public summary/list functions and purpose-specific authenticated staff functions; each staff function re-checks active role and workflow state inside the transaction.
 
 The two Section 3 public-schema RPCs are also security-definer with empty search paths, fully qualified objects, explicit validation, transaction-local advisory locking, and execute granted only to `service_role`. The browser capability is cryptographically random; only its SHA-256 hash reaches the database. Public errors never include raw database/Storage messages, participant values, secrets, or request tokens.
 
 Signed upload creation fixes the UUID-based private path and disables overwrite. No anonymous Storage policy is added. Finalisation trusts neither filename, declared MIME, size, dimensions, nor checksum from the browser: the Node.js server downloads and inspects the stored bytes with bounded Sharp settings.
 
+## Advisor review
+
+The post-migration staging Security Advisor reports zero errors. Its 12 warnings are the expected generic warning class for intentionally callable `SECURITY DEFINER` RPCs: two anonymous-safe projections and ten authenticated, role-checking staff/publication functions. Every function uses an empty fixed search path, explicit grants, validated arguments, and internal authorization; base-table RLS remains closed. The Performance Advisor reports zero errors/warnings and 11 informational unused-index notices on the newly exercised staging dataset. Those workflow, lookup, and foreign-key indexes are retained until representative production traffic exists. See the [Supabase Database Linter guidance](https://supabase.com/docs/guides/database/database-linter).
+
 ## Permanent deletion order
 
-Future hard deletion must verify Admin, require the record already be in Trash and require a reason. It then removes the original, public variants and certificate through the Storage API, confirms those operations, deletes the database record and preserves only a non-sensitive audit entry. Storage objects are never deleted with raw SQL.
+Hard deletion verifies Admin, requires the record already be in Trash, a reason, and literal `DELETE` confirmation in the UI. Server orchestration removes original, public variants and any certificate through the Storage API and stops if cleanup fails, then invokes the database delete transaction with a non-sensitive audit event. Storage objects are never deleted with raw SQL.

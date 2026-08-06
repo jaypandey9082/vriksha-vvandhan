@@ -99,3 +99,23 @@ Only trusted server code may write. Do not add broad public write policies, uplo
 Create staff Auth users manually with controlled Mirchi email addresses. Public signup remains disabled. An authorized database administrator then inserts the matching UUID, display name and role into `public.staff_profiles`. Create the first Admin this way, then Reviewer profiles. Deactivate access with `active = false`; do not delete audit history merely to revoke access.
 
 An Auth user alone grants no portal access. An active database profile is mandatory.
+
+## Section 4 staging operations
+
+After database CI is green, preview and apply the linked migration, regenerate linked types, then run the guarded moderation smoke:
+
+```bash
+npx supabase db push --linked --dry-run
+npx supabase db push --linked
+npx supabase gen types typescript --linked --schema public,private > src/lib/supabase/database.types.ts
+npm run test:staging:moderation -- --execute
+```
+
+The smoke requires `SUPABASE_TARGET_ENVIRONMENT=staging` and creates generated temporary Admin/Reviewer users, profiles, submissions, originals, and public variants. It verifies recommendation, approval instead, publication, count, Movement, Trash, regenerated restore, permanent deletion, direct Admin rejection, and untouched email/certificate placeholders. Its cleanup restores the original count and removes every temporary resource. Never run it against production.
+
+For a real staff member, first create the Auth user manually in the company dashboard, then dry-run and execute the profile bootstrap:
+
+```bash
+npm run staff:bootstrap -- --email=staff@example.com --display-name="Staff name" --role=admin
+npm run staff:bootstrap -- --email=staff@example.com --display-name="Staff name" --role=admin --execute
+```

@@ -1,6 +1,6 @@
 # Internal Product Flow
 
-This reference explains the campaign operation for Mirchi teams. Sections 1 and 2 establish the public and protected foundations. Section 3 now implements the private participant form and Pending Review handoff; staff screens arrive in Section 4.
+This reference explains the live Section 4 campaign operation for Mirchi teams. Participants enter through `/join`; authorized staff work only in the invite-only `/admin` Campaign Desk.
 
 ## What participants do
 
@@ -35,15 +35,15 @@ An Admin may also reject directly. Every recommendation or direct rejection requ
 ## Messages, count and certificate
 
 - Recommendation alone never sends a rejection email.
-- The rejection email is sent only after Admin confirms rejection or rejects directly.
+- Final rejection creates an email placeholder only; Section 4 sends no message.
 - The public count increases only after publication of an active, real campaign record that is marked to count.
 - Test records never publish, count, receive a real Guardian number or send a real participant email.
-- A certificate is generated only after approval/publication in Section 5, not by this foundation.
+- Publication creates `not_started` certificate and approval-email placeholders. Section 4 generates/sends neither.
 - If future email delivery fails, the workflow record remains intact and the same delivery can be retried without creating a duplicate message.
 
 ## Trash and deletion
 
-Trash hides a record while retaining its workflow state. Admin can restore it. Permanent deletion is a later, deliberate action requiring a reason and removal of private original, public variants and certificate before the database record. A non-sensitive audit record is preserved.
+Trash hides a record while retaining its workflow state. Published restore regenerates both public variants before visibility returns; nonpublished restore is direct. Permanent deletion requires Trash, a reason and explicit confirmation, removes Storage objects through the API, then deletes the row while preserving only non-sensitive audit intent.
 
 ## Private versus public
 

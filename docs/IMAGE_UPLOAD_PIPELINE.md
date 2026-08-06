@@ -26,4 +26,4 @@ An atomic database function then records verified metadata, moves the Draft to P
 
 Drafts expire after the configured 1,440 minutes. `npm run cleanup:drafts:dry-run` reports expired Draft IDs and fixed Storage paths in bounded batches. `npm run cleanup:drafts` removes an existing object through the Storage API and then deletes only the still-expired Draft row. Both commands require `SUPABASE_TARGET_ENVIRONMENT=staging`; no production cleanup is configured. Run the cleanup manually every 24–48 hours until Section 6 introduces scheduling.
 
-Section 4 will create approved, immutable public image variants; Section 3 never makes the private original public.
+Section 4 now creates approved, immutable public image variants; Section 3 never makes the private original public.

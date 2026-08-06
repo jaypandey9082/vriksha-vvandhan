@@ -5,8 +5,8 @@
 | 1 | Premium public site and Promise Reel | Complete |
 | 2 | Secure database, staff Auth and Storage foundation | Complete and staging-verified |
 | 3 | Public submission, private upload and confirmation | Source, CI, migration, linked types and advisors verified; staging smoke pending local credentials |
-| 4 | Staff portal, moderation, publication, Movement Wall and live count | Not started |
+| 4 | Staff portal, moderation, publication, Movement Wall and live count | Complete; CI, staging migration, linked types, smoke and Advisors verified |
 | 5 | Certificate generation and transactional email | Not started |
 | 6 | Retention, load, security and launch hardening | Not started |
 
-Section 3 adds `/join`, legal routes, guarded Node.js APIs, private signed upload, verified Pending Review finalisation, tests, and cleanup tooling. It deliberately adds no staff portal, publication, live count, Guardian assignment, certificate, or sent email. The homepage tracker remains static.
+Section 4 adds invite-only Reviewer/Admin access, private signed review, atomic moderation/publication RPCs, immutable public WebP variants, the real homepage count, approved preview, and `/movement`. Certificate and email records remain `not_started`; no certificate or campaign email is generated or sent.
