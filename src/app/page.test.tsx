@@ -4,8 +4,8 @@ import { describe, expect, it } from "vitest";
 import Home from "@/app/page";
 
 describe("campaign homepage", () => {
-  it("renders the main campaign sections and headings", () => {
-    render(<Home />);
+  it("renders the main campaign sections and headings", async () => {
+    render(await Home());
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Protect the protector.");
     expect(screen.getByRole("heading", { name: "Four steps. One bond that continues." })).toBeInTheDocument();
@@ -14,8 +14,8 @@ describe("campaign homepage", () => {
     expect(screen.getByRole("heading", { name: "Ped Ka Paigaam" })).toBeInTheDocument();
   });
 
-  it("uses valid in-page destinations for every hash CTA", () => {
-    const { container } = render(<Home />);
+  it("uses valid in-page destinations for every hash CTA", async () => {
+    const { container } = render(await Home());
     const ids = new Set(Array.from(container.querySelectorAll("[id]")).map((element) => element.id));
     const inPageLinks = Array.from(container.querySelectorAll<HTMLAnchorElement>('a[href^="#"]'));
 
@@ -25,8 +25,8 @@ describe("campaign homepage", () => {
     }
   });
 
-  it("does not render fabricated empty links", () => {
-    const { container } = render(<Home />);
+  it("does not render fabricated empty links", async () => {
+    const { container } = render(await Home());
     expect(container.querySelector('a[href=""], a:not([href])')).toBeNull();
   });
 });

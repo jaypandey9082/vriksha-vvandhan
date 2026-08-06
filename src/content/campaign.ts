@@ -14,12 +14,12 @@ import type {
 export const navigationItems = [
   { label: "The Movement", href: "/#movement" },
   { label: "How It Works", href: "/#how-it-works" },
-  { label: "Stories", href: "/#stories" },
+  { label: "Movement Wall", href: "/movement" },
   { label: "Ped Ka Paigaam", href: "/#ped-ka-paigaam" },
 ] as const satisfies readonly NavigationItem[];
 
 export const promiseMetric: CampaignMetric = {
-  current: 417,
+  current: null,
   target: 983,
   label: "Vriksha promises",
 };

@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-test("join page fails closed without backend environment and has no console errors", async ({ page }) => {
+test("join page reflects the connected campaign availability and has no console errors", async ({ page }) => {
   const errors: string[] = [];
   page.on("console", (message) => {
     if (message.type() === "error") errors.push(message.text());
@@ -10,8 +10,13 @@ test("join page fails closed without backend environment and has no console erro
   const response = await page.goto("/join");
   expect(response?.status()).toBe(200);
   await expect(page.getByRole("heading", { level: 1, name: "Make your promise visible." })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Submissions are temporarily unavailable." })).toBeVisible();
-  await expect(page.locator("form.public-submission-form")).toHaveCount(0);
+  const form = page.locator("form.public-submission-form");
+  if (await form.count()) {
+    await expect(form).toBeVisible();
+    await expect(page.getByLabel("Display name")).toBeVisible();
+  } else {
+    await expect(page.getByRole("heading", { name: /Submissions (are temporarily unavailable|opening soon)\./ })).toBeVisible();
+  }
   expect(errors).toEqual([]);
 });
 

@@ -1,5 +1,5 @@
 export type CampaignMetric = {
-  current: number;
+  current: number | null;
   target: number;
   label: string;
 };

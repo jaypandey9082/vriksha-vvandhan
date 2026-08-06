@@ -15,8 +15,9 @@ describe("CampaignHero", () => {
   it("renders the tracker and both valid hero actions", () => {
     render(<CampaignHero />);
 
-    expect(screen.getByText("417")).toBeInTheDocument();
+    expect(screen.getByText("—")).toBeInTheDocument();
     expect(screen.getByText("of 983")).toBeInTheDocument();
+    expect(screen.getByText("Tracker updating")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Join the Movement" })).toHaveAttribute(
       "href",
       "/join",

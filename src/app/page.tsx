@@ -10,8 +10,17 @@ import { PedKaPaigaam } from "@/components/home/ped-ka-paigaam";
 import { MobileJoinBar } from "@/components/layout/mobile-join-bar";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { promiseMetric } from "@/content/campaign";
+import { getPublicCampaignSummary, getPublicMovementEntries } from "@/lib/public-campaign/data";
 
-export default function Home() {
+export default async function Home() {
+  const [summary, approvedEntries] = await Promise.all([
+    getPublicCampaignSummary(),
+    getPublicMovementEntries({ limit: 8 }).catch(() => []),
+  ]);
+  const metric = summary
+    ? { current: summary.current_count, target: summary.target_count, label: summary.metric_label }
+    : promiseMetric;
   return (
     <>
       <a className="skip-link" href="#main-content">
@@ -19,13 +28,13 @@ export default function Home() {
       </a>
       <SiteHeader />
       <main id="main-content">
-        <CampaignHero />
+        <CampaignHero metric={metric} />
         <CampaignStory />
         <MovementPillars />
         <ParticipationSteps />
         <FirstRakhiMoment />
         <CampaignChannels />
-        <MovementPreview />
+        <MovementPreview entries={approvedEntries.length >= 6 ? approvedEntries : []} />
         <PedKaPaigaam />
         <FinalCta />
       </main>

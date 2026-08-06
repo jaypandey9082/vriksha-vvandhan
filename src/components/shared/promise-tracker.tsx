@@ -8,10 +8,13 @@ const RADIUS = 68;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 export function PromiseTracker({ metric }: PromiseTrackerProps) {
-  const progress = metric.target > 0 ? Math.min(Math.max(metric.current / metric.target, 0), 1) : 0;
+  const available = metric.current !== null;
+  const progress = available && metric.target > 0 ? Math.min(Math.max(metric.current! / metric.target, 0), 1) : 0;
   const percentage = Math.round(progress * 100);
   const progressOffset = CIRCUMFERENCE * (1 - progress);
-  const accessibleLabel = `${metric.current} of ${metric.target} ${metric.label}, ${percentage}% of the first circle complete`;
+  const accessibleLabel = available
+    ? `${metric.current} of ${metric.target} ${metric.label}, ${percentage}% of the first circle complete`
+    : `Campaign tracker updating, target ${metric.target} ${metric.label}`;
 
   return (
     <div className="promise-tracker" aria-label={accessibleLabel} role="img">
@@ -41,12 +44,14 @@ export function PromiseTracker({ metric }: PromiseTrackerProps) {
         <circle className="promise-tracker__knot" cx="88" cy="15" r="3.5" />
       </svg>
       <span className="promise-tracker__copy">
-        <strong>{metric.current}</strong>
+        <strong>{available ? metric.current : "—"}</strong>
         <span>of {metric.target}</span>
         <small>{metric.label}</small>
-        <b>{percentage}%</b>
+        <b>{available ? `${percentage}%` : "Updating"}</b>
       </span>
-      <span className="promise-tracker__support">{percentage}% of the first circle complete</span>
+      <span className="promise-tracker__support">
+        {available ? `${percentage}% of the first circle complete` : "Tracker updating"}
+      </span>
     </div>
   );
 }

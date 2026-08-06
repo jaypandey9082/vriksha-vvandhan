@@ -5,8 +5,9 @@ import { HeroMedia } from "@/components/home/hero-media";
 import { PromiseRibbon } from "@/components/home/promise-ribbon";
 import { PromiseTracker } from "@/components/shared/promise-tracker";
 import { heroContent, heroPromiseImages, promiseMetric } from "@/content/campaign";
+import type { CampaignMetric } from "@/types/campaign";
 
-export function CampaignHero() {
+export function CampaignHero({ metric = promiseMetric }: { metric?: CampaignMetric }) {
   return (
     <section className="campaign-hero" id="movement" aria-labelledby="campaign-title">
       <div className="shell campaign-hero__inner">
@@ -18,7 +19,7 @@ export function CampaignHero() {
             <p className="campaign-hero__description">{heroContent.description}</p>
             <div className="campaign-hero__tracker">
               <p>Promise tracker</p>
-              <PromiseTracker metric={promiseMetric} />
+              <PromiseTracker metric={metric} />
             </div>
             <div className="campaign-hero__actions">
               <a className="button button--primary" href={heroContent.primaryCta.href}>
