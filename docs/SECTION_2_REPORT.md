@@ -61,7 +61,7 @@ The pre-Section-2.2 run `31003569033` reached both jobs but failed for two concr
 - The application job used Node 20 while the locked `jsdom@30.0.1` requires Node 22.22.2 or 24.15.0 and newer supported releases.
 - The database job started and reset Supabase, seeded buckets and passed database lint, but pgTAP schema assertions used ambiguous overloads and the Guardian uniqueness fixture violated workflow state before reaching the unique index.
 
-The workflow now supports `push`, `pull_request` and `workflow_dispatch`, uses Node 24, retains all five pgTAP suites, checks generated-type drift, and always stops its local ephemeral Supabase stack. Final post-push application/database results are recorded in the Section 2.2 delivery handoff.
+The workflow now supports `push`, `pull_request` and `workflow_dispatch`, uses Node 24, retains all five pgTAP suites, checks generated-type drift, and always stops its local ephemeral Supabase stack. Final run [`31080762156`](https://github.com/jaypandey9082/vriksha-vvandhan/actions/runs/31080762156) passed both jobs: the application job completed lint, typecheck, 31 unit tests, production build and 14 Playwright tests; the database job completed start, reset, bucket seed, lint, all 98 pgTAP assertions, linked/local structural type-drift comparison, typecheck and cleanup.
 
 ## Local database limitation
 

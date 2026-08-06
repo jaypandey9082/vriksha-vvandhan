@@ -46,6 +46,6 @@
 - [x] Database job uses an ephemeral local Supabase stack with reset, bucket seed, lint, pgTAP, type drift and typecheck.
 - [x] Database cleanup runs even after failure.
 - [x] No hosted staging secret is used by database CI.
-- [ ] Final application and database jobs are green for the pushed Section 2.2 commit.
+- [x] Final application and database jobs are green in CI run `31080762156` for the pushed Section 2.2 work.
 - [x] Local Docker limitation documented.
 - [x] No Section 3 feature added.
