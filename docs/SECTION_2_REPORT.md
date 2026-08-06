@@ -70,3 +70,7 @@ Docker-backed verification remains unavailable on this Mac because the Data volu
 ## Safety confirmations
 
 `.env.example` contains variable names only, `.env.local` is ignored and absent, and no project password, connection string, access token, publishable key or secret key is tracked. The hosted resource touched was the linked staging project only. No production resource and no Section 3 feature was created or modified.
+
+## Ownership-transfer verification
+
+On 2026-08-06, the repository remote, GitHub access and CI, linked company Supabase staging project, migrations, hosted database/RLS metadata, Storage buckets, generated types, environment safety, and application suite were reverified after ownership transfer. See `docs/COMPANY_OWNERSHIP_TRANSFER.md` for the evidence and remaining company-admin actions.
