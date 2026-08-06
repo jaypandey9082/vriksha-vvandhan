@@ -37,7 +37,7 @@ export async function updateSupabaseSession(request: NextRequest) {
 
   if (!data?.claims && request.nextUrl.pathname.startsWith("/admin")) {
     const signInUrl = request.nextUrl.clone();
-    signInUrl.pathname = "/auth";
+    signInUrl.pathname = "/auth/login";
     signInUrl.searchParams.set("next", request.nextUrl.pathname);
     return NextResponse.redirect(signInUrl);
   }
