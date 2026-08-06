@@ -54,6 +54,7 @@ select throws_ok($$select public.confirm_submission_rejection('51000000-0000-400
 select throws_ok($$select * from public.trash_submission('51000000-0000-4000-8000-000000000010')$$,'P0001','unauthorized_role','Reviewer cannot trash');
 select throws_ok($$select public.delete_trashed_submission('51000000-0000-4000-8000-000000000010','Reviewer cannot delete this record.')$$,'P0001','unauthorized_role','Reviewer cannot permanently delete');
 select throws_ok($$select public.manage_staff_profile('51000000-0000-4000-8000-000000000001','Reviewer','reviewer',true)$$,'P0001','unauthorized_role','Reviewer cannot manage staff');
+select throws_ok($$select public.update_campaign_settings(983,'Vriksha promises',true)$$,'P0001','unauthorized_role','Reviewer cannot change campaign settings');
 select throws_ok($$select * from public.publish_submission('51000000-0000-4000-8000-000000000010',9001,'v1','card/9001-v1.webp',640,800,1000,'full/9001-v1.webp',1200,1200,2000,'Tree')$$,'P0001','approval_conflict','Reviewer cannot publish a rejection recommendation');
 
 select lives_ok($$select * from public.publish_submission('51000000-0000-4000-8000-000000000012',9002,'v1','card/9002-v1.webp',640,800,1000,'full/9002-v1.webp',1200,1200,2000,'A tree protected by a Vriksha Guardian')$$,'Reviewer publishes Pending Review');
@@ -85,6 +86,8 @@ select is((select current_count from public.get_public_campaign_summary()),2::bi
 select throws_ok($$select public.delete_trashed_submission('51000000-0000-4000-8000-000000000012','Cannot delete active publication.')$$,'P0001','delete_requires_trash','permanent deletion requires Trash');
 
 select lives_ok($$select public.manage_staff_profile('51000000-0000-4000-8000-000000000001','Campaign Reviewer','reviewer',true)$$,'Admin edits existing staff profile');
+select lives_ok($$select public.update_campaign_settings(1000,'Tree promises',true)$$,'Admin may change campaign settings');
+select is((select target_count from public.campaign_settings where id=1),1000,'Admin setting change is stored');
 select throws_ok($$select public.manage_staff_profile('51000000-0000-4000-8000-000000000002','Section 4 Admin','admin',false)$$,'P0001','self_deactivation_forbidden','Admin cannot deactivate their own profile');
 select lives_ok($$select public.manage_staff_profile('51000000-0000-4000-8000-000000000003','Second Admin','reviewer',true)$$,'Admin may demote another Admin while one remains');
 select throws_ok($$select public.manage_staff_profile('51000000-0000-4000-8000-000000000002','Section 4 Admin','reviewer',true)$$,'P0001','final_admin_required','final active Admin cannot be demoted');

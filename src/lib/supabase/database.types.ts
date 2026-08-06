@@ -677,6 +677,14 @@ export type Database = {
           workflow_status: Database["public"]["Enums"]["submission_status"]
         }[]
       }
+      update_campaign_settings: {
+        Args: {
+          p_metric_label: string
+          p_submissions_open: boolean
+          p_target_count: number
+        }
+        Returns: undefined
+      }
       update_submission_review_fields: {
         Args: {
           p_display_name: string

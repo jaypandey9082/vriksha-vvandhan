@@ -386,6 +386,26 @@ begin
   if v_before.active is distinct from p_active then insert into public.audit_logs(actor_id,action,entity_type,entity_id,before_data,after_data) values(v_actor,'staff.active_changed','staff_profile',p_staff_id,jsonb_build_object('active',v_before.active),jsonb_build_object('active',p_active)); end if;
 end; $$;
 
+create function public.update_campaign_settings(
+  p_target_count integer,
+  p_metric_label text,
+  p_submissions_open boolean
+)
+returns void language plpgsql security definer set search_path = '' as $$
+declare v_actor uuid := auth.uid(); v_label text := btrim(p_metric_label); v_before jsonb;
+begin
+  if not coalesce((select private.is_admin()), false) then raise exception using errcode='P0001', message='unauthorized_role'; end if;
+  if p_target_count is null or p_target_count <= 0 or v_label is null or length(v_label) not between 1 and 80 then
+    raise exception using errcode='P0001', message='invalid_campaign_settings';
+  end if;
+  select jsonb_build_object('target_count',target_count,'metric_label',metric_label,'submissions_open',submissions_open)
+    into v_before from public.campaign_settings where id=1 for update;
+  update public.campaign_settings set target_count=p_target_count,metric_label=v_label,submissions_open=p_submissions_open where id=1;
+  insert into public.audit_logs(actor_id,action,entity_type,entity_id,before_data,after_data)
+  values(v_actor,'campaign.settings_changed','campaign_settings',null,v_before,
+    jsonb_build_object('target_count',p_target_count,'metric_label',v_label,'submissions_open',p_submissions_open));
+end; $$;
+
 create function public.get_public_campaign_summary()
 returns table(current_count bigint,target_count integer,metric_label text,submissions_open boolean)
 language sql stable security definer set search_path = '' as $$
@@ -425,6 +445,7 @@ revoke all on function public.restore_nonpublished_submission(uuid) from public,
 revoke all on function public.restore_published_submission(uuid,text,text,integer,integer,bigint,text,integer,integer,bigint) from public,anon;
 revoke all on function public.delete_trashed_submission(uuid,text) from public,anon;
 revoke all on function public.manage_staff_profile(uuid,text,public.staff_role,boolean) from public,anon;
+revoke all on function public.update_campaign_settings(integer,text,boolean) from public,anon;
 grant execute on function public.update_submission_review_fields(uuid,text,numeric,numeric) to authenticated;
 grant execute on function public.recommend_submission_rejection(uuid,text) to authenticated;
 grant execute on function public.confirm_submission_rejection(uuid,text) to authenticated;
@@ -434,6 +455,7 @@ grant execute on function public.restore_nonpublished_submission(uuid) to authen
 grant execute on function public.restore_published_submission(uuid,text,text,integer,integer,bigint,text,integer,integer,bigint) to authenticated;
 grant execute on function public.delete_trashed_submission(uuid,text) to authenticated;
 grant execute on function public.manage_staff_profile(uuid,text,public.staff_role,boolean) to authenticated;
+grant execute on function public.update_campaign_settings(integer,text,boolean) to authenticated;
 
 revoke all on function public.get_public_campaign_summary() from public;
 revoke all on function public.list_public_movement_entries(integer,timestamptz,bigint) from public;
