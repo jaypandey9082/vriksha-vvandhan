@@ -5,6 +5,13 @@ import { dirname, resolve } from "node:path";
 const committedPath = resolve("src/lib/supabase/database.types.ts");
 const temporaryPath = resolve(".tmp/database.types.generated.ts");
 
+const linkedPostgrestMetadata =
+  /  \/\/ Allows to automatically instantiate createClient with right options\n  \/\/ instead of createClient<Database, \{ PostgrestVersion: 'XX' \}>\(URL, KEY\)\n  __InternalSupabase: \{\n    PostgrestVersion: "[^"]+"\n  \}\n/;
+
+function normalizeServiceMetadata(types) {
+  return types.replace(linkedPostgrestMetadata, "");
+}
+
 function formatFirstDifference(committed, generated) {
   const committedLines = committed.split("\n");
   const generatedLines = generated.split("\n");
@@ -50,10 +57,12 @@ try {
     process.exitCode = result.status ?? 1;
   } else {
     writeFileSync(temporaryPath, result.stdout);
-    const committed = existsSync(committedPath)
-      ? readFileSync(committedPath, "utf8")
-      : "";
-    const generated = readFileSync(temporaryPath, "utf8");
+    const committed = normalizeServiceMetadata(
+      existsSync(committedPath) ? readFileSync(committedPath, "utf8") : "",
+    );
+    const generated = normalizeServiceMetadata(
+      readFileSync(temporaryPath, "utf8"),
+    );
 
     if (committed !== generated) {
       process.stderr.write(
