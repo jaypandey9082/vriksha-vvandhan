@@ -23,7 +23,7 @@ type StaffProfileRecord = {
 export type StaffDalClient = {
   auth: {
     getClaims: () => Promise<{
-      data: { claims: VerifiedClaims | null };
+      data: { claims: VerifiedClaims | null } | null;
       error: unknown;
     }>;
   };
@@ -48,7 +48,7 @@ export async function resolveStaffSession(
   client: StaffDalClient,
 ): Promise<StaffResolution> {
   const { data: claimsData, error: claimsError } = await client.auth.getClaims();
-  const userId = claimsData.claims?.sub;
+  const userId = claimsData?.claims?.sub;
 
   if (claimsError || !userId) {
     return { kind: "unauthenticated" };
@@ -69,7 +69,7 @@ export async function resolveStaffSession(
     session: {
       userId: profile.id,
       email:
-        typeof claimsData.claims?.email === "string"
+        typeof claimsData?.claims?.email === "string"
           ? claimsData.claims.email
           : null,
       displayName: profile.display_name,

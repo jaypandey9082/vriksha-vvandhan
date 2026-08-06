@@ -10,6 +10,7 @@ import { ForbiddenError, UnauthenticatedError } from "@/lib/auth/errors";
 function clientFor(options: {
   claims?: { sub?: string; email?: unknown } | null;
   claimsError?: unknown;
+  nullClaimsData?: boolean;
   profile?: {
     id: string;
     display_name: string;
@@ -21,7 +22,7 @@ function clientFor(options: {
   return {
     auth: {
       getClaims: async () => ({
-        data: { claims: options.claims ?? null },
+        data: options.nullClaimsData ? null : { claims: options.claims ?? null },
         error: options.claimsError ?? null,
       }),
     },
@@ -46,6 +47,7 @@ describe("staff DAL resolution", () => {
     await expect(
       requireStaffWithClient(clientFor({ claims: null })),
     ).rejects.toBeInstanceOf(UnauthenticatedError);
+    await expect(resolveStaffSession(clientFor({ nullClaimsData: true }))).resolves.toEqual({ kind: "unauthenticated" });
   });
 
   it("rejects users without a profile and inactive staff", async () => {
