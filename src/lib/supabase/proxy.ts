@@ -4,6 +4,10 @@ import { NextResponse, type NextRequest } from "next/server";
 import { hasPublicSupabaseEnvironment } from "@/lib/env/public";
 
 export async function updateSupabaseSession(request: NextRequest) {
+  const testRole = request.cookies.get("vriksha-e2e-staff-role")?.value;
+  if (process.env.NODE_ENV !== "production" && process.env.PLAYWRIGHT_STAFF_ADAPTER === "1" && request.nextUrl.pathname.startsWith("/admin") && (testRole === "admin" || testRole === "reviewer")) {
+    return NextResponse.next({ request });
+  }
   if (!hasPublicSupabaseEnvironment()) {
     return NextResponse.next({ request });
   }

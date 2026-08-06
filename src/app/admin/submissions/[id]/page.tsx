@@ -15,7 +15,7 @@ type DetailRecord = {
 
 function one<T>(value: T | T[]): T { return Array.isArray(value) ? value[0] : value; }
 
-export default async function SubmissionDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ success?: string; cleanup?: string }> }) {
+export default async function SubmissionDetailPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ success?: string; cleanup?: string; testAction?: string }> }) {
   const { id } = await params;
   const result = await getSubmissionDetail(id);
   if (!result) notFound();
@@ -30,6 +30,7 @@ export default async function SubmissionDetailPage({ params, searchParams }: { p
   return <>
     <header className="admin-page-header"><div><p>Submission detail</p><h1>{record.display_name ?? "Participant submission"}</h1></div><span className={`status-badge status-badge--${record.status}`}>{record.status.replaceAll("_", " ")}</span></header>
     {success === "published" && <div className="admin-success" role="status">Published successfully. Guardian #{record.guardian_number} is now on the Movement Wall.</div>}
+    {query.testAction && <div className="admin-success" role="status">Test moderation action completed: {query.testAction.replaceAll("-", " ")}.</div>}
     {query.cleanup === "required" && <div className="admin-notice" role="alert">The record is safely hidden, but its public image cleanup needs an Admin retry before permanent deletion.</div>}
     <div className="admin-detail-grid">
       <section className="admin-panel admin-review-image"><h2>Private original</h2>{result.reviewImage ? <><img src={result.reviewImage.signedUrl} alt="Private submitted photograph for staff review" /><small>Private signed preview · expires in 5 minutes</small></> : <p>Private preview is temporarily unavailable.</p>}</section>

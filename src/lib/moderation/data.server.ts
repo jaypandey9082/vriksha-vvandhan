@@ -3,6 +3,20 @@ import "server-only";
 import { requireStaff } from "@/lib/auth/dal";
 import { createOriginalReviewUrl } from "@/lib/storage/signed-review-url.server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { isStaffE2EAdapterEnabled } from "@/lib/testing/staff-adapter";
+
+const E2E_PENDING_ID = "e1000000-0000-4000-8000-000000000001";
+const E2E_RECOMMENDED_ID = "e1000000-0000-4000-8000-000000000002";
+const E2E_TRASHED_ID = "e1000000-0000-4000-8000-000000000003";
+const E2E_SUBMITTED_AT = "2026-08-06T10:00:00.000Z";
+
+function e2eQueueFixtures(): QueueSubmission[] {
+  return [
+    { id:E2E_PENDING_ID,status:"pending_review",display_name:"Asha Test",submitted_at:E2E_SUBMITTED_AT,guardian_number:null,source:"internal_test",is_test:true,trashed_at:null,thumbnailUrl:"/campaign/guardian-preview.webp",reviewAgeHours:2 },
+    { id:E2E_RECOMMENDED_ID,status:"rejection_pending_admin",display_name:"Ravi Test",submitted_at:E2E_SUBMITTED_AT,guardian_number:null,source:"internal_test",is_test:true,trashed_at:null,thumbnailUrl:"/campaign/guardian-preview.webp",reviewAgeHours:2 },
+    { id:E2E_TRASHED_ID,status:"published",display_name:"Meera Test",submitted_at:E2E_SUBMITTED_AT,guardian_number:77,source:"internal_test",is_test:true,trashed_at:"2026-08-06T11:00:00.000Z",thumbnailUrl:"/campaign/guardian-preview.webp",reviewAgeHours:2 },
+  ];
+}
 
 export type QueueSubmission = {
   id: string; status: string; display_name: string | null; submitted_at: string | null;
@@ -12,6 +26,7 @@ export type QueueSubmission = {
 
 export async function getOldestUnreviewedAgeHours() {
   await requireStaff();
+  if (isStaffE2EAdapterEnabled()) return 2;
   const client = await createServerSupabaseClient();
   const { data } = await client.from("submissions").select("submitted_at").eq("status", "pending_review").is("trashed_at", null).order("submitted_at", { ascending: true, nullsFirst: false }).limit(1).maybeSingle();
   return data?.submitted_at ? Math.max(0, Math.floor((Date.now() - new Date(data.submitted_at).getTime()) / 3_600_000)) : null;
@@ -19,6 +34,7 @@ export async function getOldestUnreviewedAgeHours() {
 
 export async function getSubmissionCounts() {
   const session = await requireStaff();
+  if (isStaffE2EAdapterEnabled()) return { pending_review:1,rejection_pending_admin:1,published:1,rejected:0,trashed:1,certificate_not_started:1,email_not_started_or_failed:1 };
   const client = await createServerSupabaseClient();
   const statuses = ["pending_review", "rejection_pending_admin", "published", "rejected"] as const;
   const pairs = await Promise.all(statuses.map(async (status) => {
@@ -45,6 +61,13 @@ export async function getSubmissionCounts() {
 
 export async function listSubmissions(status: string, search: string) {
   const session = await requireStaff();
+  if (isStaffE2EAdapterEnabled()) {
+    const fixtures = e2eQueueFixtures();
+    if (status === "trashed") return session.role === "admin" ? fixtures.filter((item) => item.trashed_at) : [];
+    if (status === "all") return fixtures.filter((item) => !item.trashed_at);
+    if (status === "test") return fixtures;
+    return fixtures.filter((item) => !item.trashed_at && item.status === status && (!search || item.display_name?.toLowerCase().includes(search.toLowerCase())));
+  }
   const client = await createServerSupabaseClient();
   const normalizedSearch = search.trim();
   let emailSubmissionIds: string[] | null = null;
@@ -82,6 +105,19 @@ export async function listSubmissions(status: string, search: string) {
 
 export async function getSubmissionDetail(id: string) {
   const session = await requireStaff();
+  if (isStaffE2EAdapterEnabled()) {
+    const fixture = e2eQueueFixtures().find((item) => item.id === id);
+    if (!fixture) return null;
+    const record = {
+      id:fixture.id,status:fixture.status,display_name:fixture.display_name,submitted_at:fixture.submitted_at,guardian_number:fixture.guardian_number,
+      rejection_comment:fixture.status === "rejection_pending_admin" ? "Please review this generated test image." : null,
+      rejection_recommended_at:fixture.status === "rejection_pending_admin" ? "2026-08-06T11:00:00.000Z" : null,rejected_at:null,trashed_at:fixture.trashed_at,
+      submission_consents:{publication_consent:true,terms_accepted:true,accepted_at:E2E_SUBMITTED_AT},
+      submission_media:{status:fixture.status === "published" ? "published" : "uploaded",original_path:`${fixture.id}/original.webp`,original_mime_type:"image/webp",original_bytes:2048,original_width:900,original_height:900,focal_x:.5,focal_y:.5,published_card_path:null,published_full_path:null},
+      certificates:{status:"not_started"},email_deliveries:[{kind:"approval_certificate",status:"not_started"}],
+    };
+    return { record, reviewImage:{bucket:"submission-originals",path:`${fixture.id}/original.webp`,signedUrl:"/campaign/guardian-preview.webp",expiresIn:300}, email:session.role === "admin" ? "participant@example.test" : null, audit:session.role === "admin" ? [{id:1,action:"submission.test_fixture",created_at:E2E_SUBMITTED_AT}] : [], session };
+  }
   const client = await createServerSupabaseClient();
   const { data, error } = await client.from("submissions").select("id,status,display_name,submitted_at,guardian_number,rejection_comment,rejection_recommended_at,rejected_at,trashed_at,submission_consents(publication_consent,terms_accepted,accepted_at),submission_media(status,original_path,original_mime_type,original_bytes,original_width,original_height,focal_x,focal_y,published_card_path,published_full_path),certificates(status),email_deliveries(kind,status)").eq("id", id).maybeSingle();
   if (error || !data) return null;

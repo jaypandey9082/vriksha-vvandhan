@@ -8,7 +8,7 @@ export default function NotFound() {
       <LogoLockup />
       <p>404</p>
       <h1>This path has not grown yet.</h1>
-      <p>The Section 1 campaign experience lives on the homepage.</p>
+      <p>The campaign experience lives on the homepage.</p>
       <Link className="button button--primary" href="/">
         Return home
       </Link>

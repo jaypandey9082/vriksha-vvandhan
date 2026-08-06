@@ -1,12 +1,17 @@
 import { updateCampaignSettingsAction } from "@/app/admin/actions";
-import { requireRole } from "@/lib/auth/dal";
+import { notFound } from "next/navigation";
+import { requireStaff } from "@/lib/auth/dal";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { isStaffE2EAdapterEnabled } from "@/lib/testing/staff-adapter";
 
 export default async function AdminSettingsPage({ searchParams }: { searchParams: Promise<{ saved?: string }> }) {
-  await requireRole("admin");
-  const client = await createServerSupabaseClient();
-  const { data, error } = await client.from("campaign_settings").select("target_count,metric_label,submissions_open,updated_at").eq("id", 1).single();
-  if (error) throw new Error("Unable to load campaign settings.");
+  const session = await requireStaff();
+  if (session.role !== "admin") notFound();
+  const result = isStaffE2EAdapterEnabled()
+    ? { data:{target_count:983,metric_label:"Vriksha promises",submissions_open:true,updated_at:"2026-08-06T10:00:00.000Z"}, error:null }
+    : await (await createServerSupabaseClient()).from("campaign_settings").select("target_count,metric_label,submissions_open,updated_at").eq("id", 1).single();
+  if (result.error) throw new Error("Unable to load campaign settings.");
+  const data = result.data;
   const saved = (await searchParams).saved === "true";
   return <>
     <header className="admin-page-header"><div><p>Campaign control</p><h1>Settings</h1></div></header>

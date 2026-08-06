@@ -13,10 +13,12 @@ import { buildPublishedCardPath, buildPublishedFullPath, parseStoredOriginalPath
 import { callUntypedRpc } from "@/lib/supabase/rpc.server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getServiceSupabaseClient } from "@/lib/supabase/service";
+import { isStaffE2EAdapterEnabled } from "@/lib/testing/staff-adapter";
 
 export async function saveReviewFieldsAction(formData: FormData) {
   await requireStaff();
   const input = reviewFieldsSchema.parse({ submissionId: formData.get("submissionId"), displayName: formData.get("displayName"), focalX: formData.get("focalX"), focalY: formData.get("focalY") });
+  if (isStaffE2EAdapterEnabled()) redirect(`/admin/submissions/${input.submissionId}?testAction=fields-saved`);
   const client = await createServerSupabaseClient();
   const { error } = await callUntypedRpc(client, "update_submission_review_fields", { p_submission_id: input.submissionId, p_display_name: input.displayName, p_focal_x: input.focalX, p_focal_y: input.focalY });
   if (error) throw new Error(error.message);
@@ -26,6 +28,7 @@ export async function saveReviewFieldsAction(formData: FormData) {
 export async function approveSubmissionAction(formData: FormData) {
   const session = await requireStaff();
   const submissionId = submissionIdSchema.parse(formData.get("submissionId"));
+  if (isStaffE2EAdapterEnabled()) redirect(`/admin/submissions/${submissionId}?success=published`);
   const client = await createServerSupabaseClient();
   await publishSubmission(client, session, submissionId);
   redirect(`/admin/submissions/${submissionId}?success=published`);
@@ -34,6 +37,7 @@ export async function approveSubmissionAction(formData: FormData) {
 export async function recommendRejectionAction(formData: FormData) {
   await requireRole("reviewer");
   const input = rejectionSchema.parse({ submissionId: formData.get("submissionId"), comment: formData.get("comment") });
+  if (isStaffE2EAdapterEnabled()) redirect(`/admin/submissions/${input.submissionId}?testAction=recommended`);
   const client = await createServerSupabaseClient();
   const { error } = await callUntypedRpc(client, "recommend_submission_rejection", { p_submission_id: input.submissionId, p_comment: input.comment });
   if (error) throw new Error(error.message);
@@ -43,6 +47,7 @@ export async function recommendRejectionAction(formData: FormData) {
 export async function confirmRejectionAction(formData: FormData) {
   await requireRole("admin");
   const input = rejectionSchema.parse({ submissionId: formData.get("submissionId"), comment: formData.get("comment") });
+  if (isStaffE2EAdapterEnabled()) redirect(`/admin/submissions/${input.submissionId}?testAction=rejected`);
   const client = await createServerSupabaseClient();
   const { error } = await callUntypedRpc(client, "confirm_submission_rejection", { p_submission_id: input.submissionId, p_comment: input.comment });
   if (error) throw new Error(error.message);
@@ -52,6 +57,7 @@ export async function confirmRejectionAction(formData: FormData) {
 export async function trashSubmissionAction(formData: FormData) {
   await requireRole("admin");
   const id = submissionIdSchema.parse(formData.get("submissionId"));
+  if (isStaffE2EAdapterEnabled()) redirect(`/admin/submissions/${id}?testAction=trashed`);
   const client = await createServerSupabaseClient();
   const { data, error } = await callUntypedRpc<Array<{ workflow_status: string; card_path: string | null; full_path: string | null }>>(client, "trash_submission", { p_submission_id: id });
   if (error) throw new Error(error.message);
@@ -68,6 +74,7 @@ export async function trashSubmissionAction(formData: FormData) {
 export async function restoreNonpublishedAction(formData: FormData) {
   await requireRole("admin");
   const id = submissionIdSchema.parse(formData.get("submissionId"));
+  if (isStaffE2EAdapterEnabled()) redirect(`/admin/submissions/${id}?testAction=restored`);
   const client = await createServerSupabaseClient();
   const { error } = await callUntypedRpc(client, "restore_nonpublished_submission", { p_submission_id: id });
   if (error) throw new Error(error.message);
@@ -77,6 +84,7 @@ export async function restoreNonpublishedAction(formData: FormData) {
 export async function restorePublishedAction(formData: FormData) {
   await requireRole("admin");
   const id = submissionIdSchema.parse(formData.get("submissionId"));
+  if (isStaffE2EAdapterEnabled()) redirect(`/admin/submissions/${id}?testAction=restored`);
   const client = await createServerSupabaseClient();
   const queryClient = client as unknown as { from: (table: string) => { select: (columns: string) => { eq: (column: string, value: string) => { maybeSingle: () => Promise<{ data: { guardian_number: number; trashed_at: string | null; submission_media: { original_path: string; focal_x: number | null; focal_y: number | null } | { original_path: string; focal_x: number | null; focal_y: number | null }[] } | null }> } } } };
   const { data } = await queryClient.from("submissions").select("guardian_number,trashed_at,submission_media(original_path,focal_x,focal_y)").eq("id", id).maybeSingle();
@@ -107,6 +115,7 @@ export async function restorePublishedAction(formData: FormData) {
 export async function deleteTrashedAction(formData: FormData) {
   await requireRole("admin");
   const input = deletionSchema.parse({ submissionId: formData.get("submissionId"), reason: formData.get("reason"), confirmation: formData.get("confirmation") });
+  if (isStaffE2EAdapterEnabled()) redirect("/admin/submissions?status=trashed&testAction=deleted");
   const client = await createServerSupabaseClient();
   const queryClient = client as unknown as { from: (table: string) => { select: (columns: string) => { eq: (column: string, value: string) => { maybeSingle: () => Promise<{ data: { submission_media: { original_path: string; published_card_path: string | null; published_full_path: string | null } | { original_path: string; published_card_path: string | null; published_full_path: string | null }[]; certificates: { object_path: string | null } | { object_path: string | null }[] } | null }> } } } };
   const { data } = await queryClient.from("submissions").select("submission_media(original_path,published_card_path,published_full_path),certificates(object_path)").eq("id", input.submissionId).maybeSingle();
@@ -138,6 +147,7 @@ export async function manageStaffAction(formData: FormData) {
   const id = submissionIdSchema.parse(formData.get("staffId"));
   const role = formData.get("role");
   if (role !== "admin" && role !== "reviewer") throw new Error("invalid_staff_profile");
+  if (isStaffE2EAdapterEnabled()) redirect("/admin/team?saved=true");
   const client = await createServerSupabaseClient();
   const { error } = await callUntypedRpc(client, "manage_staff_profile", { p_staff_id: id, p_display_name: String(formData.get("displayName") ?? ""), p_role: role, p_active: formData.get("active") === "on" });
   if (error) throw new Error(error.message);
@@ -149,6 +159,7 @@ export async function updateCampaignSettingsAction(formData: FormData) {
   const targetCount = Number(formData.get("targetCount"));
   const metricLabel = String(formData.get("metricLabel") ?? "").trim();
   if (!Number.isInteger(targetCount) || targetCount <= 0 || !metricLabel || metricLabel.length > 80) throw new Error("invalid_campaign_settings");
+  if (isStaffE2EAdapterEnabled()) redirect("/admin/settings?saved=true");
   const client = await createServerSupabaseClient();
   const { error } = await callUntypedRpc(client, "update_campaign_settings", { p_target_count:targetCount,p_metric_label:metricLabel,p_submissions_open:formData.get("submissionsOpen")==="on" });
   if (error) throw new Error(error.message);

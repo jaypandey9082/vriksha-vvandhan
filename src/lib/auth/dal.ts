@@ -1,9 +1,12 @@
 import "server-only";
 
+import { cookies } from "next/headers";
+
 import { ForbiddenError, UnauthenticatedError } from "@/lib/auth/errors";
 import { hasRole } from "@/lib/auth/permissions";
 import type { StaffRole, StaffSession } from "@/lib/auth/types";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { isStaffE2EAdapterEnabled, STAFF_E2E_COOKIE, staffE2ESession } from "@/lib/testing/staff-adapter";
 
 type VerifiedClaims = {
   sub?: string;
@@ -83,6 +86,10 @@ export async function getOptionalStaffSessionWithClient(
 }
 
 export async function getOptionalStaffSession(): Promise<StaffSession | null> {
+  if (isStaffE2EAdapterEnabled()) {
+    const role = (await cookies()).get(STAFF_E2E_COOKIE)?.value;
+    if (role === "admin" || role === "reviewer") return staffE2ESession(role);
+  }
   const client = await createServerSupabaseClient();
   return getOptionalStaffSessionWithClient(
     client as unknown as StaffDalClient,
@@ -106,6 +113,11 @@ export async function requireStaffWithClient(
 }
 
 export async function requireStaff(): Promise<StaffSession> {
+  if (isStaffE2EAdapterEnabled()) {
+    const role = (await cookies()).get(STAFF_E2E_COOKIE)?.value;
+    if (role === "admin" || role === "reviewer") return staffE2ESession(role);
+    throw new UnauthenticatedError();
+  }
   const client = await createServerSupabaseClient();
   return requireStaffWithClient(client as unknown as StaffDalClient);
 }
