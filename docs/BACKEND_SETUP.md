@@ -25,7 +25,7 @@ npm run typecheck
 npm run db:stop
 ```
 
-`db:reset` applies every migration to a fresh local database and runs the intentionally participant-free seed. Bucket seeding reads the three definitions from `supabase/config.toml`. `db:types:check` generates an ignored temporary file and fails on structural drift instead of overwriting the committed linked snapshot. The comparison ignores only the generated `__InternalSupabase.PostgrestVersion` block because linked generation includes the hosted service version while local generation omits it; tables, relationships, functions and enums remain strict.
+`db:reset` applies every migration to a fresh local database and runs the intentionally participant-free seed. Bucket seeding reads the three definitions from `supabase/config.toml`. `db:types:check` generates an ignored temporary file and fails on structural drift instead of overwriting the committed linked snapshot. The comparison ignores only the generated `__InternalSupabase.PostgrestVersion` block because linked generation includes the hosted service version while local generation omits it, and canonicalizes final line terminators because the two generation modes emit different trailing newline counts. Tables, relationships, functions and enums remain strict.
 
 The current Mac cannot run this sequence until sufficient disk space is available for Docker. GitHub Actions runs the same database checks against a local ephemeral stack and always stops it.
 

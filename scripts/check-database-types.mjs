@@ -9,7 +9,9 @@ const linkedPostgrestMetadata =
   /  \/\/ Allows to automatically instantiate createClient with right options\n  \/\/ instead of createClient<Database, \{ PostgrestVersion: 'XX' \}>\(URL, KEY\)\n  __InternalSupabase: \{\n    PostgrestVersion: "[^"]+"\n  \}\n/;
 
 function normalizeServiceMetadata(types) {
-  return types.replace(linkedPostgrestMetadata, "");
+  const withoutLinkedServiceVersion = types.replace(linkedPostgrestMetadata, "");
+
+  return `${withoutLinkedServiceVersion.replace(/\n+$/, "")}\n`;
 }
 
 function formatFirstDifference(committed, generated) {
