@@ -15,10 +15,18 @@
 - `src/lib/supabase` — separate browser, request-scoped server, trusted service and scoped Proxy helpers.
 - `src/lib/auth` — server-only staff DAL, typed errors and pure Reviewer/Admin permissions.
 - `src/lib/storage` — fixed bucket names, immutable path validation and unexposed signed URL helpers.
+- `src/components/submission` — the isolated public form, photo controls, status, retry, availability and success states.
+- `src/lib/submissions` — shared validation, in-memory request capability, browser image preparation, origin checks, stable errors, private upload orchestration and trusted server verification.
 
 ## Section 2 backend boundary
 
 The public application imports none of the backend modules above. The static homepage and `417 / 983` seed tracker therefore stay prerendered. Future internal routes pass through the Next.js 16 Proxy for session refresh, but authorization is re-verified in the Data Access Layer and database RLS. The service client is a separately marked server-only boundary because its secret key bypasses RLS.
+
+## Section 3 submission boundary
+
+The homepage remains a Server Component tree. `/join` performs one server-side availability read and renders either a small Client Component form or a fail-closed state. Only the active form holds participant details, consent, the raw request token, and prepared image; none is persisted in browser storage.
+
+The prepare and finalise Route Handlers run explicitly on Node.js. They enforce same-origin JSON requests, strict Zod contracts, stable public errors, and server-only service access. The browser uploads directly with a scoped signed token, but only server-verified bytes can enter Pending Review through the atomic finalisation RPC.
 
 ## Visual-system boundary
 
@@ -38,7 +46,7 @@ All homepage sections—including the Living Promise Hero and `PromiseRibbon` wr
 
 - Replace `promiseMetric` with approved server-side campaign data without changing `PromiseTracker`.
 - Replace `seedMovementStories` with moderated public records after the submission and moderation system exists.
-- Add the upload journey behind the current `#how-it-works` section while preserving current anchor destinations.
+- Section 4 consumes Pending Review records through a protected staff workflow and creates approved public variants.
 - Replace the certificate concept with an approved generation/download workflow.
 - Add approved Ped Ka Paigaam audio sources and transcripts to the existing preview model.
 - Replace the temporary campaign text lockup with the approved wordmark asset.

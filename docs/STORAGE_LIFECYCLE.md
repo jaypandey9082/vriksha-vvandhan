@@ -19,4 +19,6 @@ Paths contain no names, emails, locations, free-form input or original filenames
 
 ## Lifecycle
 
-Section 3 will request a non-overwriting signed upload for the generated private path. Section 4 will use a short-lived signed URL for authorized review, create approved public card/full variants through the Storage API and record their paths. Trash retains objects so a record can be restored. Permanent deletion removes private original, public variants and certificate through the API before deleting the database record. Section 5 will create the private certificate object; Section 2 creates no file.
+Section 3 requests a non-overwriting signed upload for the generated private path, then downloads and verifies the stored bytes before Pending Review. Expired Draft cleanup removes any matching private object through the Storage API before deleting the Draft; a 24–48-hour manual cadence is recommended until Section 6 scheduling. Invalid prepared objects are also removed with their Draft, while transient verification failures preserve both for retry.
+
+Section 4 will use a short-lived signed URL for authorized review, create approved public card/full variants through the Storage API and record their paths. Trash retains objects so a record can be restored. Permanent deletion removes private original, public variants and certificate through the API before deleting the database record. Section 5 will create the private certificate object.

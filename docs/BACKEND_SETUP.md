@@ -62,6 +62,30 @@ npx supabase gen types --lang typescript --linked --schema public,private > src/
 
 After generation, run the complete application suite and inspect the diff before committing.
 
+## Section 3 staging operations
+
+Keep the four real staging application values in ignored `.env.local`. Guarded smoke and cleanup commands also require `SUPABASE_TARGET_ENVIRONMENT=staging`.
+
+After database CI is green:
+
+```bash
+npx supabase db push --linked --dry-run
+npx supabase db push --linked
+npx supabase gen types --lang typescript --linked --schema public,private > src/lib/supabase/database.types.ts
+npm run test:staging:submission
+```
+
+The smoke command temporarily opens staging submissions, creates a generated non-personal image, exercises prepare → signed upload → finalise, verifies Pending Review/private Storage/no Guardian/no count change, then deletes the object/row and restores the original campaign-open state. It refuses to run unless staging is explicitly marked. Never run it against production.
+
+Expired Drafts can be inspected and removed in bounded batches:
+
+```bash
+npm run cleanup:drafts:dry-run
+npm run cleanup:drafts
+```
+
+The first command is read-only. The second removes a private object through the Storage API before deleting the still-expired Draft. Run manually every 24–48 hours; scheduling remains Section 6.
+
 ## Verified staging buckets
 
 - `submission-originals`: private, 15 MiB, JPEG/PNG/WebP/HEIC/HEIF.

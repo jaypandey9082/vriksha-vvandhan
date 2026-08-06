@@ -1,6 +1,6 @@
 # Internal Product Flow
 
-This reference explains the planned campaign operation for Mirchi teams. Section 2 establishes the protected foundation; the public form and staff screens arrive later.
+This reference explains the campaign operation for Mirchi teams. Sections 1 and 2 establish the public and protected foundations. Section 3 now implements the private participant form and Pending Review handoff; staff screens arrive in Section 4.
 
 ## What participants do
 
@@ -12,11 +12,11 @@ A participant provides only:
 - Publication consent
 - Terms acceptance
 
-They receive a submission confirmation but do not create an account. Their email and original photograph remain private.
+They receive an on-screen submission confirmation but do not create an account. Their email and original photograph remain private. Section 3 creates an unsent delivery placeholder only; no participant email is sent yet.
 
 ## Main flow
 
-Participant submits → Reviewer checks → **Approve** or **Recommend Rejection** → if recommended, **Rejection Awaiting Admin** → Admin **Confirms Rejection** or **Approves Instead**
+Participant submits → **Pending Review** → Reviewer checks → **Approve** or **Recommend Rejection** → if recommended, **Rejection Awaiting Admin** → Admin **Confirms Rejection** or **Approves Instead**
 
 An Admin may also reject directly. Every recommendation or direct rejection requires a clear comment intended for the participant. There is no Return to Reviewer option.
 

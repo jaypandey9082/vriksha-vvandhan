@@ -16,8 +16,8 @@
 
 ## Still unresolved
 
-1. Final publication-consent and terms wording, including version ownership.
-2. Retention periods for drafts, originals, rejected records, Trash, audit records and backups.
+1. Final publication-consent and campaign-terms wording; Section 3 currently records staging version `staging-2026-08-v1`.
+2. Privacy and retention periods for originals, rejected records, Trash, audit records and backups; Drafts currently expire after 24 hours.
 3. Final submission, approval/certificate and rejection email templates.
 4. Approved sending domain, sender identity and reply handling.
 5. Campaign geography: India-wide, Mumbai-only or city-by-city.
@@ -25,3 +25,5 @@
 7. Celebrity, campaign photography, video and deck-derived media rights for public web use.
 8. Approved standalone Vriksha Vvandhan wordmark, icon and lockup rules.
 9. Behaviour after the `983` target is reached, including whether submissions continue and how progress is shown.
+10. Minor-participant policy and final image/media-rights approval.
+11. Production project, production rate limiting, and Turnstile policy.

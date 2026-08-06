@@ -13,7 +13,7 @@
 ## Tables and relationships
 
 - `staff_profiles` extends selected Supabase Auth users with an active Reviewer/Admin role.
-- `campaign_settings` is the `id = 1` singleton containing target, label and submission-open switch. No stored current count exists.
+- `campaign_settings` is the `id = 1` singleton containing target, label, submission-open switch, Draft TTL, and rolling per-email limit. No stored current count exists.
 - `submissions` owns workflow, publication, rejection, test, Guardian and Trash state.
 - `submission_contacts` is a one-to-one private email record.
 - `submission_consents` is one-to-one versioned acceptance evidence.
@@ -33,3 +33,7 @@ Draft may be incomplete. Pending Review requires submitted display data and acce
 ## Privacy, test and Trash rules
 
 Email is separated from publishable content. Signed URLs/tokens and image binaries are never stored. `internal_test` records use `is_test = true` and `counts_toward_goal = false`; test records cannot publish. Trash is represented by paired `trashed_at`/`trashed_by`, not a workflow status, so restoration preserves the prior state.
+
+## Section 3 public transaction
+
+`submissions.public_request_token_hash` stores only the lowercase SHA-256 capability hash and is unique when present. The prepare RPC creates a Draft, private contact, versioned consent, and fixed reserved-media path atomically. The finalise RPC accepts only server-derived verified metadata, moves the Draft to Pending Review, and creates one unsent `submission_received` delivery placeholder. Pending Review has no Guardian number, certificate row, publication timestamp, or public-count effect.
