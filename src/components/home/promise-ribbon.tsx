@@ -13,6 +13,7 @@ export function PromiseRibbon({ heading, images }: PromiseRibbonProps) {
       <div className="promise-ribbon__heading">
         <span aria-hidden="true" />
         <h2 id="promise-ribbon-title">{heading}</h2>
+        <i aria-hidden="true" />
       </div>
       <PromiseReel images={images} />
     </section>

@@ -48,9 +48,8 @@ export type CampaignLink = {
 };
 
 export type HeroContent = {
-  eyebrow: string;
   title: string;
-  description: string;
+  tagline: string;
   primaryCta: CampaignLink;
   secondaryCta: CampaignLink;
   ribbonLabel: string;

@@ -1,56 +1,59 @@
-# Section 1.1 Hero Redesign
+# Homepage Campaign Hero
 
-## Original limitations
+## Visual direction
 
-The Section 1 hero placed its message before the campaign identity, switched to two columns at portrait-tablet widths, overlaid the tracker on the photograph and surrounded it with circular Promise Halo crops. That composition made the Mirchi and Vriksha Vvandhan pairing too quiet, compressed the 768px layout and made the static metric feel secondary.
+The homepage hero follows the supplied warm-ivory campaign reference as its primary visual target. It is assembled from responsive HTML, CSS, SVG ornament and existing approved project assets; the reference screenshot is not embedded in the site.
 
-## Light Living Promise Hero
+The first viewport now uses this hierarchy:
 
-Section 1.1 interprets the supplied sketch as a “Living Promise Hero”: a large Mirchi-led campaign masthead, a direct “Protect the protector.” message, the approved tree-Rakhi photograph, a prominent promise medallion and a participant-photo ribbon. Its current treatment uses the light campaign canvas documented in `docs/LIGHT_VISUAL_SYSTEM.md`: warm off-white ground, dark ink, white raised surfaces and Rakhi red action. Every downstream homepage section and anchor remains in place.
+1. Centered standalone Mirchi logo.
+2. Small ruled `PRESENTS` label.
+3. Two-line `Vriksha Vvandhan` page title.
+4. `Ek Tasveer. Ek Vaada. Ek Hara Kal.` campaign tagline.
+5. Existing tree-with-Rakhi campaign photograph.
+6. Live rakhi-inspired promise counter.
+7. Join and How It Works actions.
+8. The existing Promises Already Taking Root reel attached to the hero canvas.
 
-## Content order
+The former sticky homepage header, desktop navigation, mobile menu, top Join button, `This Raksha Bandhan` eyebrow, `Protect the protector.` headline, supporting paragraph, arch image and generic dashboard-like counter are absent from the hero. Their routes and downstream sections remain intact. Other application routes keep their existing navigation architecture.
 
-Mobile and portrait tablet use this semantic and visual order:
+## Desktop composition
 
-1. Mirchi / presents / temporary Vriksha Vvandhan lockup
-2. “This Raksha Bandhan” eyebrow
-3. Page H1 and supporting statement
-4. Promise Tracker
-5. Primary and secondary actions
-6. Hero photograph
-7. Promise Ribbon
+At `960px` and wider the hero stage becomes a two-column editorial grid. The near-square tree photograph occupies roughly one-third of the available width on the left. The title, tagline, rakhi counter and actions form a centered campaign column on the right. The logo stays centered across the full canvas above both columns, while the reel spans the shell below them.
 
-At `960px` and wider, the masthead remains above a two-column stage. The tree-Rakhi photograph moves to the left; message, tracker and actions sit on the right. The Promise Ribbon spans the bottom.
+At 1440×900 the reel begins inside the first viewport and the complete hero stays close to one screen tall. The composition uses normal grid flow; only botanical line art and rakhi threads are decorative positioned elements.
 
-## Brand treatment
+## Rakhi promise counter
 
-`LogoLockup` now has explicit `default`, `compact` and `hero` variants plus `inline` and `stacked` layouts. The sticky header keeps its compact 78px Mirchi mark. The hero uses a 118–138px Mirchi mark and 34–42px campaign lettering on mobile, increasing to 160–190px and 58–76px respectively at desktop widths. The Vriksha Vvandhan lettering remains a documented temporary text lockup because no approved standalone wordmark was supplied. The abstract tree-ring/Rakhi browser icon prevents a missing-resource error but is explicitly not an approved campaign mark.
+`RakhiPromiseCounter` receives the existing typed `CampaignMetric`. It never owns or fabricates campaign data. The center displays the current count, target and metric label, while an SVG progress arc communicates the clamped current/target ratio. A bordered ivory medallion, dotted red and gold rings, woven CSS thread, beads and restrained tassels make the component read as a Rakhi rather than an analytics chart.
 
-## Image decision and rights fallback
+The component exposes a concise screen-reader label such as `27 of 983 Vriksha promises completed.` When the public summary is unavailable it shows an em dash and explicitly announces that the count is unavailable while retaining the real configured target.
 
-`/campaign/hero-tree-rakhi.webp` remains the hero image because it communicates the tree-protection ritual directly and comes from the supplied deck media. It uses a tall `4:5` editorial crop, organic upper curve and restrained lower corners. No celebrity imagery or internet asset was introduced. If deck-derived imagery is not cleared for public web use, this photograph and the ribbon must be replaced with approved campaign photography while preserving the typed image contracts and component layout.
+## Responsive behaviour
 
-## Tracker treatment
+- Below `640px`, content follows an intentional mobile order: brand, title/tagline, image, counter, actions and reel. The title uses fluid sizing and remains intact at 320px.
+- From `640px` to `959px`, the stacked composition gains wider spacing and paired CTAs. The image remains capped at 560px rather than stretching across a portrait tablet.
+- At `960px`, the image-left campaign grid starts. The title and counter scale independently of the image so 1024×768 remains balanced.
+- At `1280px` and wider, the image and reel cards increase modestly while preserving the one-screen campaign overview.
 
-The tracker is a reusable server-rendered SVG medallion with a white centre, neutral remaining track, Rakhi-red progress arc, two subtle gold and forest inner tree rings, four orientation marks and one red knot. It shows `417`, `of 983`, `Vriksha promises`, the visible rounded percentage and the generated support line. The percentage is calculated with `Math.round((current / target) * 100)`, clamped to the first circle and guarded against a zero target. Progress remains understandable in text without relying on colour.
+The shell, reel viewport and document remain free of page-level horizontal overflow at 320, 360, 375, 390 and 430px.
 
-## Promise Ribbon
+## Promise Reel
 
-`heroPromiseImages` is a typed collection of eight existing tree, tree-care and community campaign images. Section 1.2 progressively enhances the labelled ribbon into a slow, continuous right-to-left Promise Reel with controlled portrait, square and landscape crops. A second `aria-hidden` sequence creates the seamless CSS-transform loop; hover, focus, direct pointer contact, reduced motion and the visible Pause/Play control govern playback. Without JavaScript, the original keyboard-focusable, natively scrolling single sequence remains intact. There is no slide-by-slide carousel or motion dependency, and page-level width remains fixed. See `docs/PROMISE_REEL.md`.
+The existing isolated client component is preserved. It still auto-travels slowly from right to left, pauses on hover/focus/direct manipulation, includes a visible Pause/Play button, starts paused for reduced-motion users and remains a static manually scrollable row without JavaScript. The duplicate sequence remains hidden from assistive technology.
 
-## Rakhi thread and motion
+The reel now sits inside the hero’s visual rhythm with quieter controls, low-shadow 4:3-style crops and a red/gold heading rule. Image-specific `sizes` values match each portrait, square and landscape card width at every breakpoint. Reel images remain lazy-loaded.
 
-One `aria-hidden` SVG thread uses muted gold and Rakhi red to connect the stage visually, while the ribbon heading carries the same thread motif into the lower strip. Motion is limited to one image clip reveal and one ribbon-card entrance. The existing reduced-motion media query shortens all non-essential animation so the complete layout remains visible.
+## Image and performance decisions
 
-## Performance and accessibility
+`/campaign/hero-tree-rakhi.webp` remains the stable project-owned hero asset. It is presented as a near-square crop with softened right corners and no caption overlay. The image keeps explicit intrinsic dimensions, an accurate responsive `sizes` expression and Next.js 16 `preload`; it is not lazy-loaded and does not depend on a signed Supabase URL.
 
-The hero stays a Server Component and adds no client state or dependency. Following the installed Next.js 16.3 Image documentation, `CampaignImage` now exposes `preload`; only the true hero/LCP image enables it. All images retain explicit intrinsic dimensions and accurate responsive `sizes`; ribbon images keep native lazy loading. The design preserves one H1, semantic regions, a named brand lockup, visible percentage text, valid hash actions, 44px-or-larger controls, visible focus, reduced motion and no keyboard trap.
+Only the hero image is preloaded. The standalone Mirchi logo loads eagerly but is not separately preloaded, and the eight reel photographs retain native lazy loading. The hero and all data fetching remain Server Components; only the previously isolated Promise Reel has client state.
 
-## Breakpoints and tested viewports
+## Accessibility
 
-- Below `640px`: narrow-mobile stack with a full-width 52px primary action and 188–200px tracker.
-- `640px–959px`: roomy stacked tablet composition; actions share a row where space allows.
-- `960px` and wider: image-left/message-right stage with a 250–280px tracker.
-- `1280px` and wider: wider shell and balanced editorial proportions.
+The page keeps one H1, a logical mobile-first DOM order, meaningful image alternatives, hidden decorative SVGs, text-based counter status, 44px-or-larger actions, visible focus indicators and the existing reduced-motion behaviour. The homepage has no hidden or floating navigation control. Join links to `/join`; How It Works links to `#how-it-works`; Movement Wall and other campaign routes remain reachable through existing downstream content and the footer.
 
-Required visual review targets: `360 × 800`, `390 × 844`, `768 × 1024`, `1024 × 768` and `1440 × 1000`.
+## Visual review targets
+
+The implementation is reviewed at 1440×900, 1280×800, 1024×768, 768×1024, 430×932, 390×844, 360×800 and the 320px overflow boundary. Screenshots are temporary verification artifacts and are not committed.

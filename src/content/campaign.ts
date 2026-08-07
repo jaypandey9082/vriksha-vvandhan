@@ -25,12 +25,10 @@ export const promiseMetric: CampaignMetric = {
 };
 
 export const heroContent = {
-  eyebrow: "This Raksha Bandhan",
-  title: "Protect the protector.",
-  description:
-    "The protector has always protected us. Tie a Rakhi to a tree and make your promise visible.",
+  title: "Vriksha Vvandhan",
+  tagline: "Ek Tasveer. Ek Vaada. Ek Hara Kal.",
   primaryCta: { label: "Join the Movement", href: "/join" },
-  secondaryCta: { label: "See the Promises", href: "#stories" },
+  secondaryCta: { label: "How It Works", href: "#how-it-works" },
   ribbonLabel: "Promises already taking root",
 } as const satisfies HeroContent;
 

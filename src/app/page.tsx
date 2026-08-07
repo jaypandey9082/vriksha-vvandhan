@@ -7,9 +7,7 @@ import { MovementPillars } from "@/components/home/movement-pillars";
 import { MovementPreview } from "@/components/home/movement-preview";
 import { ParticipationSteps } from "@/components/home/participation-steps";
 import { PedKaPaigaam } from "@/components/home/ped-ka-paigaam";
-import { MobileJoinBar } from "@/components/layout/mobile-join-bar";
 import { SiteFooter } from "@/components/layout/site-footer";
-import { SiteHeader } from "@/components/layout/site-header";
 import { promiseMetric } from "@/content/campaign";
 import { getPublicCampaignSummary, getPublicMovementEntries } from "@/lib/public-campaign/data";
 
@@ -26,7 +24,6 @@ export default async function Home() {
       <a className="skip-link" href="#main-content">
         Skip to main content
       </a>
-      <SiteHeader />
       <main id="main-content">
         <CampaignHero metric={metric} />
         <CampaignStory />
@@ -39,7 +36,6 @@ export default async function Home() {
         <FinalCta />
       </main>
       <SiteFooter />
-      <MobileJoinBar />
     </>
   );
 }

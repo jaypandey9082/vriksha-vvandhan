@@ -5,27 +5,42 @@ import { CampaignHero } from "@/components/home/campaign-hero";
 import { heroPromiseImages } from "@/content/campaign";
 
 describe("CampaignHero", () => {
-  it("renders the large campaign masthead and core message", () => {
+  it("renders the Mirchi-led campaign identity with one page heading", () => {
     render(<CampaignHero />);
 
-    expect(screen.getByRole("img", { name: "Mirchi presents Vriksha Vvandhan" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1, name: "Protect the protector." })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Mirchi" })).toBeInTheDocument();
+    expect(screen.getByText("Presents")).toBeInTheDocument();
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole("heading", { level: 1, name: "Vriksha Vvandhan" })).toBeInTheDocument();
+    expect(screen.getByText("Ek Tasveer. Ek Vaada. Ek Hara Kal.")).toBeInTheDocument();
+    expect(screen.queryByText("Protect the protector.")).not.toBeInTheDocument();
+    expect(screen.queryByText("This Raksha Bandhan")).not.toBeInTheDocument();
   });
 
-  it("renders the tracker and both valid hero actions", () => {
+  it("renders the honest tracker fallback and both valid hero actions", () => {
     render(<CampaignHero />);
 
     expect(screen.getByText("—")).toBeInTheDocument();
-    expect(screen.getByText("of 983")).toBeInTheDocument();
-    expect(screen.getByText("Tracker updating")).toBeInTheDocument();
+    expect(screen.getByRole("img", {
+      name: "Campaign promise count is currently unavailable. Target: 983 Vriksha promises.",
+    })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Join the Movement" })).toHaveAttribute(
       "href",
       "/join",
     );
-    expect(screen.getByRole("link", { name: "See the Promises" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "How It Works" })).toHaveAttribute(
       "href",
-      "#stories",
+      "#how-it-works",
     );
+  });
+
+  it("renders live count and target values in the rakhi counter", () => {
+    render(<CampaignHero metric={{ current: 27, target: 983, label: "Vriksha promises" }} />);
+
+    expect(screen.getByText("27")).toBeInTheDocument();
+    expect(screen.getByRole("img", {
+      name: "27 of 983 Vriksha promises completed.",
+    })).toBeInTheDocument();
   });
 
   it("renders the typed Promise Ribbon without the retired Promise Halo", () => {

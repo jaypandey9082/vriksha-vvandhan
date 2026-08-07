@@ -10,74 +10,72 @@ test("homepage loads without browser console errors", async ({ page }) => {
   const response = await page.goto("/");
 
   expect(response?.status()).toBe(200);
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Protect the protector.");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Vriksha Vvandhan");
+  await expect(page.getByText("Protect the protector.", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("This Raksha Bandhan", { exact: true })).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 
-test("homepage uses the light campaign canvas without a dark hero treatment", async ({ page }) => {
+test("homepage uses the warm campaign canvas and rakhi medallion", async ({ page }) => {
   await page.goto("/");
 
   const surfaces = await page.evaluate(() => {
-    const header = document.querySelector<HTMLElement>(".site-header");
     const hero = document.querySelector<HTMLElement>(".campaign-hero");
-    const tracker = document.querySelector<HTMLElement>(".promise-tracker");
+    const tracker = document.querySelector<HTMLElement>(".rakhi-counter__medallion");
 
-    if (!header || !hero || !tracker) throw new Error("Required campaign surfaces are missing");
+    if (!hero || !tracker) throw new Error("Required campaign surfaces are missing");
 
     return {
       body: getComputedStyle(document.body).backgroundColor,
-      header: getComputedStyle(header).backgroundColor,
       hero: getComputedStyle(hero).backgroundColor,
       heroImage: getComputedStyle(hero).backgroundImage,
-      trackerCenter: getComputedStyle(tracker, "::before").backgroundColor,
+      trackerCenter: getComputedStyle(tracker).backgroundColor,
     };
   });
 
-  expect(surfaces).toEqual({
-    body: "rgb(248, 247, 243)",
-    header: "rgb(255, 255, 255)",
-    hero: "rgb(248, 247, 243)",
-    heroImage: "none",
-    trackerCenter: "rgb(255, 255, 255)",
-  });
+  expect(surfaces.body).toBe("rgb(248, 247, 243)");
+  expect(surfaces.hero).toBe("rgb(250, 248, 242)");
+  expect(surfaces.heroImage).toContain("radial-gradient");
+  expect(surfaces.trackerCenter).toBe("rgb(255, 253, 247)");
 });
 
-test("desktop navigation and homepage CTAs reach valid sections", async ({ page }) => {
+test("homepage removes the conventional header and keeps both hero journeys", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
 
-  await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "How It Works" }).click();
+  await expect(page.locator(".site-header")).toHaveCount(0);
+  await expect(page.getByRole("navigation", { name: "Primary navigation" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Open navigation menu" })).toHaveCount(0);
+
+  await page.locator(".campaign-hero").getByRole("link", { name: "How It Works" }).click();
   await expect(page).toHaveURL(/#how-it-works$/);
   await expect(page.locator("#how-it-works")).toBeInViewport();
 
   await page.goto("/");
   await page.locator(".campaign-hero").getByRole("link", { name: "Join the Movement" }).click();
   await expect(page).toHaveURL(/\/join$/);
-
-  await page.goto("/");
-  await page.getByRole("link", { name: "See the Promises" }).click();
-  await expect(page).toHaveURL(/#stories$/);
-  await expect(page.locator("#stories")).toBeInViewport();
 });
 
-test("mobile menu opens, closes with Escape, and restores focus", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+test("desktop identity is centered and the reel joins the first viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
 
-  const menuButton = page.getByRole("button", { name: "Open navigation menu" });
-  await menuButton.click();
-  const dialog = page.getByRole("dialog", { name: "Site navigation" });
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole("link", { name: "The Movement", exact: true })).toBeFocused();
-
-  await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog", { name: "Site navigation" })).toBeHidden();
-  await expect(menuButton).toBeFocused();
+  const logo = await page
+    .locator(".campaign-hero")
+    .getByRole("img", { name: "Mirchi", exact: true })
+    .boundingBox();
+  const hero = await page.locator(".campaign-hero").boundingBox();
+  const reel = await page.locator(".promise-ribbon__viewport").boundingBox();
+  expect(logo).not.toBeNull();
+  expect(hero).not.toBeNull();
+  expect(reel).not.toBeNull();
+  expect(Math.abs((logo!.x + logo!.width / 2) - (hero!.x + hero!.width / 2))).toBeLessThan(3);
+  expect(reel!.y).toBeLessThan(900);
 });
 
-for (const width of [360, 390]) {
+for (const width of [320, 360, 375, 390, 430]) {
   test(`homepage has no horizontal overflow at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: width === 360 ? 800 : 844 });
+    await page.setViewportSize({ width, height: width <= 360 ? 800 : 932 });
     await page.goto("/");
 
     const dimensions = await page.evaluate(() => ({
@@ -89,32 +87,53 @@ for (const width of [360, 390]) {
   });
 }
 
-test("mobile hero exposes its masthead, tracker, and primary action above the fold", async ({ page }) => {
+test("mobile hero follows the intentional identity, image, counter order", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
 
-  await expect(page.locator(".hero-brand-masthead")).toBeInViewport();
-  await expect(page.locator(".promise-tracker")).toBeInViewport();
-  await expect(page.locator(".campaign-hero").getByRole("link", { name: "Join the Movement" })).toBeInViewport();
+  const identity = await page.locator(".campaign-hero__identity").boundingBox();
+  const media = await page.locator(".hero-media").boundingBox();
+  const counter = await page.locator(".rakhi-counter").boundingBox();
+  expect(identity).not.toBeNull();
+  expect(media).not.toBeNull();
+  expect(counter).not.toBeNull();
+  expect(media!.y).toBeGreaterThan(identity!.y + identity!.height);
+  expect(counter!.y).toBeGreaterThan(media!.y + media!.height);
 });
 
 test("hero stays stacked on portrait tablet and becomes image-left on desktop", async ({ page }) => {
   await page.setViewportSize({ width: 768, height: 1024 });
   await page.goto("/");
 
-  const tabletCopy = await page.locator(".campaign-hero__copy").boundingBox();
+  const tabletCopy = await page.locator(".campaign-hero__identity").boundingBox();
   const tabletMedia = await page.locator(".hero-media").boundingBox();
   expect(tabletCopy).not.toBeNull();
   expect(tabletMedia).not.toBeNull();
   expect(tabletMedia!.y).toBeGreaterThan(tabletCopy!.y + tabletCopy!.height);
 
   await page.setViewportSize({ width: 1024, height: 768 });
-  const desktopCopy = await page.locator(".campaign-hero__copy").boundingBox();
+  const desktopCopy = await page.locator(".campaign-hero__identity").boundingBox();
   const desktopMedia = await page.locator(".hero-media").boundingBox();
   expect(desktopCopy).not.toBeNull();
   expect(desktopMedia).not.toBeNull();
   expect(desktopMedia!.x).toBeLessThan(desktopCopy!.x);
-  expect(Math.abs(desktopMedia!.y - desktopCopy!.y)).toBeLessThan(desktopMedia!.height / 2);
+  expect(desktopCopy!.x).toBeGreaterThan(desktopMedia!.x + desktopMedia!.width);
+});
+
+test("hero remains usable at a 200 percent layout-equivalent viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 720, height: 900 });
+  await page.goto("/");
+
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await expect(page.locator(".hero-media__frame")).toBeVisible();
+  await expect(
+    page.locator(".campaign-hero").getByRole("link", { name: "Join the Movement" }),
+  ).toBeVisible();
+  const dimensions = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    content: document.documentElement.scrollWidth,
+  }));
+  expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
 });
 
 test("Promise Ribbon scrolls internally without expanding the page", async ({ page }) => {

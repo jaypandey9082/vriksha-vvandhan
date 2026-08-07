@@ -1,48 +1,49 @@
-import { ArrowDownRight } from "lucide-react";
-
+import { HeroActions } from "@/components/home/hero-actions";
 import { HeroBrandMasthead } from "@/components/home/hero-brand-masthead";
 import { HeroMedia } from "@/components/home/hero-media";
 import { PromiseRibbon } from "@/components/home/promise-ribbon";
-import { PromiseTracker } from "@/components/shared/promise-tracker";
+import { RakhiPromiseCounter } from "@/components/home/rakhi-promise-counter";
 import { heroContent, heroPromiseImages, promiseMetric } from "@/content/campaign";
 import type { CampaignMetric } from "@/types/campaign";
+
+function BotanicalDetail({ side }: { side: "left" | "right" }) {
+  return (
+    <svg
+      className={`campaign-hero__botanical campaign-hero__botanical--${side}`}
+      viewBox="0 0 320 500"
+      aria-hidden="true"
+    >
+      <path d="M300 18C218 115 203 219 202 477" />
+      <path d="M253 87c-47 2-79 20-104 52 45 5 79-10 104-52Z" />
+      <path d="M226 174c44-3 76 11 98 42-43 8-76-5-98-42Z" />
+      <path d="M205 250c-43 2-75 18-98 49 43 7 75-8 98-49Z" />
+      <path d="M202 329c42-1 75 14 100 44-42 9-76-4-100-44Z" />
+      <path d="M200 401c-39 4-67 19-88 47 39 5 68-9 88-47Z" />
+    </svg>
+  );
+}
 
 export function CampaignHero({ metric = promiseMetric }: { metric?: CampaignMetric }) {
   return (
     <section className="campaign-hero" id="movement" aria-labelledby="campaign-title">
+      <BotanicalDetail side="left" />
+      <BotanicalDetail side="right" />
       <div className="shell campaign-hero__inner">
         <HeroBrandMasthead />
         <div className="campaign-hero__stage">
-          <div className="campaign-hero__copy">
-            <p className="campaign-hero__eyebrow">{heroContent.eyebrow}</p>
-            <h1 id="campaign-title">{heroContent.title}</h1>
-            <p className="campaign-hero__description">{heroContent.description}</p>
-            <div className="campaign-hero__tracker">
-              <p>Promise tracker</p>
-              <PromiseTracker metric={metric} />
-            </div>
-            <div className="campaign-hero__actions">
-              <a className="button button--primary" href={heroContent.primaryCta.href}>
-                {heroContent.primaryCta.label}
-                <ArrowDownRight aria-hidden="true" size={18} />
-              </a>
-              <a className="text-link" href={heroContent.secondaryCta.href}>
-                {heroContent.secondaryCta.label}
-              </a>
-            </div>
+          <div className="campaign-hero__identity">
+            <h1 id="campaign-title">
+              <span>Vriksha</span>
+              {" "}
+              <span>Vvandhan</span>
+            </h1>
+            <p className="campaign-hero__tagline">{heroContent.tagline}</p>
           </div>
           <HeroMedia />
-          <svg
-            className="campaign-hero__thread"
-            viewBox="0 0 1000 520"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path className="campaign-hero__thread-shadow" d="M355 430 C510 455 520 260 680 286" />
-            <path className="campaign-hero__thread-gold" d="M355 430 C510 455 520 260 680 286" />
-            <path className="campaign-hero__thread-red" d="M365 438 C520 462 530 268 690 294" />
-            <circle cx="686" cy="290" r="8" />
-          </svg>
+          <div className="campaign-hero__engagement">
+            <RakhiPromiseCounter metric={metric} />
+            <HeroActions primary={heroContent.primaryCta} secondary={heroContent.secondaryCta} />
+          </div>
         </div>
         <PromiseRibbon heading={heroContent.ribbonLabel} images={heroPromiseImages} />
       </div>
