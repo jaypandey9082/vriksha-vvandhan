@@ -21,3 +21,7 @@ export type SignedReviewDescriptor = {
   signedUrl: string;
   expiresIn: number;
 };
+
+export type SignedReviewThumbnailDescriptor = SignedReviewDescriptor & {
+  path: string;
+};

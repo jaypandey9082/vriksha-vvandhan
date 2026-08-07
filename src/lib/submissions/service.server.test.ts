@@ -9,6 +9,8 @@ const mocks = vi.hoisted(() => {
   return {
     VerificationError,
     verify: vi.fn(),
+    generateThumbnail: vi.fn(),
+    uploadThumbnail: vi.fn(),
     remove: vi.fn(),
     maybeSingle: vi.fn(),
     rpc: vi.fn(),
@@ -40,6 +42,10 @@ vi.mock("@/lib/submissions/verify-uploaded-image.server", () => ({
   UploadedImageVerificationError: mocks.VerificationError,
   verifyUploadedImage: mocks.verify,
 }));
+vi.mock("@/lib/storage/review-thumbnail.server", () => ({
+  generateReviewThumbnail: mocks.generateThumbnail,
+  uploadReviewThumbnail: mocks.uploadThumbnail,
+}));
 
 import {
   finalizePublicSubmission,
@@ -64,6 +70,29 @@ beforeEach(() => {
     error: null,
   });
   mocks.remove.mockResolvedValue({ error: null });
+  mocks.verify.mockResolvedValue({
+    data: Buffer.from([1, 2, 3]),
+    mimeType: "image/webp",
+    bytes: 3,
+    width: 640,
+    height: 800,
+    sha256: "a".repeat(64),
+  });
+  mocks.generateThumbnail.mockResolvedValue({
+    buffer: Buffer.from([4, 5]),
+    mimeType: "image/webp",
+    width: 240,
+    height: 300,
+    bytes: 2,
+  });
+  mocks.uploadThumbnail.mockResolvedValue({
+    path: `${input.submissionId}/review-thumb.webp`,
+    generatedAt: "2026-08-07T04:00:00.000Z",
+  });
+  mocks.rpc.mockResolvedValue({
+    data: [{ submission_id: input.submissionId, status: "pending_review" }],
+    error: null,
+  });
 });
 
 describe("submission finalisation retry safety", () => {
@@ -103,5 +132,43 @@ describe("submission finalisation retry safety", () => {
       status: "pending_review",
     });
     expect(mocks.verify).not.toHaveBeenCalled();
+  });
+
+  it("stores trusted thumbnail metadata in the atomic finalisation call", async () => {
+    await expect(finalizePublicSubmission(input)).resolves.toEqual({
+      success: true,
+      status: "pending_review",
+    });
+
+    expect(mocks.generateThumbnail).toHaveBeenCalledWith(Buffer.from([1, 2, 3]));
+    expect(mocks.uploadThumbnail).toHaveBeenCalledOnce();
+    expect(mocks.rpc).toHaveBeenCalledWith(
+      "finalize_public_submission_with_review_thumbnail",
+      expect.objectContaining({
+        p_review_thumbnail_path: `${input.submissionId}/review-thumb.webp`,
+        p_review_thumbnail_width: 240,
+        p_review_thumbnail_height: 300,
+        p_review_thumbnail_bytes: 2,
+      }),
+    );
+  });
+
+  it("still enters Pending Review when thumbnail generation fails transiently", async () => {
+    mocks.generateThumbnail.mockRejectedValue(new Error("temporary image worker failure"));
+
+    await expect(finalizePublicSubmission(input)).resolves.toEqual({
+      success: true,
+      status: "pending_review",
+    });
+    expect(mocks.rpc).toHaveBeenCalledWith(
+      "finalize_public_submission_with_review_thumbnail",
+      expect.objectContaining({
+        p_review_thumbnail_path: null,
+        p_review_thumbnail_width: null,
+        p_review_thumbnail_height: null,
+        p_review_thumbnail_bytes: null,
+        p_review_thumbnail_generated_at: null,
+      }),
+    );
   });
 });

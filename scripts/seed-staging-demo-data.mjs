@@ -58,7 +58,7 @@ try {
     }
     const verified = await verifyNormalDataset(service, baselineCount);
     console.log("Idempotent no-op: the complete normal demo dataset already exists.");
-    console.log(`Verified ${verified.rows.length} submissions and ${SYNTHETIC_IMAGE_COUNT} private images.`);
+    console.log(`Verified ${verified.rows.length} submissions, ${SYNTHETIC_IMAGE_COUNT} private originals and ${SYNTHETIC_IMAGE_COUNT} private review thumbnails.`);
     process.exit(0);
   }
 
@@ -80,7 +80,7 @@ try {
   console.log(
     `Distribution: draft=${EXPECTED_DISTRIBUTION.draft}, pending_review=${EXPECTED_DISTRIBUTION.pending_review}, rejection_pending_admin=${EXPECTED_DISTRIBUTION.rejection_pending_admin}, rejected=${EXPECTED_DISTRIBUTION.rejected}, published=0.`,
   );
-  console.log(`Private synthetic images: ${SYNTHETIC_IMAGE_COUNT}.`);
+  console.log(`Private synthetic images: ${SYNTHETIC_IMAGE_COUNT} originals + ${SYNTHETIC_IMAGE_COUNT} review thumbnails.`);
   console.log(`campaign_count_before=${baselineCount}`);
   console.log(`campaign_count_after=${await getPublicCount(service)}`);
   console.log(`Email placeholders: ${verified.deliveryCount}, all not_started; no provider was called.`);

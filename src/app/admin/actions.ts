@@ -9,7 +9,7 @@ import { generatePublicVariants } from "@/lib/moderation/publication-image.serve
 import { deletionSchema, rejectionSchema, reviewFieldsSchema, submissionIdSchema } from "@/lib/moderation/schemas";
 import { CAMPAIGN_PUBLIC_TAG } from "@/lib/public-campaign/data";
 import { PUBLISHED_IMAGES_BUCKET, SUBMISSION_ORIGINALS_BUCKET, CERTIFICATES_BUCKET } from "@/lib/storage/buckets";
-import { buildPublishedCardPath, buildPublishedFullPath, parseStoredOriginalPath } from "@/lib/storage/paths";
+import { buildPublishedCardPath, buildPublishedFullPath, parseStoredOriginalPath, parseStoredReviewThumbnailPath } from "@/lib/storage/paths";
 import { callUntypedRpc } from "@/lib/supabase/rpc.server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getServiceSupabaseClient } from "@/lib/supabase/service";
@@ -117,14 +117,18 @@ export async function deleteTrashedAction(formData: FormData) {
   const input = deletionSchema.parse({ submissionId: formData.get("submissionId"), reason: formData.get("reason"), confirmation: formData.get("confirmation") });
   if (isStaffE2EAdapterEnabled()) redirect("/admin/submissions?status=trashed&testAction=deleted");
   const client = await createServerSupabaseClient();
-  const queryClient = client as unknown as { from: (table: string) => { select: (columns: string) => { eq: (column: string, value: string) => { maybeSingle: () => Promise<{ data: { submission_media: { original_path: string; published_card_path: string | null; published_full_path: string | null } | { original_path: string; published_card_path: string | null; published_full_path: string | null }[]; certificates: { object_path: string | null } | { object_path: string | null }[] } | null }> } } } };
-  const { data } = await queryClient.from("submissions").select("submission_media(original_path,published_card_path,published_full_path),certificates(object_path)").eq("id", input.submissionId).maybeSingle();
+  const queryClient = client as unknown as { from: (table: string) => { select: (columns: string) => { eq: (column: string, value: string) => { maybeSingle: () => Promise<{ data: { submission_media: { original_path: string; review_thumbnail_path: string | null; published_card_path: string | null; published_full_path: string | null } | { original_path: string; review_thumbnail_path: string | null; published_card_path: string | null; published_full_path: string | null }[]; certificates: { object_path: string | null } | { object_path: string | null }[] } | null }> } } } };
+  const { data } = await queryClient.from("submissions").select("submission_media(original_path,review_thumbnail_path,published_card_path,published_full_path),certificates(object_path)").eq("id", input.submissionId).maybeSingle();
   if (!data) throw new Error("delete_requires_trash");
   const media = Array.isArray(data.submission_media) ? data.submission_media[0] : data.submission_media;
   const certificate = Array.isArray(data.certificates) ? data.certificates[0] : data.certificates;
   const service = getServiceSupabaseClient();
-  if (media?.original_path) {
-    const result = await service.storage.from(SUBMISSION_ORIGINALS_BUCKET).remove([media.original_path]);
+  const privatePaths = [
+    media?.original_path ? parseStoredOriginalPath(media.original_path) : null,
+    media?.review_thumbnail_path ? parseStoredReviewThumbnailPath(media.review_thumbnail_path) : null,
+  ].filter((path): path is string => Boolean(path));
+  if (privatePaths.length) {
+    const result = await service.storage.from(SUBMISSION_ORIGINALS_BUCKET).remove(privatePaths);
     if (result.error) throw new Error("cleanup_required");
   }
   const publicPaths = [media?.published_card_path, media?.published_full_path].filter((path): path is string => Boolean(path));

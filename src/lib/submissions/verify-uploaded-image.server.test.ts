@@ -36,6 +36,7 @@ describe("stored image verification", () => {
     mocks.metadata.mockResolvedValue({ format: "webp", width: 640, height: 480, pages: 1 });
 
     await expect(verifyUploadedImage(path)).resolves.toEqual({
+      data: Buffer.from(body),
       mimeType: "image/webp",
       bytes: 4,
       width: 640,

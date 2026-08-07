@@ -25,7 +25,9 @@
     "staff:bootstrap": "node --env-file-if-exists=.env.local scripts/bootstrap-staff-profile.mjs",
     "test:staging:moderation": "node --env-file-if-exists=.env.local scripts/staging-moderation-smoke.mjs",
     "staging:seed-demo": "node scripts/seed-staging-demo-data.mjs",
-    "staging:cleanup-demo": "node scripts/cleanup-staging-demo-data.mjs"
+    "staging:cleanup-demo": "node scripts/cleanup-staging-demo-data.mjs",
+    "staging:backfill-review-thumbnails": "node --env-file-if-exists=.env.local scripts/backfill-review-thumbnails.mjs",
+    "staging:benchmark-review-thumbnails": "node --env-file-if-exists=.env.local scripts/benchmark-review-thumbnail-queue.mjs"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"

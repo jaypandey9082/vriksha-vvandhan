@@ -10,6 +10,7 @@ import { parseStoredOriginalPath } from "@/lib/storage/paths";
 import { getServiceSupabaseClient } from "@/lib/supabase/service";
 
 export type VerifiedUploadedImage = {
+  data: Buffer;
   mimeType: "image/webp" | "image/jpeg";
   bytes: number;
   width: number;
@@ -67,6 +68,7 @@ export async function verifyUploadedImage(path: string): Promise<VerifiedUploade
     }
 
     return {
+      data: bytes,
       mimeType,
       bytes: bytes.byteLength,
       width,
@@ -78,4 +80,3 @@ export async function verifyUploadedImage(path: string): Promise<VerifiedUploade
     throw new UploadedImageVerificationError("invalid");
   }
 }
-

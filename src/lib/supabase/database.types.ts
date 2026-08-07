@@ -340,6 +340,11 @@ export type Database = {
           published_full_width: number | null
           published_version: string | null
           removed_at: string | null
+          review_thumbnail_bytes: number | null
+          review_thumbnail_generated_at: string | null
+          review_thumbnail_height: number | null
+          review_thumbnail_path: string | null
+          review_thumbnail_width: number | null
           status: Database["public"]["Enums"]["media_status"]
           submission_id: string
           updated_at: string
@@ -371,6 +376,11 @@ export type Database = {
           published_full_width?: number | null
           published_version?: string | null
           removed_at?: string | null
+          review_thumbnail_bytes?: number | null
+          review_thumbnail_generated_at?: string | null
+          review_thumbnail_height?: number | null
+          review_thumbnail_path?: string | null
+          review_thumbnail_width?: number | null
           status?: Database["public"]["Enums"]["media_status"]
           submission_id: string
           updated_at?: string
@@ -402,6 +412,11 @@ export type Database = {
           published_full_width?: number | null
           published_version?: string | null
           removed_at?: string | null
+          review_thumbnail_bytes?: number | null
+          review_thumbnail_generated_at?: string | null
+          review_thumbnail_height?: number | null
+          review_thumbnail_path?: string | null
+          review_thumbnail_width?: number | null
           status?: Database["public"]["Enums"]["media_status"]
           submission_id?: string
           updated_at?: string
@@ -550,6 +565,26 @@ export type Database = {
       finalize_public_submission: {
         Args: {
           p_public_request_token_hash: string
+          p_submission_id: string
+          p_verified_bytes: number
+          p_verified_height: number
+          p_verified_mime_type: string
+          p_verified_sha256: string
+          p_verified_width: number
+        }
+        Returns: {
+          status: Database["public"]["Enums"]["submission_status"]
+          submission_id: string
+        }[]
+      }
+      finalize_public_submission_with_review_thumbnail: {
+        Args: {
+          p_public_request_token_hash: string
+          p_review_thumbnail_bytes: number | null
+          p_review_thumbnail_generated_at: string | null
+          p_review_thumbnail_height: number | null
+          p_review_thumbnail_path: string | null
+          p_review_thumbnail_width: number | null
           p_submission_id: string
           p_verified_bytes: number
           p_verified_height: number

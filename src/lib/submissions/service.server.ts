@@ -5,6 +5,10 @@ import { z } from "zod";
 import { PUBLIC_SUBMISSION } from "@/config/public-submission";
 import { createOriginalSignedUpload } from "@/lib/storage/signed-upload.server";
 import { SUBMISSION_ORIGINALS_BUCKET } from "@/lib/storage/buckets";
+import {
+  generateReviewThumbnail,
+  uploadReviewThumbnail,
+} from "@/lib/storage/review-thumbnail.server";
 import { getServiceSupabaseClient } from "@/lib/supabase/service";
 import { mapDatabaseError } from "@/lib/submissions/api-errors";
 import { hashPublicRequestToken } from "@/lib/submissions/request-token.server";
@@ -189,7 +193,29 @@ export async function finalizePublicSubmission(
     throw new SubmissionServiceError("media_not_ready");
   }
 
-  const { data, error } = await client.rpc("finalize_public_submission", {
+  let storedThumbnail: {
+    path: string;
+    width: number;
+    height: number;
+    bytes: number;
+    generatedAt: string;
+  } | null = null;
+  try {
+    const thumbnail = await generateReviewThumbnail(verified.data);
+    const stored = await uploadReviewThumbnail(input.submissionId, thumbnail);
+    storedThumbnail = {
+      path: stored.path,
+      width: thumbnail.width,
+      height: thumbnail.height,
+      bytes: thumbnail.bytes,
+      generatedAt: stored.generatedAt,
+    };
+  } catch {
+    // The verified submission still enters review. A bounded staging backfill can
+    // safely retry this private derivative without duplicating the submission.
+  }
+
+  const { data, error } = await client.rpc("finalize_public_submission_with_review_thumbnail", {
       p_submission_id: input.submissionId,
       p_public_request_token_hash: tokenHash,
       p_verified_mime_type: verified.mimeType,
@@ -197,8 +223,21 @@ export async function finalizePublicSubmission(
       p_verified_width: verified.width,
       p_verified_height: verified.height,
       p_verified_sha256: verified.sha256,
+      p_review_thumbnail_path: storedThumbnail?.path ?? null,
+      p_review_thumbnail_width: storedThumbnail?.width ?? null,
+      p_review_thumbnail_height: storedThumbnail?.height ?? null,
+      p_review_thumbnail_bytes: storedThumbnail?.bytes ?? null,
+      p_review_thumbnail_generated_at: storedThumbnail?.generatedAt ?? null,
     });
-  if (error) throw new SubmissionServiceError(mapDatabaseError(error));
+  if (error) {
+    if (storedThumbnail) {
+      await client.storage
+        .from(SUBMISSION_ORIGINALS_BUCKET)
+        .remove([storedThumbnail.path])
+        .catch(() => undefined);
+    }
+    throw new SubmissionServiceError(mapDatabaseError(error));
+  }
   finaliseRpcRowSchema.parse(z.array(z.unknown()).parse(data)[0]);
   return { success: true, status: "pending_review" };
 }

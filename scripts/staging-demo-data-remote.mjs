@@ -76,7 +76,7 @@ export async function loadDemoRows(service) {
     service
       .from("submissions")
       .select(
-        "id,status,source,display_name,is_test,counts_toward_goal,submission_media(original_path,published_card_path,published_full_path),certificates(bucket,object_path,status),email_deliveries(kind,status,attempt_count,provider_message_id,sent_at)",
+        "id,status,source,display_name,is_test,counts_toward_goal,submission_media(original_path,review_thumbnail_path,review_thumbnail_width,review_thumbnail_height,review_thumbnail_bytes,review_thumbnail_generated_at,published_card_path,published_full_path),certificates(bucket,object_path,status),email_deliveries(kind,status,attempt_count,provider_message_id,sent_at)",
       )
       .in("id", DEMO_IDS),
     "Unable to inspect bounded demo submissions.",
@@ -149,14 +149,19 @@ export async function storageObjectExists(service, bucket, path) {
 export async function countExistingPrivateImages(service, rows) {
   let count = 0;
   for (const row of rows) {
-    const path = row.submission_media?.original_path;
-    if (path && (await storageObjectExists(service, ORIGINAL_BUCKET, path))) count += 1;
+    for (const path of [row.submission_media?.original_path, row.submission_media?.review_thumbnail_path]) {
+      if (path && (await storageObjectExists(service, ORIGINAL_BUCKET, path))) count += 1;
+    }
   }
   return count;
 }
 
 function validateOriginalPath(row, path) {
   return path === `${row.id}/original.webp`;
+}
+
+function validateReviewThumbnailPath(row, path) {
+  return path === `${row.id}/review-thumb.webp`;
 }
 
 function validatePublicPath(path) {
@@ -170,7 +175,7 @@ export async function removeDemoDataset(
   const { safe, ambiguous } = selectCleanupCandidates(rows);
   if (ambiguous.length) throw new Error("Cleanup refused an ambiguous submission record.");
 
-  const originals = [];
+  const privateFiles = [];
   const published = [];
   const certificates = [];
   for (const row of safe) {
@@ -179,7 +184,13 @@ export async function removeDemoDataset(
       if (!validateOriginalPath(row, media.original_path)) {
         throw new Error("Cleanup refused an unexpected private Storage path.");
       }
-      originals.push(media.original_path);
+      privateFiles.push(media.original_path);
+    }
+    if (media?.review_thumbnail_path) {
+      if (!validateReviewThumbnailPath(row, media.review_thumbnail_path)) {
+        throw new Error("Cleanup refused an unexpected private review-thumbnail path.");
+      }
+      privateFiles.push(media.review_thumbnail_path);
     }
     for (const path of [media?.published_card_path, media?.published_full_path]) {
       if (!path) continue;
@@ -202,9 +213,9 @@ export async function removeDemoDataset(
       "Unable to remove bounded public demo images.",
     );
   }
-  if (originals.length) {
+  if (privateFiles.length) {
     await must(
-      service.storage.from(ORIGINAL_BUCKET).remove(originals),
+      service.storage.from(ORIGINAL_BUCKET).remove(privateFiles),
       "Unable to remove bounded private demo images.",
     );
   }
@@ -243,7 +254,7 @@ export async function removeDemoDataset(
   if (remainingStaff.safe.length || remainingStaff.ambiguous.length) {
     throw new Error("Temporary staff cleanup verification failed.");
   }
-  for (const path of originals) {
+  for (const path of privateFiles) {
     if (await storageObjectExists(service, ORIGINAL_BUCKET, path)) {
       throw new Error("Private Storage cleanup verification failed.");
     }
@@ -258,7 +269,7 @@ export async function removeDemoDataset(
   }
   return {
     removedSubmissions: safe.length,
-    removedPrivateFiles: originals.length,
+    removedPrivateFiles: privateFiles.length,
     removedPublicFiles: published.length,
     removedCertificateFiles: certificates.length,
     removedStaff: staffRecords.length,
@@ -409,6 +420,12 @@ async function createDemoSubmission(service, staffClients, record, now) {
 
   const image = await generateSyntheticImage(record);
   const path = `${record.id}/original.webp`;
+  const reviewThumbnailPath = `${record.id}/review-thumb.webp`;
+  const reviewThumbnail = await sharp(image, { failOn: "warning", pages: 1 })
+    .rotate()
+    .resize(240, 300, { fit: "cover", position: "centre" })
+    .webp({ quality: 70, effort: 4 })
+    .toBuffer();
   await must(
     service.storage.from(ORIGINAL_BUCKET).upload(path, image, {
       contentType: "image/webp",
@@ -417,9 +434,16 @@ async function createDemoSubmission(service, staffClients, record, now) {
     }),
     "Unable to upload a bounded private synthetic image.",
   );
-  const checksum = createHash("sha256").update(image).digest("hex");
   await must(
-    service.rpc("finalize_public_submission", {
+    service.storage.from(ORIGINAL_BUCKET).upload(reviewThumbnailPath, reviewThumbnail, {
+      contentType: "image/webp",
+      cacheControl: "600",
+      upsert: false,
+    }),
+    "Unable to upload a bounded private synthetic review thumbnail.",
+  );
+  const checksum = createHash("sha256").update(image).digest("hex");
+  const finalized = await service.rpc("finalize_public_submission_with_review_thumbnail", {
       p_submission_id: record.id,
       p_public_request_token_hash: foundation.tokenHash,
       p_verified_mime_type: "image/webp",
@@ -427,9 +451,16 @@ async function createDemoSubmission(service, staffClients, record, now) {
       p_verified_width: record.image.width,
       p_verified_height: record.image.height,
       p_verified_sha256: checksum,
-    }),
-    "Unable to finalize a bounded demo submission.",
-  );
+      p_review_thumbnail_path: reviewThumbnailPath,
+      p_review_thumbnail_width: 240,
+      p_review_thumbnail_height: 300,
+      p_review_thumbnail_bytes: reviewThumbnail.byteLength,
+      p_review_thumbnail_generated_at: now.toISOString(),
+    });
+  if (finalized.error) {
+    await service.storage.from(ORIGINAL_BUCKET).remove([reviewThumbnailPath]);
+    throw new Error(`Unable to finalize a bounded demo submission. [${finalized.error.code ?? "remote_error"}]`);
+  }
   const submittedAt = dateBefore(now, record.ageMinutes);
   await must(
     service
@@ -504,7 +535,7 @@ export async function verifyNormalDataset(service, baselineCount) {
   for (const [status, count] of Object.entries(expected)) {
     if (distribution[status] !== count) throw new Error(`Unexpected ${status} demo distribution.`);
   }
-  if (await countExistingPrivateImages(service, safe) !== 15) {
+  if (await countExistingPrivateImages(service, safe) !== 30) {
     throw new Error("Synthetic private image verification failed.");
   }
   const deliveries = safe.flatMap((row) => row.email_deliveries);
