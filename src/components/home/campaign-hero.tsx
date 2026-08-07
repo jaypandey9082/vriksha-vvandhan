@@ -29,8 +29,8 @@ export function CampaignHero({ metric = promiseMetric }: { metric?: CampaignMetr
       <BotanicalDetail side="left" />
       <BotanicalDetail side="right" />
       <div className="shell campaign-hero__inner">
-        <HeroBrandMasthead />
         <div className="campaign-hero__stage">
+          <HeroBrandMasthead />
           <div className="campaign-hero__identity">
             <h1 id="campaign-title">
               <span>Vriksha</span>

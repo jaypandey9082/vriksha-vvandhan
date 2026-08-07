@@ -7,10 +7,16 @@ describe("RakhiPromiseCounter", () => {
   const metric = { current: 9, target: 983, label: "Vriksha promises" };
 
   it("displays the real current value and target", () => {
-    render(<RakhiPromiseCounter metric={metric} />);
+    const { container } = render(<RakhiPromiseCounter metric={metric} />);
 
     expect(screen.getByText("9")).toBeInTheDocument();
     expect(screen.getByText("983")).toBeInTheDocument();
+    expect(container.querySelector("img")).toHaveAttribute(
+      "src",
+      expect.stringContaining("rakhi-counter-ornament.png"),
+    );
+    expect(container.querySelector(".rakhi-counter__ring")).not.toBeInTheDocument();
+    expect(container.querySelector(".rakhi-counter__thread")).not.toBeInTheDocument();
   });
 
   it("exposes a concise accessible progress label", () => {

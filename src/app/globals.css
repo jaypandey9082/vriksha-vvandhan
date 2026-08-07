@@ -415,7 +415,7 @@ svg {
   overflow: hidden;
   border-bottom: 1px solid var(--line);
   background:
-    radial-gradient(circle at 56% 38%, rgba(230, 214, 175, 0.16), transparent 31rem),
+    radial-gradient(circle at 57% 38%, rgba(230, 214, 175, 0.13), transparent 31rem),
     #faf8f2;
   color: var(--ink);
 }
@@ -447,11 +447,12 @@ svg {
 
 .campaign-hero__inner {
   display: grid;
-  gap: clamp(1rem, 2vw, 1.6rem);
-  padding-block: clamp(1.25rem, 3vw, 2.25rem) clamp(2rem, 4vw, 3.25rem);
+  gap: clamp(1.1rem, 2vw, 1.45rem);
+  padding-block: clamp(1rem, 2.4vw, 1.8rem) clamp(1.4rem, 3vw, 2.3rem);
 }
 
 .hero-brand-masthead {
+  grid-area: brand;
   position: relative;
   z-index: 3;
   display: flex;
@@ -495,10 +496,11 @@ svg {
   position: relative;
   display: grid;
   grid-template-areas:
+    "brand"
     "identity"
     "media"
     "engagement";
-  gap: clamp(1.25rem, 5vw, 2.4rem);
+  gap: clamp(1rem, 4vw, 1.7rem);
   min-width: 0;
 }
 
@@ -514,10 +516,10 @@ svg {
   margin: 0;
   color: #1e321d;
   font-family: var(--font-editorial), Georgia, serif;
-  font-size: clamp(4rem, 19vw, 6rem);
+  font-size: clamp(3.45rem, 16.5vw, 5rem);
   font-weight: 570;
   letter-spacing: -0.065em;
-  line-height: 0.82;
+  line-height: 0.84;
   text-wrap: balance;
 }
 
@@ -529,10 +531,10 @@ svg {
   position: relative;
   width: fit-content;
   max-width: 100%;
-  margin: 1.15rem auto 0;
+  margin: 0.95rem auto 0;
   color: #627e43;
   font-family: var(--font-editorial), Georgia, serif;
-  font-size: clamp(1.15rem, 5.5vw, 1.6rem);
+  font-size: clamp(1.08rem, 5vw, 1.48rem);
   font-weight: 500;
   letter-spacing: -0.018em;
   line-height: 1.2;
@@ -556,7 +558,7 @@ svg {
   min-width: 0;
   display: grid;
   justify-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .hero-media {
@@ -568,16 +570,16 @@ svg {
 }
 
 .hero-media__frame {
-  aspect-ratio: 1;
+  aspect-ratio: 4 / 3;
   border: 1px solid rgba(180, 138, 69, 0.26);
-  border-radius: 0.75rem 4.5rem 4.5rem 0.75rem;
+  border-radius: 0.75rem 3.75rem 3.75rem 0.75rem;
   background: #f0ede2;
   box-shadow: 0 24px 62px rgba(45, 64, 60, 0.12);
   animation: hero-image-reveal 800ms cubic-bezier(0.2, 0.75, 0.3, 1) both;
 }
 
 .hero-media__frame .campaign-image__media {
-  object-position: 50% 58% !important;
+  object-position: 50% 92% !important;
 }
 
 .campaign-hero__botanical {
@@ -590,7 +592,7 @@ svg {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.25;
-  opacity: 0.075;
+  opacity: 0.04;
   pointer-events: none;
 }
 
@@ -609,101 +611,39 @@ svg {
 .rakhi-counter {
   position: relative;
   width: min(100%, 43rem);
-  min-height: clamp(190px, 54vw, 220px);
-  display: grid;
-  grid-template-columns: minmax(2.25rem, 1fr) clamp(178px, 52vw, 214px) minmax(2.25rem, 1fr);
-  align-items: center;
-}
-
-.rakhi-counter__medallion {
-  position: relative;
-  z-index: 2;
-  grid-column: 2;
-  width: 100%;
-  aspect-ratio: 1;
+  height: clamp(158px, 43vw, 190px);
   display: grid;
   place-items: center;
-  border-radius: 50%;
-  background: #fffdf7;
-  box-shadow: 0 12px 34px rgba(70, 47, 22, 0.16), inset 0 0 24px rgba(180, 138, 69, 0.12);
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.rakhi-counter__medallion::before,
-.rakhi-counter__medallion::after {
-  content: "";
+.rakhi-counter__ornament {
   position: absolute;
-  border-radius: 50%;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  width: clamp(700px, 180vw, 1000px);
+  max-width: none;
+  height: auto;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 12px 13px rgba(105, 50, 12, 0.18));
   pointer-events: none;
-}
-
-.rakhi-counter__medallion::before {
-  inset: -0.3rem;
-  z-index: -1;
-  border: 6px double #c8993d;
-  outline: 2px dotted rgba(185, 31, 36, 0.86);
-  outline-offset: 2px;
-  background: transparent;
-  box-shadow: 0 0 0 2px rgba(117, 70, 18, 0.18), 0 8px 20px rgba(91, 58, 20, 0.12);
-}
-
-.rakhi-counter__medallion::after {
-  inset: 0.35rem;
-  border: 1px solid rgba(185, 31, 36, 0.45);
-}
-
-.rakhi-counter__ring {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.rakhi-counter__petal-ring,
-.rakhi-counter__gold-ring,
-.rakhi-counter__track,
-.rakhi-counter__progress,
-.rakhi-counter__inner-ring {
-  fill: none;
-  vector-effect: non-scaling-stroke;
-}
-
-.rakhi-counter__petal-ring {
-  stroke: rgba(185, 31, 36, 0.72);
-  stroke-dasharray: 2 5;
-  stroke-width: 2.5;
-}
-
-.rakhi-counter__gold-ring {
-  stroke: #c8993d;
-  stroke-width: 3;
-}
-
-.rakhi-counter__track {
-  stroke: rgba(180, 138, 69, 0.2);
-  stroke-width: 4;
-}
-
-.rakhi-counter__progress {
-  stroke: var(--action-red);
-  stroke-linecap: round;
-  stroke-width: 5;
-  transition: stroke-dashoffset 500ms ease;
-}
-
-.rakhi-counter__inner-ring {
-  stroke: rgba(45, 64, 60, 0.15);
-  stroke-dasharray: 1 5;
-  stroke-width: 1.5;
+  user-select: none;
 }
 
 .rakhi-counter__copy {
-  position: relative;
+  position: absolute;
   z-index: 2;
+  left: 50%;
+  top: 50%;
+  width: clamp(104px, 29vw, 162px);
+  aspect-ratio: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  transform: translate(-50%, -50%);
   color: #1e321d;
   line-height: 1;
   text-align: center;
@@ -711,7 +651,7 @@ svg {
 
 .rakhi-counter__copy strong {
   font-family: var(--font-editorial), Georgia, serif;
-  font-size: clamp(4.1rem, 17vw, 5.7rem);
+  font-size: clamp(3rem, 12vw, 5rem);
   font-weight: 590;
   letter-spacing: -0.075em;
 }
@@ -719,7 +659,7 @@ svg {
 .rakhi-counter__copy > span {
   margin-top: -0.2rem;
   font-family: var(--font-editorial), Georgia, serif;
-  font-size: clamp(0.9rem, 3vw, 1.08rem);
+  font-size: clamp(0.72rem, 2.6vw, 1rem);
 }
 
 .rakhi-counter__copy b {
@@ -730,9 +670,9 @@ svg {
 
 .rakhi-counter__copy small {
   max-width: 14ch;
-  margin-top: 0.45rem;
+  margin-top: 0.35rem;
   color: var(--forest-accent);
-  font-size: clamp(0.55rem, 1.8vw, 0.68rem);
+  font-size: clamp(0.46rem, 1.55vw, 0.64rem);
   font-weight: 850;
   letter-spacing: 0.08em;
   line-height: 1.25;
@@ -740,9 +680,9 @@ svg {
 }
 
 .rakhi-counter__leaf {
-  width: 1.8rem;
-  height: 1.25rem;
-  margin-top: 0.35rem;
+  width: clamp(1.1rem, 4vw, 1.65rem);
+  height: auto;
+  margin-top: 0.24rem;
   fill: rgba(98, 126, 67, 0.72);
   stroke: #627e43;
   stroke-linecap: round;
@@ -750,106 +690,24 @@ svg {
   stroke-width: 1.2;
 }
 
-.rakhi-counter__thread {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 3.25rem;
-  display: block;
-}
-
-.rakhi-counter__thread--left {
-  grid-column: 1;
-}
-
-.rakhi-counter__thread--right {
-  grid-column: 3;
-}
-
-.rakhi-counter__cord {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 7px;
-  transform: translateY(-50%);
-  border-block: 1px solid rgba(185, 31, 36, 0.56);
-  background: repeating-linear-gradient(10deg, #bb1e29 0 4px, #e1ad49 4px 7px, #f8ebc4 7px 9px);
-  box-shadow: 0 2px 5px rgba(82, 44, 16, 0.12);
-}
-
-.rakhi-counter__beads {
-  position: absolute;
-  top: 50%;
-  display: flex;
-  align-items: center;
-  gap: 0.16rem;
-  transform: translateY(-50%);
-}
-
-.rakhi-counter__thread--left .rakhi-counter__beads {
-  right: -0.1rem;
-}
-
-.rakhi-counter__thread--right .rakhi-counter__beads {
-  left: -0.1rem;
-  flex-direction: row-reverse;
-}
-
-.rakhi-counter__beads i {
-  width: 0.75rem;
-  height: 0.75rem;
-  display: block;
-  border-radius: 50%;
-  border: 1px solid rgba(91, 58, 20, 0.35);
-  background: radial-gradient(circle at 35% 30%, #fff7cf, #c5902e 58%, #8e5e1b);
-  box-shadow: 0 2px 4px rgba(77, 43, 10, 0.2);
-}
-
-.rakhi-counter__beads i:nth-child(2) {
-  width: 0.58rem;
-  height: 0.58rem;
-  background: #b91f24;
-}
-
-.rakhi-counter__beads i:nth-child(4) {
-  width: 0.55rem;
-  height: 0.55rem;
-  background: #496b41;
-}
-
-.rakhi-counter__tassel {
-  position: absolute;
-  top: 50%;
-  width: 1.5rem;
-  height: 1.9rem;
-  transform: translateY(-50%);
-  background: repeating-linear-gradient(90deg, #b91f24 0 2px, #e7a83b 2px 3px);
-  clip-path: polygon(0 35%, 100% 0, 84% 50%, 100% 100%, 0 65%);
-  opacity: 0.9;
-}
-
-.rakhi-counter__thread--left .rakhi-counter__tassel {
-  left: -0.2rem;
-}
-
-.rakhi-counter__thread--right .rakhi-counter__tassel {
-  right: -0.2rem;
-  transform: translateY(-50%) scaleX(-1);
-}
-
 .campaign-hero__actions {
-  width: min(100%, 34rem);
-  display: flex;
-  flex-direction: column;
+  width: min(100%, 29rem);
+  display: grid;
+  grid-template-columns: 1fr;
   align-items: center;
   justify-content: center;
   gap: 0.7rem;
 }
 
+@media (min-width: 370px) {
+  .campaign-hero__actions {
+    grid-template-columns: minmax(0, 1.16fr) minmax(0, 0.9fr);
+  }
+}
+
 .campaign-hero__actions .button {
   width: 100%;
-  min-height: 50px;
+  min-height: 48px;
   border-radius: 0.8rem;
   padding-inline: 1.15rem;
 }
@@ -875,7 +733,7 @@ svg {
   position: relative;
   z-index: 4;
   min-width: 0;
-  --promise-reel-gap: 0.7rem;
+  --promise-reel-gap: 0.6rem;
   --promise-reel-duration: 52s;
 }
 
@@ -993,8 +851,8 @@ svg {
 }
 
 .promise-ribbon__card {
-  width: 138px;
-  height: 106px;
+  width: 158px;
+  height: 132px;
   flex: 0 0 auto;
   margin: 0;
   overflow: hidden;
@@ -1006,9 +864,9 @@ svg {
   animation: ribbon-card-in 600ms ease both;
 }
 
-.promise-ribbon__card--portrait { width: 116px; }
-.promise-ribbon__card--square { width: 142px; }
-.promise-ribbon__card--landscape { width: 180px; }
+.promise-ribbon__card--portrait { width: 145px; }
+.promise-ribbon__card--square { width: 158px; }
+.promise-ribbon__card--landscape { width: 176px; }
 
 .promise-ribbon__card img {
   width: 100%;
@@ -1753,23 +1611,17 @@ svg {
     width: clamp(230px, 34vw, 270px);
   }
 
-  .campaign-hero__actions {
-    flex-direction: row;
-    justify-content: center;
-  }
-
   .campaign-hero__actions .button {
-    width: auto;
-    min-width: 210px;
+    width: 100%;
   }
 
   .promise-ribbon__card {
-    height: 116px;
+    height: 142px;
   }
 
-  .promise-ribbon__card--portrait { width: 124px; }
-  .promise-ribbon__card--square { width: 150px; }
-  .promise-ribbon__card--landscape { width: 194px; }
+  .promise-ribbon__card--portrait { width: 148px; }
+  .promise-ribbon__card--square { width: 162px; }
+  .promise-ribbon__card--landscape { width: 178px; }
 
   .movement-preview__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1874,8 +1726,10 @@ svg {
 
 @media (min-width: 960px) {
   .campaign-hero__inner {
-    gap: clamp(0.7rem, 1.2vw, 1.1rem);
-    padding-block: clamp(1rem, 1.7vw, 1.5rem) clamp(1.25rem, 2vw, 1.8rem);
+    gap: clamp(0.65rem, 1vw, 0.9rem);
+    min-height: 100svh;
+    grid-template-rows: minmax(0, 1fr) auto;
+    padding-block: clamp(1rem, 1.45vw, 1.35rem) clamp(0.85rem, 1.5vw, 1.25rem);
   }
 
   .hero-brand-masthead {
@@ -1883,7 +1737,7 @@ svg {
   }
 
   .hero-brand-masthead__logo {
-    width: clamp(250px, 21vw, 300px);
+    width: clamp(260px, 21vw, 310px);
   }
 
   .hero-brand-masthead__presents p {
@@ -1892,59 +1746,79 @@ svg {
 
   .campaign-hero__stage {
     grid-template-areas:
+      "media brand"
       "media identity"
       "media engagement";
-    grid-template-columns: minmax(340px, 0.72fr) minmax(0, 1.28fr);
-    grid-template-rows: auto 1fr;
+    grid-template-columns: minmax(390px, 0.78fr) minmax(0, 1.22fr);
+    grid-template-rows: auto auto 1fr;
     align-items: center;
-    column-gap: clamp(2rem, 4vw, 4.2rem);
-    row-gap: 0.25rem;
+    min-height: min(690px, calc(100svh - 178px));
+    column-gap: clamp(2rem, 4vw, 4.4rem);
+    row-gap: clamp(0.25rem, 0.7vw, 0.55rem);
+  }
+
+  .hero-brand-masthead {
+    align-self: start;
   }
 
   .campaign-hero__identity {
-    align-self: end;
+    align-self: center;
   }
 
   .hero-media {
     width: 100%;
-    max-width: 440px;
+    max-width: 455px;
+    height: 100%;
+    min-height: 0;
+    align-self: stretch;
+  }
+
+  .hero-media__frame {
+    height: 100%;
+    min-height: 560px;
+    aspect-ratio: auto;
+    border-radius: 0.75rem 5rem 5rem 0.75rem;
   }
 
   .campaign-hero h1 {
-    font-size: clamp(5.4rem, 7.2vw, 7rem);
-    line-height: 0.79;
+    font-size: clamp(5rem, 6.6vw, 6.25rem);
+    line-height: 0.8;
   }
 
   .campaign-hero__tagline {
-    margin-top: 1.1rem;
-    font-size: clamp(1.3rem, 2vw, 1.72rem);
+    margin-top: 0.95rem;
+    font-size: clamp(1.45rem, 2.15vw, 1.95rem);
   }
 
   .campaign-hero__engagement {
-    align-self: start;
-    gap: 0.65rem;
+    align-self: center;
+    gap: 0.45rem;
   }
 
   .rakhi-counter {
-    min-height: 204px;
-    grid-template-columns: minmax(4rem, 1fr) 194px minmax(4rem, 1fr);
+    width: min(100%, 45rem);
+    height: 214px;
+  }
+
+  .rakhi-counter__copy {
+    width: 162px;
   }
 
   .rakhi-counter__copy strong {
-    font-size: 5.15rem;
+    font-size: 5rem;
   }
 
   .campaign-hero__actions {
-    width: min(100%, 31rem);
+    width: min(100%, 29rem);
   }
 
   .promise-ribbon__card {
-    height: 118px;
+    height: 145px;
   }
 
-  .promise-ribbon__card--portrait { width: 126px; }
-  .promise-ribbon__card--square { width: 152px; }
-  .promise-ribbon__card--landscape { width: 198px; }
+  .promise-ribbon__card--portrait { width: 150px; }
+  .promise-ribbon__card--square { width: 165px; }
+  .promise-ribbon__card--landscape { width: 180px; }
 }
 
 @media (min-width: 1024px) {
@@ -2009,16 +1883,16 @@ svg {
   }
 
   .hero-media {
-    max-width: 455px;
+    max-width: 465px;
   }
 
   .promise-ribbon__card {
-    height: 130px;
+    height: 150px;
   }
 
-  .promise-ribbon__card--portrait { width: 136px; }
-  .promise-ribbon__card--square { width: 166px; }
-  .promise-ribbon__card--landscape { width: 214px; }
+  .promise-ribbon__card--portrait { width: 154px; }
+  .promise-ribbon__card--square { width: 168px; }
+  .promise-ribbon__card--landscape { width: 184px; }
 }
 
 @media (min-width: 1440px) {
@@ -2027,11 +1901,11 @@ svg {
   }
 
   .campaign-hero__stage {
-    grid-template-columns: minmax(390px, 0.7fr) minmax(0, 1.3fr);
+    grid-template-columns: minmax(420px, 0.78fr) minmax(0, 1.22fr);
   }
 
   .hero-media {
-    max-width: 470px;
+    max-width: 475px;
   }
 }
 

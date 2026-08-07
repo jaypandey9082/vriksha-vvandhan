@@ -16,27 +16,32 @@ test("homepage loads without browser console errors", async ({ page }) => {
   expect(errors).toEqual([]);
 });
 
-test("homepage uses the warm campaign canvas and rakhi medallion", async ({ page }) => {
+test("homepage uses the warm campaign canvas and transparent rakhi ornament", async ({ page }) => {
   await page.goto("/");
 
   const surfaces = await page.evaluate(() => {
     const hero = document.querySelector<HTMLElement>(".campaign-hero");
-    const tracker = document.querySelector<HTMLElement>(".rakhi-counter__medallion");
+    const tracker = document.querySelector<HTMLElement>(".rakhi-counter");
+    const ornament = document.querySelector<HTMLImageElement>(".rakhi-counter__ornament");
 
-    if (!hero || !tracker) throw new Error("Required campaign surfaces are missing");
+    if (!hero || !tracker || !ornament) throw new Error("Required campaign surfaces are missing");
 
     return {
       body: getComputedStyle(document.body).backgroundColor,
       hero: getComputedStyle(hero).backgroundColor,
       heroImage: getComputedStyle(hero).backgroundImage,
-      trackerCenter: getComputedStyle(tracker).backgroundColor,
+      ornamentAlt: ornament.alt,
+      ornamentLoaded: ornament.complete && ornament.naturalWidth > 0,
+      trackerText: tracker.textContent,
     };
   });
 
   expect(surfaces.body).toBe("rgb(248, 247, 243)");
   expect(surfaces.hero).toBe("rgb(250, 248, 242)");
   expect(surfaces.heroImage).toContain("radial-gradient");
-  expect(surfaces.trackerCenter).toBe("rgb(255, 253, 247)");
+  expect(surfaces.ornamentAlt).toBe("");
+  expect(surfaces.ornamentLoaded).toBe(true);
+  expect(surfaces.trackerText).toContain("983");
 });
 
 test("homepage removes the conventional header and keeps both hero journeys", async ({ page }) => {
@@ -56,7 +61,7 @@ test("homepage removes the conventional header and keeps both hero journeys", as
   await expect(page).toHaveURL(/\/join$/);
 });
 
-test("desktop identity is centered and the reel joins the first viewport", async ({ page }) => {
+test("desktop identity is centered in its campaign column and the reel joins the first viewport", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
 
@@ -64,12 +69,12 @@ test("desktop identity is centered and the reel joins the first viewport", async
     .locator(".campaign-hero")
     .getByRole("img", { name: "Mirchi", exact: true })
     .boundingBox();
-  const hero = await page.locator(".campaign-hero").boundingBox();
+  const identity = await page.locator(".campaign-hero__identity").boundingBox();
   const reel = await page.locator(".promise-ribbon__viewport").boundingBox();
   expect(logo).not.toBeNull();
-  expect(hero).not.toBeNull();
+  expect(identity).not.toBeNull();
   expect(reel).not.toBeNull();
-  expect(Math.abs((logo!.x + logo!.width / 2) - (hero!.x + hero!.width / 2))).toBeLessThan(3);
+  expect(Math.abs((logo!.x + logo!.width / 2) - (identity!.x + identity!.width / 2))).toBeLessThan(3);
   expect(reel!.y).toBeLessThan(900);
 });
 

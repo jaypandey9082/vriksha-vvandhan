@@ -17,9 +17,9 @@ type ReelSequenceProps = {
 
 const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
 const reelImageSizes = {
-  portrait: "(max-width: 639px) 116px, (max-width: 959px) 124px, (max-width: 1279px) 126px, 136px",
-  square: "(max-width: 639px) 142px, (max-width: 959px) 150px, (max-width: 1279px) 152px, 166px",
-  landscape: "(max-width: 639px) 180px, (max-width: 959px) 194px, (max-width: 1279px) 198px, 214px",
+  portrait: "(max-width: 639px) 145px, (max-width: 959px) 148px, (max-width: 1279px) 150px, 154px",
+  square: "(max-width: 639px) 158px, (max-width: 959px) 162px, (max-width: 1279px) 165px, 168px",
+  landscape: "(max-width: 639px) 176px, (max-width: 959px) 178px, (max-width: 1279px) 180px, 184px",
 } as const;
 
 function subscribeToHydration() {
