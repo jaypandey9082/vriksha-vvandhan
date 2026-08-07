@@ -2409,6 +2409,10 @@ svg {
 .admin-page-header h1 { margin: .2rem 0 0; font-family: var(--font-editorial), Georgia, serif; font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 550; line-height: 1; }
 .admin-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: .8rem; }
 .admin-stat-grid a { display: grid; border: 1px solid var(--line); border-radius: .6rem; background: var(--surface); padding: 1.1rem; }
+.admin-stat-card { display: grid; border: 1px solid var(--line); border-radius: .6rem; background: var(--surface); padding: 1.1rem; }
+.admin-stat-card span { color: var(--muted-ink); font-size: .76rem; font-weight: 800; }
+.admin-stat-card strong { margin: .4rem 0; font-family: var(--font-editorial), Georgia, serif; font-size: 2.5rem; line-height: 1; }
+.admin-stat-card small { color: var(--action-red); font-weight: 750; }
 .admin-stat-grid span { color: var(--muted-ink); font-size: .76rem; font-weight: 800; }
 .admin-stat-grid strong { margin: .4rem 0; font-family: var(--font-editorial), Georgia, serif; font-size: 2.5rem; line-height: 1; }
 .admin-stat-grid small { color: var(--action-red); font-weight: 750; }
@@ -2492,6 +2496,17 @@ svg {
 .admin-settings { max-width: 42rem; display: grid; gap: 1rem; }
 .admin-settings label:not(.team-card__active) { display: grid; gap: .4rem; font-size: .82rem; font-weight: 800; }
 .admin-settings input[type="number"], .admin-settings input[type="text"] { min-height: 48px; border: 1px solid var(--line-strong); border-radius: .45rem; padding: .7rem .8rem; }
+.admin-settings-status { display: grid; gap: .65rem; margin: 0; }
+.admin-settings-status div { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--line); padding-bottom: .65rem; }
+.admin-settings-status dt { color: var(--muted-ink); font-weight: 750; }
+.admin-settings-status dd { margin: 0; font-weight: 850; text-align: right; }
+.admin-delivery-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); align-items: end; gap: .8rem; }
+.admin-delivery-filters label { display: grid; gap: .35rem; color: var(--muted-ink); font-size: .75rem; font-weight: 800; }
+.admin-delivery-filters input, .admin-delivery-filters select { min-height: 44px; border: 1px solid var(--line-strong); border-radius: .45rem; background: var(--surface); padding: .55rem .65rem; }
+.admin-delivery-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .45rem; }
+.admin-delivery-actions form { display: flex; align-items: center; gap: .35rem; }
+.admin-delivery-actions a, .admin-delivery-actions button { border: 1px solid var(--line-strong); border-radius: .35rem; background: var(--surface); color: var(--action-red); cursor: pointer; padding: .45rem .6rem; font-size: .74rem; font-weight: 800; white-space: nowrap; }
+.admin-delivery-actions input { width: 125px; min-height: 34px; border: 1px solid var(--line-strong); border-radius: .35rem; padding: .35rem; font-size: .7rem; }
 .admin-error { max-width: 42rem; margin: 2rem auto; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
 

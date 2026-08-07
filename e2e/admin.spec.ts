@@ -40,6 +40,19 @@ test("Reviewer is denied a direct Team route", async ({ page }) => {
   await expect(page.getByText("404", { exact:true })).toBeVisible();
 });
 
+test("Reviewer is denied deliveries while Admin can operate the Delivery Center", async ({ page }) => {
+  await signInAs(page, "reviewer");
+  await page.goto("/admin/deliveries");
+  await expect(page.getByText("404", { exact:true })).toBeVisible();
+
+  await signInAs(page, "admin");
+  await page.goto("/admin/deliveries");
+  await expect(page.getByRole("heading", { name:"Delivery Center" })).toBeVisible();
+  await expect(page.getByRole("link", { name:"Download" })).toBeVisible();
+  await page.getByRole("button", { name:"Retry email" }).click();
+  await expect(page.getByText(/delivery action completed: email retry/i)).toBeVisible();
+});
+
 test("Admin can confirm, approve instead, Trash, restore, delete, and manage controls", async ({ page }) => {
   await signInAs(page, "admin");
   await page.goto(`/admin/submissions/${recommendedId}`);
@@ -70,6 +83,7 @@ test("Admin can confirm, approve instead, Trash, restore, delete, and manage con
   await expect(page.getByRole("heading", { name:"Team" })).toBeVisible();
   await page.getByRole("link", { name:"Settings" }).click();
   await expect(page.getByRole("heading", { name:"Settings" })).toBeVisible();
+  await expect(page.getByRole("link", { name:"Export Campaign Data" })).toBeVisible();
 });
 
 test("Campaign Desk has no serious or critical accessibility violations", async ({ page }) => {

@@ -11,6 +11,7 @@ describe("Campaign Desk navigation", () => {
     expect(screen.queryByRole("link", { name: "Trash" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Team" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Settings" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Deliveries" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Submissions" })).toBeInTheDocument();
   });
 
@@ -19,6 +20,7 @@ describe("Campaign Desk navigation", () => {
     expect(screen.getByRole("link", { name: "Trash" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Team" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Settings" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Deliveries" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Rejection Review" })).toBeInTheDocument();
   });
 });

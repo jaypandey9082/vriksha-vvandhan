@@ -2,8 +2,10 @@
 
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 
 import { requireRole, requireStaff } from "@/lib/auth/dal";
+import { processApprovalDelivery, processSubmissionDelivery } from "@/lib/email/delivery-orchestration.server";
 import { publishSubmission } from "@/lib/moderation/publication.server";
 import { generatePublicVariants } from "@/lib/moderation/publication-image.server";
 import { deletionSchema, rejectionSchema, reviewFieldsSchema, submissionIdSchema } from "@/lib/moderation/schemas";
@@ -31,6 +33,11 @@ export async function approveSubmissionAction(formData: FormData) {
   if (isStaffE2EAdapterEnabled()) redirect(`/admin/submissions/${submissionId}?success=published`);
   const client = await createServerSupabaseClient();
   await publishSubmission(client, session, submissionId);
+  after(async () => {
+    await processApprovalDelivery(submissionId).catch(() => {
+      console.error("Approval delivery attempt failed.");
+    });
+  });
   redirect(`/admin/submissions/${submissionId}?success=published`);
 }
 
@@ -51,6 +58,11 @@ export async function confirmRejectionAction(formData: FormData) {
   const client = await createServerSupabaseClient();
   const { error } = await callUntypedRpc(client, "confirm_submission_rejection", { p_submission_id: input.submissionId, p_comment: input.comment });
   if (error) throw new Error(error.message);
+  after(async () => {
+    await processSubmissionDelivery(input.submissionId, "rejection").catch(() => {
+      console.error("Rejection delivery attempt failed.");
+    });
+  });
   revalidatePath(`/admin/submissions/${input.submissionId}`);
 }
 

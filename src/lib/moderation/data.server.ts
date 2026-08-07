@@ -60,7 +60,7 @@ export async function getOldestUnreviewedAgeHours() {
 
 export async function getSubmissionCounts() {
   const session = await requireStaff();
-  if (isStaffE2EAdapterEnabled()) return { pending_review:1,rejection_pending_admin:1,published:1,rejected:0,trashed:1,certificate_not_started:1,email_not_started_or_failed:1 };
+  if (isStaffE2EAdapterEnabled()) return { pending_review:1,rejection_pending_admin:1,published:1,rejected:0,trashed:1,certificate_not_started:1,certificate_generated:1,certificate_failed:1,email_not_started_or_failed:1,approval_email_sent:1,rejection_email_sent:1,email_failed:1 };
   const client = await createServerSupabaseClient();
   const statuses = ["pending_review", "rejection_pending_admin", "published", "rejected"] as const;
   const pairs = await Promise.all(statuses.map(async (status) => {
@@ -69,20 +69,40 @@ export async function getSubmissionCounts() {
   }));
   const { count: trashed } = await client.from("submissions").select("id", { count: "exact", head: true }).not("trashed_at", "is", null);
   let certificateNotStarted = 0;
+  let certificateGenerated = 0;
+  let certificateFailed = 0;
   let emailNotStartedOrFailed = 0;
+  let approvalEmailSent = 0;
+  let rejectionEmailSent = 0;
+  let emailFailed = 0;
   if (session.role === "admin") {
-    const [certificates, emails] = await Promise.all([
+    const [certificates, generated, certificateFailures, emails, approvalSent, rejectionSent, emailFailures] = await Promise.all([
       client.from("certificates").select("id", { count: "exact", head: true }).eq("status", "not_started"),
+      client.from("certificates").select("id", { count: "exact", head: true }).eq("status", "generated"),
+      client.from("certificates").select("id", { count: "exact", head: true }).eq("status", "failed"),
       client.from("email_deliveries").select("id", { count: "exact", head: true }).in("status", ["not_started", "failed"]),
+      client.from("email_deliveries").select("id", { count: "exact", head: true }).eq("kind", "approval_certificate").eq("status", "sent"),
+      client.from("email_deliveries").select("id", { count: "exact", head: true }).eq("kind", "rejection").eq("status", "sent"),
+      client.from("email_deliveries").select("id", { count: "exact", head: true }).eq("status", "failed"),
     ]);
     certificateNotStarted = certificates.count ?? 0;
+    certificateGenerated = generated.count ?? 0;
+    certificateFailed = certificateFailures.count ?? 0;
     emailNotStartedOrFailed = emails.count ?? 0;
+    approvalEmailSent = approvalSent.count ?? 0;
+    rejectionEmailSent = rejectionSent.count ?? 0;
+    emailFailed = emailFailures.count ?? 0;
   }
   return {
     ...Object.fromEntries(pairs), trashed: trashed ?? 0,
     certificate_not_started: certificateNotStarted,
+    certificate_generated: certificateGenerated,
+    certificate_failed: certificateFailed,
     email_not_started_or_failed: emailNotStartedOrFailed,
-  } as Record<(typeof statuses)[number] | "trashed" | "certificate_not_started" | "email_not_started_or_failed", number>;
+    approval_email_sent: approvalEmailSent,
+    rejection_email_sent: rejectionEmailSent,
+    email_failed: emailFailed,
+  } as Record<(typeof statuses)[number] | "trashed" | "certificate_not_started" | "certificate_generated" | "certificate_failed" | "email_not_started_or_failed" | "approval_email_sent" | "rejection_email_sent" | "email_failed", number>;
 }
 
 export async function listSubmissionPage(status: string, search: string, rawCursor?: string) {
@@ -199,12 +219,12 @@ export async function getSubmissionDetail(id: string) {
       rejection_recommended_at:fixture.status === "rejection_pending_admin" ? "2026-08-06T11:00:00.000Z" : null,rejected_at:null,trashed_at:fixture.trashed_at,
       submission_consents:{publication_consent:true,terms_accepted:true,accepted_at:E2E_SUBMITTED_AT},
       submission_media:{status:fixture.status === "published" ? "published" : "uploaded",original_path:`${fixture.id}/original.webp`,original_mime_type:"image/webp",original_bytes:2048,original_width:900,original_height:900,review_thumbnail_path:`${fixture.id}/review-thumb.webp`,review_thumbnail_width:240,review_thumbnail_height:300,review_thumbnail_bytes:4096,focal_x:.5,focal_y:.5,published_card_path:null,published_full_path:null},
-      certificates:{status:"not_started"},email_deliveries:[{kind:"approval_certificate",status:"not_started"}],
+      certificates:{id:"c1000000-0000-4000-8000-000000000001",status:"not_started",template_version:null,generated_at:null,last_error_code:null},email_deliveries:[{id:"d1000000-0000-4000-8000-000000000001",kind:"approval_certificate",status:"not_started",sent_at:null,last_error_code:null}],
     };
     return { record, reviewThumbnail:{bucket:"submission-originals",path:`${fixture.id}/review-thumb.webp`,signedUrl:"/campaign/guardian-preview.webp",expiresIn:600}, reviewImage:{bucket:"submission-originals",path:`${fixture.id}/original.webp`,signedUrl:"/campaign/guardian-preview.webp",expiresIn:600}, email:session.role === "admin" ? "participant@example.test" : null, audit:session.role === "admin" ? [{id:1,action:"submission.test_fixture",created_at:E2E_SUBMITTED_AT}] : [], session };
   }
   const client = await createServerSupabaseClient();
-  const { data, error } = await client.from("submissions").select("id,status,display_name,submitted_at,guardian_number,rejection_comment,rejection_recommended_at,rejected_at,trashed_at,submission_consents(publication_consent,terms_accepted,accepted_at),submission_media(status,original_path,original_mime_type,original_bytes,original_width,original_height,review_thumbnail_path,review_thumbnail_width,review_thumbnail_height,review_thumbnail_bytes,focal_x,focal_y,published_card_path,published_full_path),certificates(status),email_deliveries(kind,status)").eq("id", id).maybeSingle();
+  const { data, error } = await client.from("submissions").select("id,status,display_name,submitted_at,guardian_number,rejection_comment,rejection_recommended_at,rejected_at,trashed_at,submission_consents(publication_consent,terms_accepted,accepted_at),submission_media(status,original_path,original_mime_type,original_bytes,original_width,original_height,review_thumbnail_path,review_thumbnail_width,review_thumbnail_height,review_thumbnail_bytes,focal_x,focal_y,published_card_path,published_full_path),certificates(id,status,template_version,generated_at,last_error_code),email_deliveries(id,kind,status,sent_at,last_error_code)").eq("id", id).maybeSingle();
   if (error || !data) return null;
   const record = data as unknown as Record<string, unknown> & {
     submission_media:

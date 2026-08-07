@@ -1,5 +1,7 @@
 import { ZodError } from "zod";
+import { after } from "next/server";
 
+import { processSubmissionDelivery } from "@/lib/email/delivery-orchestration.server";
 import { jsonApiError } from "@/lib/submissions/api-errors";
 import { acceptsSmallJson, isSameOriginRequest } from "@/lib/submissions/origin.server";
 import {
@@ -33,7 +35,13 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   try {
-    return Response.json(await finalizePublicSubmission(input), {
+    const result = await finalizePublicSubmission(input);
+    after(async () => {
+      await processSubmissionDelivery(input.submissionId, "submission_received").catch(() => {
+        console.error("Submission receipt delivery attempt failed.");
+      });
+    });
+    return Response.json(result, {
       status: 200,
       headers: { "Cache-Control": "no-store" },
     });

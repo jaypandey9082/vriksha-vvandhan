@@ -10,8 +10,11 @@ const mocks = vi.hoisted(() => {
     ServiceError,
     prepare: vi.fn(),
     finalize: vi.fn(),
+    after: vi.fn(),
   };
 });
+
+vi.mock("next/server", () => ({ after: mocks.after }));
 
 vi.mock("@/lib/submissions/service.server", () => ({
   SubmissionServiceError: mocks.ServiceError,
@@ -119,6 +122,7 @@ describe("finalize submission handler", () => {
     }));
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ success: true, status: "pending_review" });
+    expect(mocks.after).toHaveBeenCalledOnce();
   });
 
   it("returns a generic retryable response for an unexpected internal failure", async () => {
@@ -131,5 +135,6 @@ describe("finalize submission handler", () => {
     expect(response.status).toBe(503);
     expect(text).not.toContain("private@example.com");
     expect(text).not.toContain("secret-token");
+    expect(mocks.after).not.toHaveBeenCalled();
   });
 });

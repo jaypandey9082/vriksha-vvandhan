@@ -15,8 +15,10 @@ export default async function AdminOverviewPage() {
   ];
   if (session.role === "admin") cards.push(["Trashed", counts.trashed, "/admin/submissions?status=trashed"]);
   if (session.role === "admin") {
-    cards.push(["Certificate Not Started", counts.certificate_not_started, "/admin/submissions?status=published"]);
-    cards.push(["Email Not Started / Failed", counts.email_not_started_or_failed, "/admin/submissions?status=published"]);
+    cards.push(["Certificates Generated", counts.certificate_generated, "/admin/deliveries?kind=certificate&status=generated"]);
+    cards.push(["Approval Emails Sent", counts.approval_email_sent, "/admin/deliveries?kind=approval_certificate&status=sent"]);
+    cards.push(["Rejection Emails Sent", counts.rejection_email_sent, "/admin/deliveries?kind=rejection&status=sent"]);
+    cards.push(["Failed Deliveries", counts.certificate_failed + counts.email_failed, "/admin/deliveries?status=failed"]);
   }
   return <>
     <header className="admin-page-header"><div><p>Vriksha Vvandhan operations</p><h1>Overview</h1></div><AdminRefreshControls refreshedAt={new Date().toISOString()} /></header>
