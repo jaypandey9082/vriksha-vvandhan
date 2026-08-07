@@ -111,7 +111,10 @@ export type Database = {
         Row: {
           attempt_count: number
           bucket: string | null
+          checksum_sha256: string | null
+          claim_token: string | null
           created_at: string
+          file_bytes: number | null
           format: string | null
           generated_at: string | null
           id: string
@@ -120,12 +123,16 @@ export type Database = {
           queued_at: string | null
           status: Database["public"]["Enums"]["certificate_status"]
           submission_id: string
+          template_version: string | null
           updated_at: string
         }
         Insert: {
           attempt_count?: number
           bucket?: string | null
+          checksum_sha256?: string | null
+          claim_token?: string | null
           created_at?: string
+          file_bytes?: number | null
           format?: string | null
           generated_at?: string | null
           id?: string
@@ -134,12 +141,16 @@ export type Database = {
           queued_at?: string | null
           status?: Database["public"]["Enums"]["certificate_status"]
           submission_id: string
+          template_version?: string | null
           updated_at?: string
         }
         Update: {
           attempt_count?: number
           bucket?: string | null
+          checksum_sha256?: string | null
+          claim_token?: string | null
           created_at?: string
+          file_bytes?: number | null
           format?: string | null
           generated_at?: string | null
           id?: string
@@ -148,6 +159,7 @@ export type Database = {
           queued_at?: string | null
           status?: Database["public"]["Enums"]["certificate_status"]
           submission_id?: string
+          template_version?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -163,6 +175,7 @@ export type Database = {
       email_deliveries: {
         Row: {
           attempt_count: number
+          claim_token: string | null
           created_at: string
           id: string
           idempotency_key: string
@@ -179,6 +192,7 @@ export type Database = {
         }
         Insert: {
           attempt_count?: number
+          claim_token?: string | null
           created_at?: string
           id?: string
           idempotency_key: string
@@ -195,6 +209,7 @@ export type Database = {
         }
         Update: {
           attempt_count?: number
+          claim_token?: string | null
           created_at?: string
           id?: string
           idempotency_key?: string
@@ -554,6 +569,57 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_certificate_generation: {
+        Args: {
+          p_force_regeneration: boolean
+          p_submission_id: string
+          p_template_version: string
+        }
+        Returns: {
+          approved_at: string
+          certificate_id: string
+          claim_token: string
+          display_name: string
+          guardian_number: number
+          previous_object_path: string
+        }[]
+      }
+      claim_email_delivery: {
+        Args: { p_delivery_id: string }
+        Returns: {
+          certificate_bucket: string
+          certificate_path: string
+          claim_token: string
+          delivery_id: string
+          display_name: string
+          guardian_number: number
+          idempotency_key: string
+          kind: Database["public"]["Enums"]["email_delivery_kind"]
+          recipient_email: string
+          rejection_comment: string
+          submission_id: string
+        }[]
+      }
+      complete_certificate_generation: {
+        Args: {
+          p_certificate_id: string
+          p_checksum_sha256: string
+          p_claim_token: string
+          p_file_bytes: number
+          p_object_path: string
+          p_template_version: string
+        }
+        Returns: boolean
+      }
+      complete_email_delivery: {
+        Args: {
+          p_claim_token: string
+          p_delivery_id: string
+          p_provider_message_id: string
+          p_template_version: string
+        }
+        Returns: boolean
+      }
       confirm_submission_rejection: {
         Args: { p_comment: string; p_submission_id: string }
         Returns: undefined
@@ -561,6 +627,22 @@ export type Database = {
       delete_trashed_submission: {
         Args: { p_reason: string; p_submission_id: string }
         Returns: undefined
+      }
+      fail_certificate_generation: {
+        Args: {
+          p_certificate_id: string
+          p_claim_token: string
+          p_error_code: string
+        }
+        Returns: boolean
+      }
+      fail_email_delivery: {
+        Args: {
+          p_claim_token: string
+          p_delivery_id: string
+          p_error_code: string
+        }
+        Returns: boolean
       }
       finalize_public_submission: {
         Args: {
@@ -678,6 +760,10 @@ export type Database = {
       }
       recommend_submission_rejection: {
         Args: { p_comment: string; p_submission_id: string }
+        Returns: undefined
+      }
+      record_campaign_data_export: {
+        Args: { p_row_count: number }
         Returns: undefined
       }
       reserve_guardian_number_for_publication: {
