@@ -6,8 +6,9 @@ import { RotateCcw } from "lucide-react";
 
 import { saveReviewFieldsAction } from "@/app/admin/actions";
 
-export function FocalPointEditor({ submissionId, displayName, imageUrl, initialX, initialY }: { submissionId: string; displayName: string; imageUrl: string; initialX: number; initialY: number }) {
+export function FocalPointEditor({ submissionId, displayName, imageUrl, previewUrl, initialX, initialY }: { submissionId: string; displayName: string; imageUrl: string; previewUrl?: string; initialX: number; initialY: number }) {
   const [point, setPoint] = useState({ x: initialX, y: initialY });
+  const [fullImageLoaded, setFullImageLoaded] = useState(false);
   function move(dx: number, dy: number) { setPoint(({ x, y }) => ({ x: Math.min(1, Math.max(0, x + dx)), y: Math.min(1, Math.max(0, y + dy)) })); }
   return (
     <form className="focal-editor" action={saveReviewFieldsAction}>
@@ -20,8 +21,10 @@ export function FocalPointEditor({ submissionId, displayName, imageUrl, initialX
           const bounds = event.currentTarget.getBoundingClientRect();
           setPoint({ x: (event.clientX - bounds.left) / bounds.width, y: (event.clientY - bounds.top) / bounds.height });
         }}>
-          {/* Short-lived private signed review URL. */}
-          <img src={imageUrl} alt="Private submitted photograph" />
+          {previewUrl && <img className={fullImageLoaded ? "is-hidden" : ""} src={previewUrl} alt="" width="240" height="300" decoding="async" />}
+          {/* Short-lived private original URL is only rendered on this detail page. */}
+          <img className={fullImageLoaded ? "is-loaded" : "is-loading"} src={imageUrl} alt="Private submitted photograph" loading="lazy" decoding="async" onLoad={() => setFullImageLoaded(true)} />
+          {!fullImageLoaded && <span className="focal-editor__loading" role="status">Loading full private original…</span>}
           <span style={{ left: `${point.x * 100}%`, top: `${point.y * 100}%` }} aria-hidden="true" />
         </button>
         <div className="focal-editor__controls" aria-label="Fine tune focal point">

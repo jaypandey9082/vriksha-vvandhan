@@ -50,10 +50,10 @@ describe("signed Storage helpers", () => {
       bucket: "submission-originals",
       path,
       signedUrl: "https://example.test/private-token",
-      expiresIn: 300,
+      expiresIn: 600,
     });
     expect(from).toHaveBeenCalledWith("submission-originals");
-    expect(createSignedUrl).toHaveBeenCalledWith(path, 300);
+    expect(createSignedUrl).toHaveBeenCalledWith(path, 600);
     await expect(createOriginalReviewUrl("card/1-v1.webp")).rejects.toThrow();
   });
 });
