@@ -78,3 +78,51 @@ test("Campaign Desk has no serious or critical accessibility violations", async 
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
   expect(results.violations.filter((violation) => ["serious", "critical"].includes(violation.impact ?? ""))).toEqual([]);
 });
+
+test("queue text is usable before one batched private thumbnail response", async ({ page }) => {
+  const errors: string[] = [];
+  const signingRequests: string[] = [];
+  page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+  await page.route("**/api/admin/review-thumbnails", async (route) => {
+    signingRequests.push(route.request().postData() ?? "");
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    await route.continue();
+  });
+  await signInAs(page, "reviewer");
+  await page.goto("/admin/submissions");
+
+  await expect(page.getByText("Asha Test")).toBeVisible();
+  const skeleton = page.locator(".admin-thumbnail--skeleton").first();
+  await expect(skeleton).toBeVisible();
+  const before = await skeleton.boundingBox();
+  expect(before?.width).toBe(96);
+  expect(before?.height).toBe(120);
+
+  const image = page.getByAltText("Private submission preview");
+  await expect(image).toBeVisible();
+  const after = await image.boundingBox();
+  expect(after?.width).toBe(96);
+  expect(after?.height).toBe(120);
+  expect(signingRequests).toHaveLength(1);
+  expect(signingRequests[0]).not.toContain("original");
+  expect(signingRequests[0]).not.toContain("review-thumb");
+  expect(await page.locator('link[rel="preload"][as="image"]').count()).toBe(0);
+  expect(errors).toEqual([]);
+});
+
+test("broken queue thumbnails fall back and mobile has no page overflow", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await signInAs(page, "admin");
+  await page.goto("/admin/submissions?status=rejection_pending_admin");
+  await expect(page.getByText("Ravi Test")).toBeVisible();
+  await expect(page.getByLabel("Private preview unavailable")).toBeVisible();
+  const overflow = await page.evaluate(() => {
+    const table = document.querySelector<HTMLElement>(".admin-table-wrap");
+    window.scrollTo({ left: 1000, top: 0, behavior: "instant" });
+    return { pageScrollX: window.scrollX, tableScrollsInternally: Boolean(table && table.scrollWidth > table.clientWidth) };
+  });
+  expect(overflow).toEqual({ pageScrollX: 0, tableScrollsInternally: true });
+
+  const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+  expect(results.violations.filter((violation) => ["serious", "critical"].includes(violation.impact ?? ""))).toEqual([]);
+});
