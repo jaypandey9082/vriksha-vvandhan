@@ -23,5 +23,20 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
       <small>Last changed {new Date(data.updated_at).toLocaleString("en-IN")}. Changes are audited and invalidate public campaign data.</small>
       <button className="button button--primary" type="submit">Save campaign settings</button>
     </form>
+    <section className="admin-panel admin-settings" aria-labelledby="delivery-configuration-title">
+      <div><p>Section 5 operations</p><h2 id="delivery-configuration-title">Delivery configuration</h2></div>
+      <dl className="admin-settings-status">
+        <div><dt>Certificate template</dt><dd>Installed · vriksha-2026-v1</dd></div>
+        <div><dt>Email sending</dt><dd>{process.env.EMAIL_SENDING_ENABLED === "true" ? "Enabled" : "Disabled (safe default)"}</dd></div>
+        <div><dt>Staging recipient guard</dt><dd>{process.env.EMAIL_TEST_RECIPIENT ? "Configured" : "Not configured"}</dd></div>
+      </dl>
+      <small>No API keys or participant addresses are displayed here.</small>
+    </section>
+    <section className="admin-panel admin-settings" aria-labelledby="data-export-title">
+      <div><p>Sensitive Admin operation</p><h2 id="data-export-title">Data Export</h2></div>
+      <p>Download the operational campaign workbook. It contains participant contact details and must be handled as sensitive data.</p>
+      <a className="button button--primary" href="/api/admin/export/campaign.xlsx">Export Campaign Data</a>
+      <small>Every successful export is recorded in the audit log. Secrets, signed URLs, request tokens, and binary files are excluded.</small>
+    </section>
   </>;
 }
