@@ -19,6 +19,8 @@
 - `src/lib/submissions` — shared validation, in-memory request capability, browser image preparation, origin checks, stable errors, private upload orchestration and trusted server verification.
 - `src/app/admin`, `src/components/admin`, and `src/lib/moderation` — dynamic invite-only Campaign Desk, role-aware queues, private signed review, focal-point editing, and server-only publication orchestration.
 - `src/lib/public-campaign`, `src/app/movement`, and `src/components/movement` — cached anonymous-safe campaign summary, keyset Movement data, public wall, and accessible full-image dialog.
+- `src/lib/certificates`, `src/lib/email`, and `src/lib/deliveries` — server-only PDF/Storage, transactional delivery claims/templates/provider integration, and Admin operational reads.
+- `src/lib/export` and `src/app/api/admin/export` — bounded server-side seven-sheet workbook generation behind Admin authorization.
 
 ## Staff and public publication boundary
 
@@ -48,7 +50,7 @@ All homepage sections—including the Living Promise Hero and `PromiseRibbon` wr
 
 - The homepage tracker now uses the cached public summary and falls back to an unavailable state.
 - The homepage uses approved records only when at least six exist; otherwise curated imagery remains explicitly labelled.
-- Replace the certificate concept with an approved generation/download workflow.
+- Activate the approved Resend sender/domain and environment values through company-controlled configuration.
 - Add approved Ped Ka Paigaam audio sources and transcripts to the existing preview model.
 - Replace the temporary campaign text lockup with the approved wordmark asset.
 

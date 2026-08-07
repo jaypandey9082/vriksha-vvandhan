@@ -8,10 +8,10 @@ Vriksha Vvandhan is Mirchi's Raksha Bandhan campaign inviting people to protect 
 2. **Backend foundation** — Supabase schema, RLS, staff roles, Storage rules, server clients, authorization DAL, tests and CI. Complete and verified on staging.
 3. **Public submission flow** — display name, email, one privately uploaded photograph, publication consent, terms acceptance, server verification and Pending Review confirmation. Source, CI and staging migration are verified; the credentialed staging smoke result is tracked in `docs/SECTION_3_REPORT.md`.
 4. **Internal operations and publication** — staff portal, moderation workflow, Guardian assignment, public Movement Wall and live derived count. Complete and staging-verified.
-5. **Certificates and email** — certificate generation plus submission, approval and final-rejection delivery.
+5. **Certificates, delivery operations and export** — personalized private PDFs, transactional email, Admin retries/downloads, and sensitive audited XLSX export. Implemented; final staging/CI gates are tracked in `docs/SECTION_5_REPORT.md`.
 6. **Hardening and launch** — retention, load, accessibility, security and operational launch checks.
 
-Section 4 adds the portal and publication path while keeping certificate generation and email sending deferred to Section 5. The homepage still builds without Supabase credentials and shows an honest unavailable count rather than fabricated campaign data.
+The homepage still builds without Supabase credentials and shows an honest unavailable count rather than fabricated campaign data. Email remains disabled by default even when the rest of the application is configured.
 
 ## Local application setup
 
@@ -55,6 +55,9 @@ npm run cleanup:drafts:dry-run
 npm run test:staging:submission
 npm run staff:bootstrap -- --email=staff@example.com --display-name="Staff name" --role=reviewer
 npm run test:staging:moderation -- --execute
+npm run certificate:preview -- /private/tmp/certificate.pdf "Test Name"
+npm run test:export
+npm run test:staging:certificate-email -- --recipient=approved-test@example.com
 ```
 
 ## Environment variables
@@ -64,9 +67,15 @@ NEXT_PUBLIC_SITE_URL=
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SECRET_KEY=
+SUPABASE_TARGET_ENVIRONMENT=
+RESEND_API_KEY=
+EMAIL_FROM=
+EMAIL_REPLY_TO=
+EMAIL_SENDING_ENABLED=
+EMAIL_TEST_RECIPIENT=
 ```
 
-Only the publishable key is browser-safe. `SUPABASE_SECRET_KEY` bypasses RLS and must remain in server-only environments.
+Only the publishable key is browser-safe. `SUPABASE_SECRET_KEY` and `RESEND_API_KEY` must remain in server-only environments. Staging sends additionally require `EMAIL_SENDING_ENABLED=true` and an explicit `EMAIL_TEST_RECIPIENT`; stored contacts are never rewritten.
 
 Guarded staging scripts additionally require `SUPABASE_TARGET_ENVIRONMENT=staging` in the untracked local environment. Never configure this marker for production.
 
@@ -74,11 +83,11 @@ Guarded staging scripts additionally require `SUPABASE_TARGET_ENVIRONMENT=stagin
 
 - Docker is required to apply and execute the local migrations, bucket seed and pgTAP suites.
 - Staff Auth users are provisioned manually; public participants never receive accounts.
-- Legal consent text, retention, email templates/domain, geography, dates, media rights, final wordmark and post-983 behaviour remain unresolved.
+- Legal consent text, retention, approved production sender domain/DNS, geography, campaign dates, media rights, final wordmark and post-983 behaviour remain unresolved.
 - Local Docker-backed database execution remains unavailable until sufficient Mac disk space is available; GitHub Actions performs the same ephemeral database verification.
 
 The hosted staging project has been linked and its Section 2 migrations, RLS,
 policies and Storage bucket restrictions have been verified. No hosted
 credential is committed; production remains untouched.
 
-See [the moderation workflow](docs/MODERATION_WORKFLOW.md), [publication pipeline](docs/PUBLICATION_PIPELINE.md), [staff access setup](docs/STAFF_ACCESS_SETUP.md), and [Section 4 report](docs/SECTION_4_REPORT.md).
+See [the certificate pipeline](docs/CERTIFICATE_PIPELINE.md), [email delivery pipeline](docs/EMAIL_DELIVERY_PIPELINE.md), [Admin export](docs/ADMIN_DATA_EXPORT.md), and [Section 5 report](docs/SECTION_5_REPORT.md).

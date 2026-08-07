@@ -12,7 +12,7 @@ A participant provides only:
 - Publication consent
 - Terms acceptance
 
-They receive an on-screen submission confirmation but do not create an account. Their email and original photograph remain private. Section 3 creates an unsent delivery placeholder only; no participant email is sent yet.
+They receive an on-screen confirmation but do not create an account. Their email and original remain private. When sending is enabled, a receipt email is attempted after finalisation; failure never changes Pending Review.
 
 ## Main flow
 
@@ -31,15 +31,17 @@ An Admin may also reject directly. Every recommendation or direct rejection requ
 | Read participant email | No | Yes |
 | Change settings or staff roles | No | Yes |
 | Trash, restore or permanently delete | No | Yes |
+| Delivery Center, retry, certificate download/regeneration | No | Yes |
+| Sensitive campaign XLSX export | No | Yes |
 
 ## Messages, count and certificate
 
 - Recommendation alone never sends a rejection email.
-- Final rejection creates an email placeholder only; Section 4 sends no message.
+- Final rejection creates and attempts the respectful participant notification; recommendation alone still sends nothing.
 - The public count increases only after publication of an active, real campaign record that is marked to count.
 - Test records never publish, count, receive a real Guardian number or send a real participant email.
-- Publication creates `not_started` certificate and approval-email placeholders. Section 4 generates/sends neither.
-- If future email delivery fails, the workflow record remains intact and the same delivery can be retried without creating a duplicate message.
+- Publication creates certificate and approval-email placeholders, then a best-effort post-response task generates the private PDF before attempting the attached approval email.
+- If certificate or email delivery fails, the workflow record remains intact. Admin retries the same stable delivery without changing approval, Guardian number, or count.
 
 ## Trash and deletion
 

@@ -18,8 +18,8 @@
 - `submission_contacts` is a one-to-one private email record.
 - `submission_consents` is one-to-one versioned acceptance evidence.
 - `submission_media` is one-to-one private-original metadata plus immutable public version, card/full paths, dimensions, byte sizes, focal point and alt text.
-- `certificates` is one-to-one generation state.
-- `email_deliveries` is one row per submission and delivery kind with a stable idempotency key.
+- `certificates` is one-to-one generation state with template version/path, byte size, SHA-256, attempts, safe error, and ephemeral claim token.
+- `email_deliveries` is one row per submission/kind with stable idempotency, provider/template metadata, attempts, safe error, and ephemeral claim token.
 - `audit_logs` records explicit future staff actions without copying participant email.
 
 ## Workflow rules
@@ -41,3 +41,7 @@ Email is separated from publishable content. Signed URLs/tokens and image binari
 ## Section 4 moderation and publication
 
 Purpose-specific RPCs normalize review fields, recommend/confirm rejection, publish, Trash, restore, permanently delete, manage existing staff profiles, and update campaign settings. Publication records card/full metadata atomically with the workflow transition and creates exactly one `not_started` certificate and approval-email placeholder. `get_public_campaign_summary` and `list_public_movement_entries` expose only derived public data; neither returns submission IDs, contacts, private paths, consent, staff identity, or rejection data.
+
+## Section 5 delivery state
+
+Service-only claim/complete/fail functions row-lock certificate and email work. Claim tokens prevent one worker completing another attempt. Generated certificates require the private bucket, PDF format, versioned UUID/Guardian path, bounded bytes, SHA-256, and generation time. Sent email requires provider ID and sent time. Sent rows cannot be reclaimed; failed rows reuse the same idempotency key. Delivery state never participates in public count or Guardian allocation.

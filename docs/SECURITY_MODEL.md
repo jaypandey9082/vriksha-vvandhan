@@ -13,6 +13,8 @@
 
 The publishable key may reach the browser. `SUPABASE_SECRET_KEY` is validated lazily inside server-only code, bypasses RLS and must never be logged or returned. Participant email is readable only to Admin. Original photographs stay in the private `submission-originals` bucket and are viewed using short-lived signed URLs. The public bucket is only for trusted approved derivatives.
 
+`RESEND_API_KEY` is also server-only. Provider requests, recipient addresses, attachment bytes, signed URLs, and raw provider errors are never logged or stored. Staging sends fail closed without an explicit test-recipient override. Certificate downloads require Admin again and redirect to a fresh two-minute private signed URL.
+
 ## Security-definer helpers
 
 Private RLS helpers use an empty fixed `search_path`, schema-qualified references and minimum execute grants. Default table/function exposure is revoked. Section 4 grants only the anonymous-safe public summary/list functions and purpose-specific authenticated staff functions; each staff function re-checks active role and workflow state inside the transaction.
@@ -20,6 +22,8 @@ Private RLS helpers use an empty fixed `search_path`, schema-qualified reference
 The two Section 3 public-schema RPCs are also security-definer with empty search paths, fully qualified objects, explicit validation, transaction-local advisory locking, and execute granted only to `service_role`. The browser capability is cryptographically random; only its SHA-256 hash reaches the database. Public errors never include raw database/Storage messages, participant values, secrets, or request tokens.
 
 Signed upload creation fixes the UUID-based private path and disables overwrite. No anonymous Storage policy is added. Finalisation trusts neither filename, declared MIME, size, dimensions, nor checksum from the browser: the Node.js server downloads and inspects the stored bytes with bounded Sharp settings.
+
+Section 5 claim/complete/fail RPCs are executable only by `service_role` and re-check eligibility inside each transaction. The authenticated export-audit RPC re-checks active Admin in the database. Reviewer cannot access Delivery Center, certificate downloads, retry/regeneration, or campaign export. XLSX generation neutralizes formula/control-prefix attacks and excludes request hashes, secrets, signed URLs, binaries, and sensitive audit JSON.
 
 ## Advisor review
 
