@@ -66,6 +66,7 @@ set local role service_role;
 select is((select count(*) from public.claim_certificate_generation('52000000-0000-4000-8000-000000000011','vriksha-2026-v1',false)),0::bigint,'Rejected submission cannot generate a certificate');
 select is((select count(*) from public.claim_certificate_generation('52000000-0000-4000-8000-000000000012','vriksha-2026-v1',false)),0::bigint,'Pending Review cannot generate a certificate');
 select is((select count(*) from public.claim_certificate_generation('52000000-0000-4000-8000-000000000010','vriksha-2026-v1',false)),1::bigint,'Published submission is eligible for certificate generation');
+reset role;
 select is((select status::text from public.certificates where submission_id='52000000-0000-4000-8000-000000000010'),'queued','certificate becomes queued atomically');
 select is((select attempt_count from public.certificates where submission_id='52000000-0000-4000-8000-000000000010'),1,'certificate attempt is incremented');
 select is((select count(*) from public.claim_certificate_generation('52000000-0000-4000-8000-000000000010','vriksha-2026-v1',false)),0::bigint,'a second worker cannot claim queued generation');
@@ -113,7 +114,6 @@ select is((select count(*) from public.claim_email_delivery('52000000-0000-4000-
 select is((select attempt_count from public.email_deliveries where id='52000000-0000-4000-8000-000000000020'),2,'email retry attempt count is retained');
 select is((select count(*) from public.claim_email_delivery('52000000-0000-4000-8000-000000000021')),1::bigint,'final rejection email is eligible without certificate');
 select is((select guardian_number from public.submissions where id='52000000-0000-4000-8000-000000000010'),427::bigint,'all delivery operations preserve Guardian allocation');
-reset role;
 
 select * from finish();
 rollback;
