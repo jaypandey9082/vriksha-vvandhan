@@ -20,7 +20,7 @@ The normal seed converges staging to exactly 18 records:
 
 Every normal submission has a deterministic, bounded seed ID, `source=internal_test`, `is_test=true`, `counts_toward_goal=false`, and an approved `Demo ` display-name prefix. Contacts use reserved `example.com` addresses. The two workflow identities are temporary staging-only Auth users marked in protected app metadata and paired with clearly named temporary staff profiles. Their random passwords exist only in process memory and are never logged.
 
-The 15 non-Draft records use 15 distinct synthetic WebP images generated in memory by Sharp. They cover portrait, landscape and square dimensions, contain only abstract environmental artwork and `VRIKSHA TEST` labels, and are uploaded through the Supabase Storage API to normal `<submission-id>/original.webp` paths in the private `submission-originals` bucket. No generated image is committed to Git and `storage.objects` is never edited directly.
+The 15 non-Draft records use 15 distinct synthetic WebP originals and 15 generated 240×300 review thumbnails. They cover portrait, landscape and square dimensions, contain only abstract environmental artwork and `VRIKSHA TEST` labels, and are uploaded through the Supabase Storage API to normal `<submission-id>/original.webp` and `<submission-id>/review-thumb.webp` paths in the private `submission-originals` bucket. No generated image is committed to Git and `storage.objects` is never edited directly.
 
 The seed uses consent version `staging-2026-08-v1`, matching `src/config/public-submission.ts`. Non-Draft records use the real finalisation RPC; rejection recommendations and confirmations use the real role-checked workflow functions so their audit events and `not_started` placeholders are realistic.
 
@@ -68,7 +68,7 @@ Execute cleanup before campaign launch:
 npm run staging:cleanup-demo -- --execute
 ```
 
-Cleanup removes only records that match the deterministic ID, display-name, source and test/count markers. It removes public files (if separately authorized), private originals and certificate files through Storage APIs before audit rows, submissions and temporary Auth users. It then verifies no bounded records or objects remain and that the public count is unchanged. Repeated cleanup is a safe no-op.
+Cleanup removes only records that match the deterministic ID, display-name, source and test/count markers. It removes public files (if separately authorized), private originals, private review thumbnails and certificate files through Storage APIs before audit rows, submissions and temporary Auth users. It then verifies no bounded records or objects remain and that the public count is unchanged. Repeated cleanup is a safe no-op.
 
 If a separately supervised Published dataset ever exists, cleanup additionally requires:
 

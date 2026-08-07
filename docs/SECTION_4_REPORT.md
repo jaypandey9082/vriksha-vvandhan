@@ -37,3 +37,13 @@ No `.env.local`, secret, production URL, password, real participant record or ge
 ## Next section
 
 Section 5 turns the existing `not_started` certificate and email placeholders into idempotent certificate generation and transactional approval/rejection delivery, without changing the Section 4 moderation contract.
+
+## Private review-thumbnail performance hardening
+
+The queue previously selected each `original_path`, created one signed URL per row (parallel but still up to 25 Storage HTTP calls), waited for all signing before returning the page, and sent full originals to 56×70 display boxes. The retained staging originals measured 277,652 bytes average, 214,850 median and 515,294 largest. Fifteen individual sign calls took 647.2 ms versus 207.5 ms for one supported batch call; the database metadata query took 722.3 ms on that hosted run. Network variability applies, but the architectural waste was unambiguous.
+
+The hardened path adds constrained private 240×300 quality-70 WebP review derivatives, automatic generation during trusted public finalisation, a staging-only dry-run-first backfill, 25-row keyset pagination, one authenticated batch-sign endpoint and fixed 96×120 native lazy images. Server-rendered text no longer waits for Storage signing or image bytes. Private paths do not cross the client boundary, normal queue links do not prefetch full originals, and signing/image failures retain a usable text queue with a neutral fallback.
+
+The detail page now shows the review thumbnail first and uses it as the loading preview for the full original. Original signing is limited to the selected detail request. The queue still omits audit history, Reviewer email/contact data and certificate detail; these existing deliberate boundaries were retained. No speculative new database index or observability dependency was added because the page remains bounded and existing status/time indexes cover the current filters.
+
+Actual post-backfill thumbnail sizes, migrated record count, final CI run and hosted Advisor results are recorded after the staging-only rollout. The architecture, failure contract and benchmark command are documented in `docs/PRIVATE_REVIEW_IMAGE_PIPELINE.md`.
