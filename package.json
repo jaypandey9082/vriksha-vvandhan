@@ -23,7 +23,9 @@
     "cleanup:drafts": "node --env-file-if-exists=.env.local scripts/cleanup-expired-drafts.mjs --execute",
     "test:staging:submission": "node --env-file-if-exists=.env.local scripts/test-staging-submission.mjs",
     "staff:bootstrap": "node --env-file-if-exists=.env.local scripts/bootstrap-staff-profile.mjs",
-    "test:staging:moderation": "node --env-file-if-exists=.env.local scripts/staging-moderation-smoke.mjs"
+    "test:staging:moderation": "node --env-file-if-exists=.env.local scripts/staging-moderation-smoke.mjs",
+    "staging:seed-demo": "node scripts/seed-staging-demo-data.mjs",
+    "staging:cleanup-demo": "node scripts/cleanup-staging-demo-data.mjs"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
