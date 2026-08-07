@@ -6,7 +6,7 @@ Section 5 started from company `main` commit `bfec2dec506282cd7a6a5ed59278e527d5
 
 ## Implemented
 
-- Approved-master A4 PDF renderer, embedded OFL Manrope, long-name fallback, India approval date, Guardian helper, checksum, versioned private path, verified upload, retry/regeneration, and Admin signed download.
+- Approved-master A4 PDF renderer, embedded OFL Marcellus, long-name fallback, India approval date, Guardian helper, checksum, versioned private path, verified upload, retry/regeneration, and Admin signed download.
 - Resend receipt, approval-with-PDF, and rejection templates/processor; database claims, stable idempotency, safe errors, staging override, disabled default, post-transaction attempts, and manual retries.
 - Admin-only Delivery Center, status cards/filters/actions, submission-detail status, overview metrics, and audited seven-sheet XLSX export with formula protection.
 - One Section 5 migration, pgTAP, unit/component/API/Playwright coverage, guarded staging smoke, and documentation.
@@ -20,10 +20,13 @@ Section 5 started from company `main` commit `bfec2dec506282cd7a6a5ed59278e527d5
 
 ## Local evidence
 
-- Real normal-name and 86-character Unicode two-line PDFs were generated, parsed with `pdfinfo`, rendered through Poppler, and visually inspected.
+- Real normal-name and long Unicode two-line PDFs were generated, parsed with `pdfinfo`, rendered through Poppler, and visually inspected against the supplied personalized reference.
 - A real 1,000-row XLSX was saved, parsed, inspected through the spreadsheet runtime, and rendered for visual review.
-- Final lint, typecheck, unit/component, build, E2E, audit, and dependency results are recorded at handoff.
+- Lint, typecheck, 141 unit/component tests, production build, 31 Playwright tests, dependency audit, and the 236-assertion database suite passed.
+- GitHub Actions run `31169693245` is green. The Section 5 migration is applied only to linked staging, linked generated types match the committed snapshot, and the guarded certificate-only staging smoke verified generation, private upload/download, checksum/metadata, PDF opening, cleanup, and restoration of the public baseline.
+- The authenticated local Admin route connected to staging returned `200` for `/api/admin/export/campaign.xlsx`. The downloaded workbook opened with the seven expected sheets and zero formula cells; its successful export audit event was part of the same transaction path. The sensitive verification download was moved to Trash after inspection.
+- Live staging Advisors report Security 0 errors / 16 warnings / 0 info, and Performance 0 errors / 0 warnings / 7 unused-index suggestions. The warnings remain recorded for explicit hardening rather than being silently treated as clean.
 
 ## Completion gates
 
-Section 5 remains **in progress** until final application/database CI is green, the migration is applied to staging only, linked types are committed, a real explicit-recipient staging email and duplicate retry pass, the staging export route is exercised, and Security/Performance Advisors are reviewed. No email success or Section 5 completion is claimed before those gates.
+Section 5 remains **in progress** until a real explicit-recipient staging email and duplicate retry pass. Company-controlled Resend configuration is not present locally, so email remains safely disabled. Advisor warnings also remain visible for a later, separately reviewed hardening change. No email success or Section 5 completion is claimed before the required gates.

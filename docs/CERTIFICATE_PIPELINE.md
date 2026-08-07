@@ -29,3 +29,5 @@ Failure records only a bounded stable error code. It never changes submission st
 ## Verification
 
 Use `npm run certificate:preview -- /private/tmp/preview.pdf "Test Name"`. Preview output must remain outside Git. Render through Poppler after layout changes and inspect normal, Unicode, and two-line names before changing the version.
+
+The linked staging certificate-only smoke generated a non-counting synthetic Published fixture, stored and downloaded its private PDF, opened it with `pdf-lib`, matched checksum/byte/path metadata, removed the private object and fixture, and restored the public baseline count. It did not send email.

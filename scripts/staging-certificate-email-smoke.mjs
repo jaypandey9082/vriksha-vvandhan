@@ -27,14 +27,23 @@ async function publicCount(client) {
 
 async function main() {
   const execute = process.argv.includes("--execute");
+  const certificateOnly = process.argv.includes("--certificate-only");
   const recipient = option("--recipient");
   if (process.env.SUPABASE_TARGET_ENVIRONMENT !== "staging") throw new Error("staging_guard_required");
-  if (!recipient || recipient !== process.env.EMAIL_TEST_RECIPIENT) throw new Error("explicit_test_recipient_required");
+  if (!certificateOnly && (!recipient || recipient !== process.env.EMAIL_TEST_RECIPIENT)) {
+    throw new Error("explicit_test_recipient_required");
+  }
   if (!execute) {
-    console.log(JSON.stringify({ mode: "dry-run", stagingGuard: true, explicitRecipient: true, emailEnabled: process.env.EMAIL_SENDING_ENABLED === "true" }));
+    console.log(JSON.stringify({
+      mode: "dry-run",
+      stagingGuard: true,
+      certificateOnly,
+      explicitRecipient: certificateOnly ? "not-required" : true,
+      emailEnabled: process.env.EMAIL_SENDING_ENABLED === "true",
+    }));
     return;
   }
-  if (process.env.EMAIL_SENDING_ENABLED !== "true") throw new Error("email_sending_disabled");
+  if (!certificateOnly && process.env.EMAIL_SENDING_ENABLED !== "true") throw new Error("email_sending_disabled");
 
   const client = getServiceSupabaseClient();
   const baselineCount = await publicCount(client);
@@ -53,9 +62,14 @@ async function main() {
     if (submission.error) throw new Error("staging_fixture_creation_failed");
     const relations = await Promise.all([
       client.from("submission_consents").insert({ submission_id: submissionId, consent_version: "section5-staging-smoke", publication_consent: true, terms_accepted: true, accepted_at: approvedAt.toISOString() }),
-      client.from("submission_contacts").insert({ submission_id: submissionId, email: recipient }),
+      client.from("submission_contacts").insert({
+        submission_id: submissionId,
+        email: certificateOnly ? "certificate-smoke@example.test" : recipient,
+      }),
       client.from("certificates").insert({ id: certificateId, submission_id: submissionId, status: "not_started" }),
-      client.from("email_deliveries").insert({ id: deliveryId, submission_id: submissionId, kind: "approval_certificate", status: "not_started", idempotency_key: `approval_certificate:${submissionId}` }),
+      ...(certificateOnly ? [] : [
+        client.from("email_deliveries").insert({ id: deliveryId, submission_id: submissionId, kind: "approval_certificate", status: "not_started", idempotency_key: `approval_certificate:${submissionId}` }),
+      ]),
     ]);
     if (relations.some((result) => result.error)) throw new Error("staging_fixture_creation_failed");
     const publication = await client.from("submissions").update({
@@ -78,6 +92,17 @@ async function main() {
     if (metadata.error || metadata.data.status !== "generated" || metadata.data.checksum_sha256 !== expected.sha256 || metadata.data.file_bytes !== expected.byteLength || metadata.data.object_path !== objectPath) throw new Error("certificate_metadata_verification_failed");
     if (formatCertificateDate(approvedAt) !== "07 August 2026") throw new Error("certificate_date_verification_failed");
 
+    if (certificateOnly) {
+      console.log(JSON.stringify({
+        mode: "execute",
+        certificate: "verified",
+        privateStorage: "verified",
+        email: "skipped",
+        baselineCount,
+      }));
+      return;
+    }
+
     const sent = await processEmailDelivery(deliveryId);
     if (sent.outcome !== "sent" || !sent.providerMessageId) throw new Error("email_smoke_not_sent");
     const firstState = await client.from("email_deliveries").select("status,provider_message_id,attempt_count,idempotency_key").eq("id", deliveryId).single();
@@ -88,10 +113,19 @@ async function main() {
 
     console.log(JSON.stringify({ mode: "execute", certificate: "verified", privateStorage: "verified", email: "sent", providerMessageIdRecorded: true, duplicateRetry: "blocked", baselineCount }));
   } finally {
-    if (objectPath) await client.storage.from(CERTIFICATES_BUCKET).remove([objectPath]);
-    await client.from("submissions").delete().eq("id", submissionId);
+    let cleanupFailed = false;
+    if (objectPath) {
+      const removal = await client.storage.from(CERTIFICATES_BUCKET).remove([objectPath]);
+      cleanupFailed ||= Boolean(removal.error);
+    }
+    const remainingObjects = await client.storage.from(CERTIFICATES_BUCKET).list(submissionId);
+    cleanupFailed ||= Boolean(remainingObjects.error || remainingObjects.data?.length);
+    const deleted = await client.from("submissions").delete().eq("id", submissionId);
+    cleanupFailed ||= Boolean(deleted.error);
+    const fixture = await client.from("submissions").select("id").eq("id", submissionId).maybeSingle();
+    cleanupFailed ||= Boolean(fixture.error || fixture.data);
     const restoredCount = await publicCount(client).catch(() => null);
-    if (restoredCount !== baselineCount) throw new Error("staging_count_restore_failed");
+    if (cleanupFailed || restoredCount !== baselineCount) throw new Error("staging_cleanup_failed");
   }
 }
 

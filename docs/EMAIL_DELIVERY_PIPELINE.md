@@ -25,11 +25,15 @@ Required server-only names are `RESEND_API_KEY`, `EMAIL_FROM`, and `EMAIL_REPLY_
 The guarded smoke is dry-run by default:
 
 ```bash
+npm run test:staging:certificate-email -- --certificate-only
+npm run test:staging:certificate-email -- --certificate-only --execute
 npm run test:staging:certificate-email -- --recipient=approved-test@example.com
 npm run test:staging:certificate-email -- --execute --recipient=approved-test@example.com
 ```
 
-The argument must match the untracked environment value. Execute mode creates a synthetic non-counting Published fixture without consuming the real Guardian sequence, verifies the private PDF, sends one approval email, retries to prove no duplicate, cleans up, and verifies the baseline count.
+Certificate-only mode needs no recipient and sends no email. It creates a synthetic non-counting Published fixture without consuming the real Guardian sequence, verifies generation, private upload/download, checksum/metadata and PDF opening, then verifies Storage/database cleanup and the baseline count.
+
+Email mode additionally requires the argument to match the untracked `EMAIL_TEST_RECIPIENT`. It sends one approval email and retries to prove no duplicate before performing the same cleanup checks.
 
 ## Company Resend setup before production
 
