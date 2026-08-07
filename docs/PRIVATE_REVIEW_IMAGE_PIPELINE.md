@@ -54,4 +54,8 @@ Use the read-only post-backfill benchmark to record the actual derivative distri
 npm run staging:benchmark-review-thumbnails
 ```
 
+The 2026-08-07 staging rollout generated derivatives for all 15 eligible retained originals, with none missing or failed. The resulting thumbnails averaged 10,199 bytes (median 11,352; largest 12,268), for 152,982 bytes total and an estimated 254,975 bytes for 25 similar rows. The post-backfill metadata query took 651.5 ms and the single batch-sign request took 225.1 ms. Compared with the estimated 6,941,300 original-image bytes for 25 rows, the derivative transfer estimate is about 96.3% smaller. These simple synthetic staging images compress below the normal 30–80 KiB target while remaining within the same dimensions, quality setting and hard limit.
+
+The idempotent follow-up run reported all 15 records complete and zero planned, generated, recovered or failed work. Read-only verification found 30 private objects: 15 untouched originals and 15 review thumbnails. Submission status distribution, public campaign count, email placeholders and certificate count were unchanged.
+
 CI deliberately does not enforce brittle wall-clock thresholds. It enforces the 120 KiB output maximum, one batch request for 25 synthetic rows, no original/path value in the browser request, fixed dimensions, lazy decoding and queue-text independence.
