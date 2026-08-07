@@ -580,11 +580,11 @@ export type Database = {
       finalize_public_submission_with_review_thumbnail: {
         Args: {
           p_public_request_token_hash: string
-          p_review_thumbnail_bytes: number | null
-          p_review_thumbnail_generated_at: string | null
-          p_review_thumbnail_height: number | null
-          p_review_thumbnail_path: string | null
-          p_review_thumbnail_width: number | null
+          p_review_thumbnail_bytes: number
+          p_review_thumbnail_generated_at: string
+          p_review_thumbnail_height: number
+          p_review_thumbnail_path: string
+          p_review_thumbnail_width: number
           p_submission_id: string
           p_verified_bytes: number
           p_verified_height: number

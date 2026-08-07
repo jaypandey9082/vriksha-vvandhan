@@ -10,6 +10,7 @@ import {
   uploadReviewThumbnail,
 } from "@/lib/storage/review-thumbnail.server";
 import { getServiceSupabaseClient } from "@/lib/supabase/service";
+import { callUntypedRpc } from "@/lib/supabase/rpc.server";
 import { mapDatabaseError } from "@/lib/submissions/api-errors";
 import { hashPublicRequestToken } from "@/lib/submissions/request-token.server";
 import type {
@@ -215,7 +216,7 @@ export async function finalizePublicSubmission(
     // safely retry this private derivative without duplicating the submission.
   }
 
-  const { data, error } = await client.rpc("finalize_public_submission_with_review_thumbnail", {
+  const { data, error } = await callUntypedRpc<unknown>(client, "finalize_public_submission_with_review_thumbnail", {
       p_submission_id: input.submissionId,
       p_public_request_token_hash: tokenHash,
       p_verified_mime_type: verified.mimeType,
