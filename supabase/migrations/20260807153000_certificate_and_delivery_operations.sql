@@ -26,7 +26,7 @@ alter table public.certificates
     or (
       bucket = 'certificates'
       and object_path is not null
-      and object_path = submission_id::text || '/' || pg_catalog.substring(object_path from '[^/]+$')
+      and object_path = submission_id::text || '/' || pg_catalog.substring(object_path, '[^/]+$')
       and object_path ~ ('^' || submission_id::text || '/vriksha-guardian-[1-9][0-9]*-v[a-zA-Z0-9]+\.pdf$')
       and format = 'pdf'
       and generated_at is not null
@@ -156,7 +156,7 @@ begin
 
   if not found then return false; end if;
   v_expected_path := v_submission_id::text || '/vriksha-guardian-' || v_guardian_number::text
-    || '-v' || pg_catalog.substring(p_template_version from '-v([a-zA-Z0-9]+)$') || '.pdf';
+    || '-v' || pg_catalog.substring(p_template_version, '-v([a-zA-Z0-9]+)$') || '.pdf';
 
   if p_template_version !~ '^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$'
      or p_object_path is distinct from v_expected_path
